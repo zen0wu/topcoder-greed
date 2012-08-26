@@ -13,6 +13,11 @@ public class Configuration {
 
     private static final String GREED_WORKSPACE = "greed.workspace";
 
+    public static boolean workspaceSet() {
+        String workspace = getWorkspace();
+        return workspace != null && workspace.length() > 0;
+    }
+
     public static String getWorkspace() {
         return pref.getProperty(GREED_WORKSPACE);
     }

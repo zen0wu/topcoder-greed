@@ -27,10 +27,10 @@ public class Greed {
     private HashMap<String, Object> currentTemplateModel;
 
     private GreedEditorPanel talkingWindow;
-
     private boolean firstUsing;
 
     public Greed() {
+        // Entrance of all program
         Log.i("Create Greed Plugin");
         this.talkingWindow = new GreedEditorPanel();
         this.firstUsing = true;

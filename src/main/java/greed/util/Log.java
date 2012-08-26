@@ -11,7 +11,7 @@ import java.util.Locale;
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;
     private static final String[] LEVEL_NAMES = new String[] { "DEBUG", "INFO", "WARN", "ERROR" };
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.ENGLISH);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.ENGLISH);
 
     private static int minimalLoggingLevel = 0;
     private static PrintWriter logger = null;
@@ -27,8 +27,8 @@ public class Log {
                 minimalLoggingLevel = i;
                 break;
             }
-        // If logging is enabled
-        if (minimalLoggingLevel < LEVEL_NAMES.length) {
+        // If logging is enabled and workspace exists
+        if (minimalLoggingLevel < LEVEL_NAMES.length && Configuration.workspaceSet()) {
             logToErr = Configuration.getBoolean(Configuration.Keys.LOG_TO_STDERR);
             // Create logging folder
             String logFolder = Configuration.getString(Configuration.Keys.FOLDER_LOG);
@@ -46,7 +46,7 @@ public class Log {
 
     private static void doLog(int level, String message) {
         StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_BACKDEPTH];
-        String dateString = dateFormat.format(new Date());
+        String dateString = DATE_FORMAT.format(new Date());
         String prefix = "    ";
         if (level >= 0) prefix = trace.getClassName().substring(trace.getClassName().lastIndexOf(".") + 1) + "[" + LEVEL_NAMES[level] + "]:";
         String log = String.format("[%s] [%s.%s@line %d] %s %s",
