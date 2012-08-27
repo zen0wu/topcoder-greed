@@ -15,7 +15,8 @@ template <typename T> string pretty_print(T t) { stringstream s; typeid(T) == ty
 ${<if UsePrintArray}
 // Vector print
 template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
-    for (int i = 0; i < arr.size(); ++i) out << (i == 0 ? "{ " : ", ") << pretty_print(arr[i]);
+    out << "{ ";
+    for (int i = 0; i < arr.size(); ++i) out << (i == 0 ? "" : ", ") << pretty_print(arr[i]);
     out << " }";
     return out;
 }

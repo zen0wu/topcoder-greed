@@ -8,8 +8,6 @@
 
 using namespace std;
 
-${CodeBlockStart}
-
 class ${ClassName} {
     public:
     ${Method.ReturnType} ${Method.Name}(${Method.Params}) {
@@ -17,6 +15,6 @@ class ${ClassName} {
     }
 };
 
-${TestBlockStart}
-
-${TestCode}
+// CUT begin
+${<TestCode}
+// CUT end
