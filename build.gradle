@@ -11,7 +11,7 @@ repositories {
 configurations { provide }
 sourceSets { main { compileClasspath += configurations.provide } }
 
-def providedDependencies = [ files('lib/ContestApplet.jar')]
+def providedDependencies = [ files('lib/ContestApplet.jar') ]
 
 dependencies {
     provide providedDependencies

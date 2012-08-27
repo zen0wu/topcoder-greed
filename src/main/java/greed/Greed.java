@@ -5,6 +5,7 @@ import com.topcoder.shared.problem.Renderer;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import greed.model.*;
+import greed.transform.CodeByLine;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
 import greed.util.FileSystem;
@@ -18,6 +19,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class Greed {
     public static final String APP_NAME = "Greed";
 
@@ -36,70 +38,61 @@ public class Greed {
         this.firstUsing = true;
     }
 
-    /**
+    /*
      * Cache the editor
-     * @return
      */
     public boolean isCacheable() {
-        return true;
+        return false;
     }
 
-    /**
+    /*
      * Called when open the coding frame
      * Like FileEdit, a log window is used
-     * @return
      */
     public JPanel getEditorPanel() {
         return talkingWindow;
     }
 
-    /**
+    /*
      * Ignore the given source code
-     * @param source
      */
     public void setSource(String source) {}
 
     public String getSource() {
-        String codeDir = Configuration.getString(Keys.FOLDER_CODE);
+        String codeDir = Configuration.getString(Keys.CODE_ROOT);
         String relativePath = TemplateEngine.render(Configuration.getString(Keys.PATH_PATTERN), currentTemplateModel);
         String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
 
         // Create source file if not exists
-        String filePath = codeDir + "/" + relativePath + "/" + fileName + "." + Configuration.getString(Keys.getTemplateKey(currentLang) + Keys.SUFFIX_EXTENSION);
+	    Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(currentLang));
+        String filePath = codeDir + "/" + relativePath + "/" + fileName + "." +  langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
+
+	    // Get begincut and endcut tag
+	    String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
+	    String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(FileSystem.getInputStream(filePath)));
+	        CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
 
-            // Create a block expression to useful mapping
-            HashMap<String, Boolean> useful = new HashMap<String, Boolean>();
-            Config blockConfig = Configuration.getConfig(Keys.getTemplateKey(currentLang) + Keys.SUFFIX_BLOCK);
-            for (String tagToHide: blockConfig.getStringList("hide"))
-                useful.put(currentTemplateModel.get(tagToHide + "BlockStart").toString(), false);
-            for (String allTag: blockConfig.getStringList("tags")) {
-                String key = currentTemplateModel.get(allTag + "BlockStart").toString();
-                if (!useful.containsKey(key)) useful.put(key, true);
-            }
-
-            // Remove unused code blocks
-            StringBuffer buf = new StringBuffer();
-            String line;
-            boolean showCurrent = true;
-            while ((line = reader.readLine()) != null) {
-                if (useful.containsKey(line)) {
-                    boolean show = useful.get(line);
-                    showCurrent = show;
-                }
-                else if (showCurrent) {
-                    buf.append(line);
-                    buf.append('\n');
-                }
-            }
-            reader.close();
+            // Cut the code
+	        boolean cutting = false;
+	        StringBuffer buf = new StringBuffer();
+	        for (String line: code.getLines()) {
+		        System.err.println(line);
+		        if (line.equals(beginCut))
+			        cutting = true;
+		        else if (line.equals(endCut))
+			        cutting = false;
+		        else if (!cutting) {
+			        buf.append(line);
+			        buf.append("\n");
+		        }
+	        }
 
             return buf.toString();
         }
         catch (IOException e) {
-            talkingWindow.say("Cannot fetch your source code. Please check the logs, and whether your source code was present");
+            talkingWindow.say("Cannot fetch your source code. Please check the logs, and make sure your source code is present");
             talkingWindow.say("Now I'm giving out a empty string!");
             Log.e("Error getting the source", e);
             return "";
@@ -161,7 +154,7 @@ public class Greed {
         String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
 
         // Create source directory
-        String codeDir = Configuration.getString(Keys.FOLDER_CODE);
+        String codeDir = Configuration.getString(Keys.CODE_ROOT);
         codeDir += "/" + relativePath;
         if (!FileSystem.exists(codeDir)) {
             talkingWindow.say("I'm creating folder " + codeDir);
@@ -169,7 +162,8 @@ public class Greed {
         }
 
         // Create source file if not exists
-        String filePath = codeDir + "/" + fileName + "." + Configuration.getString(Keys.getTemplateKey(language) + Keys.SUFFIX_EXTENSION);
+	    Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(language));
+        String filePath = codeDir + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
         boolean exists = FileSystem.exists(filePath);
         boolean override = Configuration.getBoolean(Keys.OVERRIDE);
         talkingWindow.say("Source code will be generated, \"" + filePath + "\"" + ", in your workspace");
@@ -190,16 +184,6 @@ public class Greed {
             // First, set the language of template engine
             TemplateEngine.switchLanguage(language);
 
-            // Bind code blocks
-            Config blockConfig = Configuration.getConfig(Keys.getTemplateKey(language) + Keys.SUFFIX_BLOCK);
-            String formatString = blockConfig.getString("format");
-            HashMap<String, Object> miniMap = new HashMap<String, Object>();
-            for (String tag: blockConfig.getStringList("tags")) {
-                miniMap.clear();
-                miniMap.put("BlockName", tag);
-                currentTemplateModel.put(tag + "BlockStart", TemplateEngine.render(formatString, miniMap));
-            }
-
             // Bind additional model
             currentTemplateModel.put("ClassName", problem.getClassName());
             currentTemplateModel.put("Method", problem.getMethod());
@@ -214,8 +198,7 @@ public class Greed {
             talkingWindow.say("I'm generating source code for you~");
             // Generate test code
             try {
-                String tmplPath = Configuration.getString(Keys.FOLDER_TEMPLATE);
-                tmplPath += "/" + Configuration.getString(Keys.getTestCodeTemplateKey(language));
+                String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEST_TEMPLATE_FILE);
                 talkingWindow.say("Using test template \"" + tmplPath + "\"");
 
                 InputStream testTmpl = FileSystem.getInputStream(tmplPath);
@@ -232,10 +215,9 @@ public class Greed {
             }
 
             // Generate main code
-            String sourceCode = "";
+            String sourceCode;
             try {
-                String tmplPath = Configuration.getString(Keys.FOLDER_TEMPLATE);
-                tmplPath += "/" + Configuration.getString(Keys.getTemplateKey(language) + Keys.SUFFIX_FILE);
+	            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEMPLATE_FILE);
                 talkingWindow.say("Using source template \"" + tmplPath + "\"");
 
                 InputStream codeTmpl = FileSystem.getInputStream(tmplPath);

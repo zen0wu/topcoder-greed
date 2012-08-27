@@ -7,6 +7,7 @@ import greed.model.Language;
 
 import java.io.*;
 
+@SuppressWarnings("unused")
 public class Configuration {
     // Workspace related
     private static LocalPreferences pref = LocalPreferences.getInstance();
@@ -35,30 +36,27 @@ public class Configuration {
     public static class Keys {
         public static final String JAR_RESOURCE = "greed.reserved.jarResourcePath";
 
-        public static final String FOLDER_LOG = "greed.folder.log";
-        public static final String FOLDER_TEMPLATE = "greed.folder.template";
-        public static final String FOLDER_CODE = "greed.folder.code";
+        public static final String CODE_ROOT = "greed.codeRoot";
 
         public static final String FILE_NAME_PATTERN = "greed.templates.fileNamePattern";
         public static final String PATH_PATTERN = "greed.templates.pathPattern";
 
-        public static final String OVERRIDE = "greed.options.override";
-        public static final String LOG_LEVEL = "greed.options.logLevel";
-        public static final String LOG_TO_STDERR = "greed.options.logToStderr";
+        public static final String OVERRIDE = "greed.override";
+        public static final String LOG_LEVEL = "greed.logLevel";
+        public static final String LOG_TO_STDERR = "greed.logToStderr";
+	    public static final String LOG_FOLDER = "greed.logFolder";
 
-        public static final String RECORD_RUNTIME = "greed.templates.test.recordRuntime";
+	    public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
 
         public static String getTemplateKey(Language language) {
             return "greed.templates." + Language.getName(language);
         }
 
-        public static String getTestCodeTemplateKey(Language language) {
-            return "greed.templates.test.codeTemplates." + Language.getName(language);
-        }
-
-        public static final String SUFFIX_FILE = ".file";
-        public static final String SUFFIX_EXTENSION = ".extension";
-        public static final String SUFFIX_BLOCK = ".blocks";
+        public static final String SUBKEY_TEMPLATE_FILE = "tmplFile";
+	    public static final String SUBKEY_TEST_TEMPLATE_FILE = "testTmplFile";
+	    public static final String SUBKEY_EXTENSION = "extension";
+        public static final String SUBKEY_CUTBEGIN = "cutBegin";
+	    public static final String SUBKEY_CUTEND = "cutEnd";
     }
 
     private static final String DEFAULT_USER_CONFIG_FILENAME = "greed.conf";

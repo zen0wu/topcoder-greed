@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;
     private static final String[] LEVEL_NAMES = new String[] { "DEBUG", "INFO", "WARN", "ERROR" };
@@ -31,7 +32,7 @@ public class Log {
         if (minimalLoggingLevel < LEVEL_NAMES.length && Configuration.workspaceSet()) {
             logToErr = Configuration.getBoolean(Configuration.Keys.LOG_TO_STDERR);
             // Create logging folder
-            String logFolder = Configuration.getString(Configuration.Keys.FOLDER_LOG);
+            String logFolder = Configuration.getString(Configuration.Keys.LOG_FOLDER);
             FileSystem.createFolder(logFolder);
 
             int month = GregorianCalendar.getInstance().get(Calendar.MONTH);

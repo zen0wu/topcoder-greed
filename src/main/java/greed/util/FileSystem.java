@@ -5,7 +5,7 @@ import java.io.*;
 public class FileSystem {
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
-        if (resourcePath.startsWith("jar:")) {
+        if (resourcePath.startsWith("res:")) {
             resourcePath = Configuration.getString(Configuration.Keys.JAR_RESOURCE) + resourcePath.substring(4);
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
@@ -31,7 +31,7 @@ public class FileSystem {
     }
 
     public static void writeFile(String relativePath, String content) {
-        PrintWriter writer = null;
+        PrintWriter writer;
         try {
             writer = new PrintWriter(Configuration.getWorkspace() + "/" + relativePath);
             writer.print(content);
