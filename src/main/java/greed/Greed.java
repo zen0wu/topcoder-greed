@@ -214,9 +214,11 @@ public class Greed {
             talkingWindow.say("I'm generating source code for you~");
             // Generate test code
             try {
-                String tmpl = Configuration.getString(Keys.getTestCodeTemplateKey(language));
-                talkingWindow.say("Using test template \"" + tmpl + "\"");
-                InputStream testTmpl = FileSystem.getInputStream(tmpl);
+                String tmplPath = Configuration.getString(Keys.FOLDER_TEMPLATE);
+                tmplPath += "/" + Configuration.getString(Keys.getTestCodeTemplateKey(language));
+                talkingWindow.say("Using test template \"" + tmplPath + "\"");
+
+                InputStream testTmpl = FileSystem.getInputStream(tmplPath);
                 String testCode = TemplateEngine.render(testTmpl, currentTemplateModel);
                 currentTemplateModel.put("TestCode", testCode);
             }
@@ -233,7 +235,7 @@ public class Greed {
             String sourceCode = "";
             try {
                 String tmplPath = Configuration.getString(Keys.FOLDER_TEMPLATE);
-                tmplPath += Configuration.getString(Keys.getTemplateKey(language) + Keys.SUFFIX_FILE);
+                tmplPath += "/" + Configuration.getString(Keys.getTemplateKey(language) + Keys.SUFFIX_FILE);
                 talkingWindow.say("Using source template \"" + tmplPath + "\"");
 
                 InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
@@ -251,20 +253,8 @@ public class Greed {
                 return;
             }
 
-            // Remove continuous blank line
-            String[] lines = sourceCode.split("\n");
-            StringBuffer buf = new StringBuffer();
-            boolean lastLineBlank = true;
-            for (int i = 0; i < lines.length; ++i) {
-                boolean thisLineBlank = lines[i].trim().length() == 0;
-                if (lastLineBlank && thisLineBlank) continue;
-                buf.append(lines[i]);
-                buf.append("\n");
-                lastLineBlank = thisLineBlank;
-            }
-
             // Write to file
-            FileSystem.writeFile(filePath, buf.toString());
+            FileSystem.writeFile(filePath, sourceCode);
         }
         talkingWindow.say("All set, good luck!");
     }
