@@ -46,14 +46,14 @@ public class Configuration {
         public static final String LOG_LEVEL = "greed.options.logLevel";
         public static final String LOG_TO_STDERR = "greed.options.logToStderr";
 
-        public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
+        public static final String RECORD_RUNTIME = "greed.templates.test.recordRuntime";
 
         public static String getTemplateKey(Language language) {
             return "greed.templates." + Language.getName(language);
         }
 
         public static String getTestCodeTemplateKey(Language language) {
-            return "greed.test.codeTemplates." + Language.getName(language);
+            return "greed.templates.test.codeTemplates." + Language.getName(language);
         }
 
         public static final String SUFFIX_FILE = ".file";
