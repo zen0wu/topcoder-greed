@@ -1,5 +1,8 @@
 package greed.model;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class Param {
     private String name;
     private Type type;

@@ -58,7 +58,7 @@ ${<foreach e.Input in}
 ${<if !in.Param.Type.Array}
             ${in.Param.Type.Primitive} ${in.Param.Name} = ${in};
 ${<else}
-            ${in.Param.Type.Primitive} ${in.Param.Name}[] = {${foreach in.ValueList v}
+            ${in.Param.Type.Primitive} ${in.Param.Name}[] = {${foreach in.ValueList v ,}
                 ${v}${end}
             };
 ${<end}
@@ -66,13 +66,14 @@ ${<end}
 ${<if !e.Output.Param.Type.Array}
             ${e.Output.Param.Type.Primitive} expected = ${e.Output};
 ${<else}
-            ${e.Output.Param.Type.Primitive} expected[] = {${foreach e.Output.ValueList v}
+            ${e.Output.Param.Type.Primitive} expected[] = {${foreach e.Output.ValueList v ,}
                 ${v}${end}
             };
 ${<end}
             run_testcase(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
             break;
-        }${end}
+        }
+${<end}
     }
 }
 

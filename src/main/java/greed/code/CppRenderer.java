@@ -1,4 +1,4 @@
-package greed.template;
+package greed.code;
 
 import com.floreysoft.jmte.Engine;
 import com.floreysoft.jmte.NamedRenderer;
@@ -11,6 +11,9 @@ import greed.model.Type;
 
 import java.util.Locale;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class CppRenderer implements LanguageRenderer {
     public static CppRenderer instance = new CppRenderer();
 
@@ -50,7 +53,9 @@ public class CppRenderer implements LanguageRenderer {
     private static String renderParamValue(ParamValue o) {
         Type paramType = o.getParam().getType();
         String value = o.getValue();
-        if (paramType.isArray()) return value;
+        if (paramType.isArray()) {
+	        return value;
+        }
 
         switch (paramType.getPrimitive()) {
             case STRING: value = "\"" + value + "\""; break;

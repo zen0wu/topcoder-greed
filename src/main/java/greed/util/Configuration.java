@@ -7,6 +7,9 @@ import greed.model.Language;
 
 import java.io.*;
 
+/**
+ * Greed is good! Cheers!
+ */
 @SuppressWarnings("unused")
 public class Configuration {
     // Workspace related

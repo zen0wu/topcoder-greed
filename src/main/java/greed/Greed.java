@@ -4,8 +4,9 @@ import com.topcoder.client.contestant.ProblemComponentModel;
 import com.topcoder.shared.problem.Renderer;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
+import greed.code.LanguageManager;
 import greed.model.*;
-import greed.transform.CodeByLine;
+import greed.code.CodeByLine;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
 import greed.util.FileSystem;
@@ -19,9 +20,13 @@ import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * Greed is good! Cheers!
+ */
 @SuppressWarnings("unused")
 public class Greed {
     public static final String APP_NAME = "Greed";
+	public static final String APP_VERSION = "v1.0";
 
     private Language currentLang;
     private Problem currentProb;
@@ -38,24 +43,24 @@ public class Greed {
         this.firstUsing = true;
     }
 
-    /*
-     * Cache the editor
-     */
+	// Greed signature in the code
+	public String getSignature() {
+		return String.format("%s Powered by %s %s",
+				LanguageManager.getInstance().getTrait(currentLang).getCommentPrefix(), APP_NAME, APP_VERSION);
+	}
+
+    // Cache the editor
     public boolean isCacheable() {
         return false;
     }
 
-    /*
-     * Called when open the coding frame
-     * Like FileEdit, a log window is used
-     */
+    // Called when open the coding frame
+    // Like FileEdit, a log window is used
     public JPanel getEditorPanel() {
         return talkingWindow;
     }
 
-    /*
-     * Ignore the given source code
-     */
+    // Ignore the given source code
     public void setSource(String source) {}
 
     public String getSource() {
@@ -89,6 +94,7 @@ public class Greed {
 		        }
 	        }
 
+	        buf.append(getSignature());
             return buf.toString();
         }
         catch (IOException e) {
@@ -129,8 +135,8 @@ public class Greed {
         }
 
         currentContest = Convert.convertContest(componentModel);
-        currentProb = Convert.convertProblem(componentModel);
-        currentLang = Convert.convertLanguage(language);
+	    currentLang = Convert.convertLanguage(language);
+	    currentProb = Convert.convertProblem(componentModel, currentLang);
 
         talkingWindow.say("Hmmm, it's a problem with " + currentProb.getScore() + " points.");
 

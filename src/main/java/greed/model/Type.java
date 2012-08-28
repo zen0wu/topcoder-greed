@@ -1,5 +1,8 @@
 package greed.model;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class Type {
     private Primitive primitive;
     private int dim;

@@ -2,6 +2,9 @@ package greed.util;
 
 import java.io.*;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class FileSystem {
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);

@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class ConfigurationDialog extends JDialog implements ActionListener {
     private JButton saveButton;
     private JButton cancelButton;

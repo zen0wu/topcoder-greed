@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+/**
+ * Greed is good! Cheers!
+ */
 @SuppressWarnings("unused")
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;

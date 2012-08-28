@@ -1,12 +1,16 @@
 package greed.ui;
 
 import com.topcoder.client.contestApplet.widgets.RoundBorder;
+import greed.Greed;
 import greed.util.Log;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class GreedEditorPanel extends JPanel implements TalkingWindow {
     private JTextArea logTextArea;
 
@@ -23,7 +27,7 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow {
 
         JScrollPane scrollPane = new JScrollPane(logTextArea);
 
-        TitledBorder border = new TitledBorder(new RoundBorder(Color.decode("0x333333"), 8, true), "Greed says");
+        TitledBorder border = new TitledBorder(new RoundBorder(Color.decode("0x333333"), 8, true), Greed.APP_NAME + " " + Greed.APP_VERSION);
         border.setTitleColor(Color.decode("0xCCFF99"));
         scrollPane.setBorder(border);
         this.add(scrollPane);
