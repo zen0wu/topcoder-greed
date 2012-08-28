@@ -1,5 +1,8 @@
 package greed.model;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class Testcase {
     private int num;
     private ParamValue[] input;

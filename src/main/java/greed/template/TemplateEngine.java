@@ -1,30 +1,29 @@
 package greed.template;
 
 import com.floreysoft.jmte.Engine;
+import greed.code.LanguageManager;
 import greed.model.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class TemplateEngine {
     private static Engine engine = null;
-    private static HashMap<Language, LanguageRenderer> rendererMap = null;
 
     private static void lazyInit() {
         if (engine == null)
             engine = new Engine();
-        rendererMap = new HashMap<Language, LanguageRenderer>();
-        rendererMap.put(Language.CPP, CppRenderer.instance);
     }
 
     public static void switchLanguage(Language language) {
         lazyInit();
-        if (rendererMap.containsKey(language))
-            rendererMap.get(language).registerSelf(engine);
+	    LanguageManager.getInstance().getRenderer(language).registerSelf(engine);
     }
 
     public static String render(InputStream templateStream, Map<String, Object> model) {

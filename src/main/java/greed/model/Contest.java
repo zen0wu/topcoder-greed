@@ -1,5 +1,8 @@
 package greed.model;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class Contest {
     private String name;
     private int div;

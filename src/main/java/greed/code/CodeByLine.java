@@ -1,9 +1,12 @@
-package greed.transform;
+package greed.code;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Greed is good! Cheers!
+ */
 public class CodeByLine {
 	private List<String> lines;
 

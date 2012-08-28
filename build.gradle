@@ -19,6 +19,7 @@ dependencies {
     compile 'com.typesafe:config:0.5.0'
 //    compile 'com.floreysoft:jmte:3.0'
     compile files('lib/jmte-3.1-mod.jar')
+    testRuntime 'junit:junit:4.9'
 }
 
 jar {

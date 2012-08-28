@@ -1,5 +1,8 @@
 package greed.model;
 
+/**
+ * Greed is good! Cheers!
+ */
 public enum Language {
     CPP, JAVA, VB, PYTHON, CSHARP;
     
