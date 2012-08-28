@@ -28,3 +28,9 @@ jar {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
+// Tasks
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.1'
+    jarFile = 'gradle/wrapper.jar'
+}
