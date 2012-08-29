@@ -1,5 +1,9 @@
 	static void runTestcase(int cs) {
 		switch (cs) {
+			// Your custom testcase goes here
+			case -1:
+				break;
+
 ${<foreach Examples e}
 			case ${e.Num}: {
 ${<foreach e.Input in}
@@ -21,11 +25,7 @@ ${<end}
 				doTest(${foreach e.Input in , }${in.Param.Name}${end}, expected, cs);
 				break;
 			}
-		${<end}
-
-			// Your custom testcase goes here
-			case -1:
-				break;
+${<end}
 			default: break;
 		}
 	}
@@ -58,6 +58,7 @@ ${<end}
 		}
 		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}Math.abs(result - expected) < 1e-8${else}result == expected${end}${end}${end}) {
 			System.err.println("PASSED! "${if RecordTime} + String.format("(%.2f seconds)", elapsed)${end});
+			nPassed++;
 		}
 		else {
 			System.err.println("FAILED! "${if RecordTime} + String.format("(%.2f seconds)", elapsed)${end});
@@ -95,4 +96,3 @@ ${<end}
 			for (int i = 0; i < args.length; ++i) runTestcase(Integer.parseInt(args[i]));
 		System.err.println(String.format("%nPassed %d/%d", nPassed, nAll));
 	}
-

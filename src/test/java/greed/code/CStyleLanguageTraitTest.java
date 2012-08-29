@@ -35,6 +35,6 @@ public class CStyleLanguageTraitTest {
 		for (String pv: parsedValueList)
 			System.out.println(pv);
 		Assert.assertArrayEquals("Parsed value is " + parsedValueList, parsedValueList,
-				new String[] { "123LL", "124LL", "125LL", "999LL", "12LL", "123LL" });
+				new String[] { "123LL, 124LL, 125LL, 999LL, 12LL, 123LL" });
 	}
 }
