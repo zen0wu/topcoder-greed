@@ -13,11 +13,11 @@ public class Convert {
         String fullName = problem.getProblem().getRound().getContestName();
         boolean hasDivision = fullName.contains("DIV");
         if (!hasDivision)
-            return new Contest(fullName, -1);
+            return new Contest(fullName, null);
         else {
             int sp = fullName.indexOf("DIV");
             String contestName = fullName.substring(0, sp - 1);
-            String divNum = fullName.substring(sp + 4);
+            String divNum = fullName.substring(sp +     4);
             return new Contest(contestName, Integer.parseInt(divNum));
         }
     }

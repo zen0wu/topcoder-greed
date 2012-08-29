@@ -5,9 +5,9 @@ package greed.model;
  */
 public class Contest {
     private String name;
-    private int div;
+    private Integer div;
 
-    public Contest(String name, int div) {
+    public Contest(String name, Integer div) {
         this.div = div;
         this.name = name;
     }
@@ -16,7 +16,7 @@ public class Contest {
         return name;
     }
 
-    public int getDiv() {
+    public Integer getDiv() {
         return div;
     }
 }
