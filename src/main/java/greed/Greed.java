@@ -200,6 +200,7 @@ public class Greed {
             for (Param param: problem.getMethod().getParams()) useArray |= param.getType().isArray();
             currentTemplateModel.put("UseArray", useArray);
             currentTemplateModel.put("RecordRuntime", Configuration.getBoolean(Keys.RECORD_RUNTIME));
+	        currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
 
             talkingWindow.say("I'm generating source code for you~");
             // Generate test code
