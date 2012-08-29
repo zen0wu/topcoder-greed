@@ -22,7 +22,7 @@ int nExample = ${NumOfExamples}, nCustom = 0;
 void do_test(${Method.Params}, ${Method.ReturnType} expected, int caseNo = -1) {
     nAll++;
     bool isExample = caseNo >= 0 && caseNo < nExample;
-    cout << (isExample ? "    Custom " : "    Example") << " #" << (isExample ? caseNo : nCustom++) << " ... ";
+    cout << (isExample ? "   Example" : "    Custom ") << " #" << (isExample ? caseNo : nCustom++) << " ... ";
 
 ${<if RecordRuntime}
     time_t startClock = clock();
