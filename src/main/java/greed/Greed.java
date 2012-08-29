@@ -79,11 +79,13 @@ public class Greed {
         try {
 	        CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
 
+	        if (LanguageManager.getInstance().getProcessor(currentLang) != null)
+		        code = LanguageManager.getInstance().getProcessor(currentLang).process(code);
+
             // Cut the code
 	        boolean cutting = false;
 	        StringBuffer buf = new StringBuffer();
 	        for (String line: code.getLines()) {
-		        System.err.println(line);
 		        if (line.equals(beginCut))
 			        cutting = true;
 		        else if (line.equals(endCut))

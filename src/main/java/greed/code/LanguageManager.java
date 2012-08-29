@@ -18,6 +18,7 @@ public class LanguageManager {
 
 	private Map<Language, LanguageTrait> traitMap = new HashMap<Language, LanguageTrait>();
 	private Map<Language, LanguageRenderer> rendererMap = new HashMap<Language, LanguageRenderer>();
+	private Map<Language, CodeProcessor> processorMap = new HashMap<Language, CodeProcessor>();
 
 	private LanguageManager() {
 		traitMap.put(Language.CPP, CStyleLanguageTrait.getInstance());
@@ -25,6 +26,8 @@ public class LanguageManager {
 
 		rendererMap.put(Language.CPP, CppRenderer.instance);
 		rendererMap.put(Language.JAVA, JavaRenderer.instance);
+
+		processorMap.put(Language.JAVA, new JavaCodeProcessor());
 	}
 
 	public LanguageTrait getTrait(Language language) {
@@ -33,5 +36,9 @@ public class LanguageManager {
 
 	public LanguageRenderer getRenderer(Language language) {
 		return rendererMap.get(language);
+	}
+
+	public CodeProcessor getProcessor(Language language) {
+		return processorMap.get(language);
 	}
 }
