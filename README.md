@@ -17,13 +17,11 @@ Greed is good
 Quick start
 -----------
 1. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Add__  
-![Add greed](https://github.com/shivawu/topcoder-greed/wiki/Add-Plugin.png)  
-
+![Add greed](https://github.com/shivawu/topcoder-greed/wiki/Add-Plugin.png)<br/>
 __OK__! Remember to check __Default__ and __At startup__.
 
 2. Select me, click __Configure__.  
-![Configure greed](https://github.com/shivawu/topcoder-greed/wiki/Set-Workspace.png)  
-
+![Configure greed](https://github.com/shivawu/topcoder-greed/wiki/Set-Workspace.png)<br/>
 Fill in your workspace full path.
 
 3. All set! Go get your rating! Let me worry about the rest crap.
