@@ -74,7 +74,6 @@ public class Configuration {
             conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
         }
         else {
-            for (int i = 0; i<10;++i) System.err.println(Configuration.class.getResource("/default.conf"));
             conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
         }
 
