@@ -182,12 +182,6 @@ public class Greed {
             talkingWindow.say("This time I'll not override it, if you say so.");
         }
         else {
-            if (exists) {
-                talkingWindow.say("Overriding, old files will be renamed");
-                // Backup the old files
-                FileSystem.backup(filePath);
-            }
-
             // Create code template
             // First, set the language of template engine
             TemplateEngine.switchLanguage(language);
@@ -244,7 +238,18 @@ public class Greed {
                 return;
             }
 
-            // Write to file
+	        if (exists) {
+		        talkingWindow.say("Overriding, old files will be renamed");
+		        if (FileSystem.getSize(filePath) == sourceCode.length()) {
+					talkingWindow.say("Seems the current file is the same as the template.");
+			        talkingWindow.say("OK, just use the current file, I'm not writing to it.");
+			        return;
+		        }
+		        else
+		            FileSystem.backup(filePath); // Backup the old files
+	        }
+
+	        // Write to file
             FileSystem.writeFile(filePath, sourceCode);
         }
         talkingWindow.say("All set, good luck!");

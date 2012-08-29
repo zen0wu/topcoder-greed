@@ -79,9 +79,7 @@ public class Configuration {
 
         String workspace = getWorkspace();
         File userConfFile = new File(workspace, DEFAULT_USER_CONFIG_FILENAME);
-        for (int i = 0;i < 10; ++i) System.err.println(userConfFile.getAbsolutePath() + " " + userConfFile.exists());
         if (userConfFile.exists()) {
-            for (int i = 0;i < 10; ++i) System.err.println("loading user config");
             Config userConf = ConfigFactory.parseFile(userConfFile);
             conf = userConf.withoutPath(RESERVED_CONFPATH).withFallback(conf);
         }
@@ -111,4 +109,9 @@ public class Configuration {
         lazyInit();
         return conf;
     }
+
+	public static void reload() {
+		conf = null;
+		lazyInit();
+	}
 }

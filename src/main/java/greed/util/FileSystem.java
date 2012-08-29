@@ -41,13 +41,20 @@ public class FileSystem {
             writer.flush();
             writer.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+	        Log.e("Write file error", e);
         }
     }
 
     public static boolean exists(String relativePath) {
         return new File(Configuration.getWorkspace() + "/" + relativePath).exists();
     }
+
+	public static long getSize(String resourcePath) {
+		File f = new File(Configuration.getWorkspace() + "/" + resourcePath);
+		if (f.exists() && f.isFile())
+			return f.length();
+		return -1;
+	}
 
     public static void backup(String relativePath) {
         String absolutePath = Configuration.getWorkspace() + "/" + relativePath;
