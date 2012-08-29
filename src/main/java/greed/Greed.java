@@ -196,9 +196,9 @@ public class Greed {
             currentTemplateModel.put("Examples", problem.getTestcases());
             currentTemplateModel.put("NumOfExamples", problem.getTestcases().length);
             boolean useArray = problem.getMethod().getReturnType().isArray();
-            currentTemplateModel.put("UsePrintArray", useArray);
+            currentTemplateModel.put("ReturnsArray", useArray);
             for (Param param: problem.getMethod().getParams()) useArray |= param.getType().isArray();
-            currentTemplateModel.put("UseArray", useArray);
+            currentTemplateModel.put("HasArray", useArray);
             currentTemplateModel.put("RecordRuntime", Configuration.getBoolean(Keys.RECORD_RUNTIME));
 	        currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
 

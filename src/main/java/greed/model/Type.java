@@ -23,4 +23,12 @@ public class Type {
     public boolean isArray() {
         return dim > 0;
     }
+
+	public boolean isString() {
+		return this.primitive == Primitive.STRING;
+	}
+
+	public boolean isRealNumber() {
+		return this.primitive == Primitive.DOUBLE;
+	}
 }

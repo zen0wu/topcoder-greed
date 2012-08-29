@@ -17,7 +17,7 @@ import java.util.Locale;
 public class CppRenderer implements LanguageRenderer {
     public static CppRenderer instance = new CppRenderer();
 
-    private CppRenderer() {}
+    protected CppRenderer() {}
 
     public void registerSelf(Engine engine) {
         engine.registerRenderer(Primitive.class, instance.new PrimitiveRender());
@@ -28,7 +28,7 @@ public class CppRenderer implements LanguageRenderer {
         engine.registerNamedRenderer(instance.new ZeroValueRenderer());
     }
 
-    private static String renderPrimitive(Primitive o) {
+    protected String renderPrimitive(Primitive o) {
         switch (o) {
             case STRING: return "string";
             case DOUBLE: return "double";
@@ -39,18 +39,18 @@ public class CppRenderer implements LanguageRenderer {
         return "";
     }
 
-    private static String renderType(Type o) {
+	protected String renderType(Type o) {
         String typeName = renderPrimitive(o.getPrimitive());
         if (o.isArray())
             typeName = "vector<" + typeName + ">";
         return typeName;
     }
 
-    private static String renderParam(Param o) {
+	protected String renderParam(Param o) {
         return renderType(o.getType()) + " " + o.getName();
     }
 
-    private static String renderParamValue(ParamValue o) {
+	protected String renderParamValue(ParamValue o) {
         Type paramType = o.getParam().getType();
         String value = o.getValue();
         if (paramType.isArray()) {

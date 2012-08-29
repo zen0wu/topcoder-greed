@@ -1,4 +1,4 @@
-${<if UseArray}
+${<if HasArray}
 // Array to vector converter
 template <typename T> vector<T> vector_wrapper(T arr[], int n) { return vector<T>(arr, arr + n); }
 #define to_vector(arr) vector_wrapper(arr, sizeof(arr) / sizeof(arr[0]))
@@ -6,7 +6,7 @@ ${<end}
 
 template <typename T> string pretty_print(T t) { stringstream s; typeid(T) == typeid(string) ? s << "\\"" << t << "\\"" : s << t; return s.str(); }
 
-${<if UsePrintArray}
+${<if ReturnsArray}
 // Vector print
 template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
     out << "{ ";

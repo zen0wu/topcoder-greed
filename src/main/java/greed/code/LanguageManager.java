@@ -24,6 +24,7 @@ public class LanguageManager {
 		traitMap.put(Language.JAVA, CStyleLanguageTrait.getInstance());
 
 		rendererMap.put(Language.CPP, CppRenderer.instance);
+		rendererMap.put(Language.JAVA, JavaRenderer.instance);
 	}
 
 	public LanguageTrait getTrait(Language language) {
