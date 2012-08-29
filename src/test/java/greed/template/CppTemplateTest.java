@@ -23,11 +23,14 @@ public class CppTemplateTest {
 
         Method method = new Method("TestMethod", retType, new Param[] {param1, param2, param3});
 
-        Testcase case0 = new Testcase(0, new ParamValue[]{
+	    String[] valueList0 = new String[] { "919, 111, 234", "234, 567, 555" };
+	    String[] valueList1 = new String[] { "\"a\", \"b\", \"c\"", "\"d\"" };
+	    String[] valueList2 = new String[] { "\"abcd\", \"efg\"", "\"123\", \"456\"" };
+	    Testcase case0 = new Testcase(0, new ParamValue[]{
                 new ParamValue(param1, "15"),
-                new ParamValue(param2, " { 9182399120391023, 1209102, 20392, \n2309, 1002,\n2391, 239823 }   "),
-                new ParamValue(param3, "{ \"a\", \"b\" }")
-        }, new ParamValue(new Param("return", retType), " { \"abcd\", \"efg\", \n\"123\", \n\"456\""));
+                new ParamValue(param2, valueList0),
+                new ParamValue(param3, valueList1)
+        }, new ParamValue(new Param("return", retType), valueList2));
 
         Problem problem = new Problem("Test", 250, "TestClass", method, new Testcase[] { case0 });
 
@@ -42,9 +45,6 @@ public class CppTemplateTest {
         model.put("UseArray", true);
         model.put("UsePrintArray", true);
         model.put("RecordRuntime", true);
-
-        model.put("TestBlockStart", "// Test following");
-        model.put("CodeBlockStart", "// Code following");
 
         FileInputStream tmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Template.cpp");
         FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/GreedTest.cpp");

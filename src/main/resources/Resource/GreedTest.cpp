@@ -4,12 +4,6 @@ template <typename T> vector<T> vector_wrapper(T arr[], int n) { return vector<T
 #define to_vector(arr) vector_wrapper(arr, sizeof(arr) / sizeof(arr[0]))
 ${<end}
 
-void run_testcase(${foreach Method.Params par , }${par.Type}${end}, ${Method.ReturnType} expected, int caseNo = -1);
-
-void custom_test() {
-    // You can add your custom test here
-}
-
 template <typename T> string pretty_print(T t) { stringstream s; typeid(T) == typeid(string) ? s << "\\"" << t << "\\"" : s << t; return s.str(); }
 
 ${<if UsePrintArray}
@@ -23,11 +17,12 @@ template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
 ${<end}
 
 int nPassed = 0, nAll = 0;
+int nExample = ${NumOfExamples}, nCustom = 0;
 
-void run_testcase(${Method.Params}, ${Method.ReturnType} expected, int caseNo) {
-    static int nCustom = 0;
+void do_test(${Method.Params}, ${Method.ReturnType} expected, int caseNo = -1) {
     nAll++;
-    cout << (caseNo < 0 ? "    Custom " : "    Example") << " #" << (caseNo < 0 ? nCustom++ : caseNo) << " ... ";
+    bool isExample = caseNo >= 0 && caseNo < nExample;
+    cout << (isExample ? "    Custom " : "    Example") << " #" << (isExample ? caseNo : nCustom++) << " ... ";
 
 ${<if RecordRuntime}
     time_t startClock = clock();
@@ -51,8 +46,9 @@ ${<end}
     }
 }
 
-void run_example(int no) {
-    switch (no) {${foreach Examples e}
+void run_testcase(int no) {
+    switch (no) {
+${<foreach Examples e}
         case ${e.Num}: {
 ${<foreach e.Input in}
 ${<if !in.Param.Type.Array}
@@ -70,20 +66,24 @@ ${<else}
                 ${v}${end}
             };
 ${<end}
-            run_testcase(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
+            do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
             break;
         }
 ${<end}
+
+        // Your custom testcase goes here
+        case -1:
+            break;
+        default: break;
     }
 }
 
 int main(int argc, char *argv[]) {
     cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
     if (argc == 1)
-        for (int i = 0; i < ${NumOfExamples}; ++i) run_example(i);
+        for (int i = 0; i < nExample; ++i) run_testcase(i);
     else
-        for (int i = 1; i < argc; ++i) run_example(atoi(argv[i]));
-    custom_test();
+        for (int i = 1; i < argc; ++i) run_testcase(atoi(argv[i]));
 
     cout << endl << "Passed " << nPassed << "/" << nAll << endl;
     return 0;
