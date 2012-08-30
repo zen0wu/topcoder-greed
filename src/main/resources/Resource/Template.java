@@ -3,7 +3,7 @@ public class ${ClassName} {
 		return ${Method.ReturnType;ZeroValue};
 	}
 
-// CUT begin
+${CutBegin}
 ${<TestCode}
-// CUT end
+${CutEnd}
 }

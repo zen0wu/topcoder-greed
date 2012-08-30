@@ -50,8 +50,9 @@ public class Configuration {
 	    public static final String LOG_FOLDER = "greed.logFolder";
 
 	    public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
+	    public static final String RECORD_SCORE = "greed.test.recordScore";
 
-        public static String getTemplateKey(Language language) {
+	    public static String getTemplateKey(Language language) {
             return "greed.templates." + Language.getName(language);
         }
 

@@ -16,7 +16,7 @@ Greed is good
 
 Quick start
 -----------
-1. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Add__  
+1. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Editor__ -> __Add__  
 ![Add greed](https://github.com/shivawu/topcoder-greed/wiki/Add-Plugin.png)<br/>
 __OK__! Remember to check __Default__ and __At startup__.
 
@@ -53,7 +53,7 @@ This is especially useful for Java developers, since Java resolves packages by f
 
 Set your own template file for your preferred language.
 
-Just set this to a relative path of your template file in your workspace, done! 
+Just set this to the relative path of your template file in your workspace, done! 
 
 The default template for java, FYI, is
 
@@ -63,9 +63,9 @@ public class ${ClassName} {
     return ${Method.ReturnType;ZeroValue};
   }
 
-// CUT begin
+${CutBegin}
 ${<TestCode}
-// CUT end
+${CutEnd}
 }
 ```
 

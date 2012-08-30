@@ -15,6 +15,6 @@ class ${ClassName} {
     }
 };
 
-// CUT begin
+${CutBegin}
 ${<TestCode}
-// CUT end
+${CutEnd}

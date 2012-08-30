@@ -196,7 +196,10 @@ public class Greed {
             for (Param param: problem.getMethod().getParams()) useArray |= param.getType().isArray();
             currentTemplateModel.put("HasArray", useArray);
             currentTemplateModel.put("RecordRuntime", Configuration.getBoolean(Keys.RECORD_RUNTIME));
+	        currentTemplateModel.put("RecordScore", Configuration.getBoolean(Keys.RECORD_SCORE));
 	        currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
+	        currentTemplateModel.put("CutBegin", langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN));
+	        currentTemplateModel.put("CutEnd", langSpecConfig.getString(Keys.SUBKEY_CUTEND));
 
             talkingWindow.say("I'm generating source code for you~");
             // Generate test code

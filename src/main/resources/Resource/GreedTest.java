@@ -56,7 +56,7 @@ ${<end}
 			System.err.println("RUNTIME ERROR!");
 			exception.printStackTrace();
 		}
-		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}Math.abs(result - expected) < 1e-8${else}result == expected${end}${end}${end}) {
+		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}Math.abs(result - expected) < 1e-9${else}result == expected${end}${end}${end}) {
 			System.err.println("PASSED! "${if RecordTime} + String.format("(%.2f seconds)", elapsed)${end});
 			nPassed++;
 		}
@@ -73,7 +73,7 @@ ${<end}
 ${<if ReturnsArray}
 	static boolean equals(${Method.ReturnType} a, ${Method.ReturnType} b) {
 		if (a.length != b.length) return false;
-		for (int i = 0; i < a.length; ++i) if (${if Method.ReturnType.String}a[i] == null || b[i] == null || !a[i].equals(b[i])${else}${if Method.ReturnType.RealNumber}Math.abs(a[i] - b[i]) > 1e-8${else}a[i] != b[i]${end}${end}) return false;
+		for (int i = 0; i < a.length; ++i) if (${if Method.ReturnType.String}a[i] == null || b[i] == null || !a[i].equals(b[i])${else}${if Method.ReturnType.RealNumber}Math.abs(a[i] - b[i]) > 1e-9${else}a[i] != b[i]${end}${end}) return false;
 		return true;
 	}
 
