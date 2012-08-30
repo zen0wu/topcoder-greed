@@ -39,7 +39,7 @@ public class Greed {
     public Greed() {
         // Entrance of all program
         Log.i("Create Greed Plugin");
-        this.talkingWindow = new GreedEditorPanel();
+        this.talkingWindow = new GreedEditorPanel(this);
         this.firstUsing = true;
     }
 
@@ -51,7 +51,7 @@ public class Greed {
 
     // Cache the editor
     public boolean isCacheable() {
-        return true;
+        return false;
     }
 
     // Called when open the coding frame
@@ -100,7 +100,7 @@ public class Greed {
             return buf.toString();
         }
         catch (IOException e) {
-            talkingWindow.say("Cannot fetch your source code. Please check the logs, and make sure your source code is present");
+            talkingWindow.say("Errr... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
             talkingWindow.say("Now I'm giving out a empty string!");
             Log.e("Error getting the source", e);
             return "";
@@ -112,7 +112,6 @@ public class Greed {
         talkingWindow.clear();
         if (firstUsing) {
             talkingWindow.say(String.format("Hi, this is %s.", APP_NAME));
-            talkingWindow.say("Nice to help you with your contest");
         }
         else {
             talkingWindow.say(String.format("So we meet again :>"));
@@ -129,18 +128,25 @@ public class Greed {
     }
 
     public void setProblemComponent(ProblemComponentModel componentModel, com.topcoder.shared.language.Language language, Renderer renderer) {
-        // Check whether workspace is set
-        if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
-            talkingWindow.say("It seems that you haven't set your workspace, go set it!");
-            Log.e("Workspace not set");
-            return;
-        }
-
         currentContest = Convert.convertContest(componentModel);
 	    currentLang = Convert.convertLanguage(language);
 	    currentProb = Convert.convertProblem(componentModel, currentLang);
 
-        talkingWindow.say("Hmmm, it's a problem with " + currentProb.getScore() + " points.");
+        talkingWindow.say("Hmmm, it's a problem with " + currentProb.getScore() + " points. Good choice!");
+
+        generateCode();
+    }
+
+    public void generateCode() {
+        // Check whether workspace is set
+        System.err.println(Configuration.getWorkspace());
+        System.err.println(Configuration.getWorkspace() == null);
+        if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
+            talkingWindow.setEnabled(false);
+            talkingWindow.say("It seems that you haven't set your workspace, go set it!");
+            Log.e("Workspace not set");
+            return;
+        }
 
         try {
             setProblem(currentContest, currentProb, currentLang);
@@ -256,5 +262,6 @@ public class Greed {
             FileSystem.writeFile(filePath, sourceCode);
         }
         talkingWindow.say("All set, good luck!");
+        talkingWindow.say("");
     }
 }
