@@ -16,15 +16,17 @@ Greed is good
 
 Quick start
 -----------
-1. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Editor__ -> __Add__  
+1. Go to [Downloads](https://github.com/shivawu/topcoder-greed/downloads), and download my latest version
+
+2. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Editor__ -> __Add__  
 ![Add greed](https://github.com/shivawu/topcoder-greed/wiki/Add-Plugin.png)<br/>
 __OK__! Remember to check __Default__ and __At startup__.
 
-2. Select me, click __Configure__.  
+3. Select me, click __Configure__.  
 ![Configure greed](https://github.com/shivawu/topcoder-greed/wiki/Set-Workspace.png)<br/>
 Fill in your workspace full path.
 
-3. All set! Go get your rating! Let me worry about the rest crap.
+4. All set! Go get your rating! Let me worry about the rest crap.
 
 Go rock with config
 -------------------
@@ -45,7 +47,7 @@ Change where I store your code, via `greed.codeRoot = ???`, this path is relativ
 
 This tells me where I generate and fetch your code, for different contest and problem.  
 
-The default is `${Problem.Name}.cpp/java` in `${Contest.Name}/${Problem.Name}`. Take `TableSeating` in `SRM 249 DIV 1`, you can find your code in `workspace/code root/SRM 249/TableSeating.cpp`.
+The default is `${Problem.Name}.cpp/java` in `${Contest.Name}`. Take `TableSeating` in `SRM 249 DIV 1`, you can find your code in `workspace/code root/SRM 249/TableSeating.cpp`.
 
 This is especially useful for Java developers, since Java resolves packages by folder structure.
 You can declare your package in your code template(described below),

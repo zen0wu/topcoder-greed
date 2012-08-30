@@ -146,6 +146,7 @@ public class Greed {
             return;
         }
 
+        talkingWindow.setEnabled(true);
         try {
             setProblem(currentContest, currentProb, currentLang);
         }

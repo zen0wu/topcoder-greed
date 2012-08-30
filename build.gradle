@@ -23,7 +23,6 @@ dependencies {
 }
 
 jar {
-    classifier = 'all'
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
