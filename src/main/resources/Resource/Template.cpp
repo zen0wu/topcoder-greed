@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <sstream>
+#include <typeinfo>
 
 using namespace std;
 

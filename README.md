@@ -7,7 +7,7 @@ Greed is good
 -------------
 
 * No CodeProcessor+FileEdit+blah blah, no tons of jars, just _**Greed**_
-* No need to set up all the messes, just set your _**workspace**_, done
+* No need to set up all the messes, just set your _**workspace**_, end of story
 * Seamless migration between OS and enviroments, since all stuff are kept in workspace, in your line of sight
 * Manage your code, in different _**folders**_, based on the contest and problem you're in
 * Generate code based on a fully-customizable _**template**_
@@ -49,7 +49,7 @@ The default is `${Problem.Name}.cpp/java` in `${Contest.Name}/${Problem.Name}`. 
 
 This is especially useful for Java developers, since Java resolves packages by folder structure. You can declare your package in your code template(described below), and do the same in `pathPattern`.  Write your code with your favorite IDE. That's beyond awesome! Package declaration will be auto removed while compiling and submitting in the arena.
 
-#### greed.templates.(lang).tmplFile
+#### greed.templates.\<lang\>.tmplFile
 
 Set your own template file for your preferred language.
 
@@ -70,6 +70,24 @@ ${CutEnd}
 ```
 
 Cannot be simpler, can it?
+
+#### greed.templates.\<lang\>.testTmplFile
+
+This is where the magic happens!
+
+You can do __meta programming__ with your testing code template.
+
+There're several built-in test templates.
+
+| Resource path      | Language | Tested on | Comment |
+| ------------------ | :------: | --------- | ------- |
+| `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Runtime error is not detected and terminates the whole program |
+| `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance, with runtime exception catching |
+
+If you're not satisfied with the default template, consider DIY your own!
+See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
+
+And please, please, __contribute good templates to me__, including templates for different environments, and with more functionalities. Everyone will benefit from your templates. How cool is this!
 
 Want to learn more?
 -------------------
@@ -94,19 +112,19 @@ Contribute to me
 ----------------
 
 Currently, I'm still immature, and under development.
-Any help is helpful and fully appreciated.
+Any help is helpful and greatly appreciated.
 
-A note, C# support is not available in me now. And my developers seems not familiar with C#, if you're willing to add this, I'll be grateful to you!
+A note, C# support is not available in me now. And my developers seems not familiar with C#, if you're willing to add this, I'll very be grateful to you!
 
 You can contribute to me in 2 ways:
 
-1. Fork me, modify me, and send a pull request. Oh, you're not familiar with this style, well, you should. Read [this](https://help.github.com/articles/fork-a-repo).
+1. Fork me, modify me, and send a pull request. Oh, you're not familiar with this style, well, you should. Read [this article](https://help.github.com/articles/fork-a-repo).
 2. Be a collaborators with my developers
 
 License
 -------
 
-Copyright 2012 Shiva Wu
+Copyright 2012 Greed
 
 Licensed under _Apache License, Version 2.0_. You may obtain a copy of the license in the _LICENSE_ file, or at:
 
