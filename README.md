@@ -105,8 +105,8 @@ You'll learn how to config all the functionalities, like
 
 Bug Tracker
 -----------
-When you found a bug in me, or need a new feature, raise an issue [here](https://github.com/shivawu/topcoder-greed/issues). With the problem you're solving,
-to better identify the problem.
+When you found a bug in me, or need a new feature, raise an issue [here](https://github.com/shivawu/topcoder-greed/issues).
+Please, with the problem you're solving and the room you're in, to better identify the problem.
 
 I'll try to repair myself ASAP.
 

@@ -51,7 +51,7 @@ public class Greed {
 
     // Cache the editor
     public boolean isCacheable() {
-        return false;
+        return true;
     }
 
     // Called when open the coding frame
@@ -139,8 +139,6 @@ public class Greed {
 
     public void generateCode() {
         // Check whether workspace is set
-        System.err.println(Configuration.getWorkspace());
-        System.err.println(Configuration.getWorkspace() == null);
         if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
             talkingWindow.setEnabled(false);
             talkingWindow.say("It seems that you haven't set your workspace, go set it!");
