@@ -44,13 +44,15 @@ public class CppTemplateTest {
 		model.put("HasArray", true);
 		model.put("ReturnsArray", true);
 		model.put("RecordRuntime", true);
+		model.put("RecordScore", true);
+		model.put("CreateTime", System.currentTimeMillis() / 1000);
 
 		return model;
 	}
 
     public static void main(String[] args) throws Exception {
         FileInputStream tmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Template.cpp");
-        FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/GreedTest.cpp");
+        FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/GCCTest.cpp");
 
 	    HashMap<String, Object> model = new CppTemplateTest().buildModel();
 

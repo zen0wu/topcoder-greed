@@ -2,6 +2,7 @@
 		switch (cs) {
 			// Your custom testcase goes here
 			case -1:
+				//doTest(${foreach Method.Params p , }${p.Name}${end}, expected, cs);
 				break;
 
 ${<foreach Examples e}
@@ -46,34 +47,36 @@ ${<if RecordRuntime}
 ${<end}
 
 		nAll++;
-		boolean isExample = caseNo >= 0 && caseNo < nExample;
-		if (isExample)
-			System.err.print(String.format("   Example #%d ...", caseNo));
-		else
-			System.err.print(String.format("   Custom  #%d ...", nCustom++));
+		System.err.print(String.format("  Testcase #%d ... ", caseNo));
 
 		if (exception != null) {
 			System.err.println("RUNTIME ERROR!");
 			exception.printStackTrace();
 		}
-		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}Math.abs(result - expected) < 1e-9${else}result == expected${end}${end}${end}) {
-			System.err.println("PASSED! "${if RecordTime} + String.format("(%.2f seconds)", elapsed)${end});
+		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}doubleEquals(expected, result)${else}result == expected${end}${end}${end}) {
+			System.err.println("PASSED! "${if RecordRuntime} + String.format("(%.2f seconds)", elapsed)${end});
 			nPassed++;
 		}
 		else {
-			System.err.println("FAILED! "${if RecordTime} + String.format("(%.2f seconds)", elapsed)${end});
-			System.err.println("            Expected: " + ${if Method.ReturnType.Array}toString(expected)${else}expected${end});
-			System.err.println("            Received: " + ${if Method.ReturnType.Array}toString(result)${else}result${end});
+			System.err.println("FAILED! "${if RecordRuntime} + String.format("(%.2f seconds)", elapsed)${end});
+			System.err.println("           Expected: " + ${if Method.ReturnType.Array}toString(expected)${else}expected${end});
+			System.err.println("           Received: " + ${if Method.ReturnType.Array}toString(result)${else}result${end});
 		}
 	}
 
-	static int nExample = ${NumOfExamples}, nCustom = 0;
+	static int nExample = ${NumOfExamples};
 	static int nAll = 0, nPassed = 0;
 
+${<if Method.ReturnType.RealNumber}
+	static boolean doubleEquals(double a, double b) {
+		return Math.abs(a - b) < 1e-9 || Math.abs(a) > Math.abs(b) * (1.0 - 1e-9) && Math.abs(a) < Math.abs(b) * (1.0 + 1e-9);
+	}
+
+${<end}
 ${<if ReturnsArray}
 	static boolean equals(${Method.ReturnType} a, ${Method.ReturnType} b) {
 		if (a.length != b.length) return false;
-		for (int i = 0; i < a.length; ++i) if (${if Method.ReturnType.String}a[i] == null || b[i] == null || !a[i].equals(b[i])${else}${if Method.ReturnType.RealNumber}Math.abs(a[i] - b[i]) > 1e-9${else}a[i] != b[i]${end}${end}) return false;
+		for (int i = 0; i < a.length; ++i) if (${if Method.ReturnType.String}a[i] == null || b[i] == null || !a[i].equals(b[i])${else}${if Method.ReturnType.RealNumber}!doubleEquals(a[i], b[i])${else}a[i] != b[i]${end}${end}) return false;
 		return true;
 	}
 
@@ -94,5 +97,11 @@ ${<end}
 			for (int i = 0; i < nExample; ++i) runTestcase(i);
 		else
 			for (int i = 0; i < args.length; ++i) runTestcase(Integer.parseInt(args[i]));
-		System.err.println(String.format("%nPassed %d/%d", nPassed, nAll));
+		System.err.println(String.format("%nPassed : %d/%d cases", nPassed, nAll));
+
+${<if RecordScore}
+		int T = (int)(System.currentTimeMillis() / 1000) - ${CreateTime};
+		double PT = T / 60.0, TT = 75.0;
+		System.err.println(String.format("Time   : %d minutes %d secs%nScore  : %.2f points", T / 60, T % 60, ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))));
+${<end}
 	}

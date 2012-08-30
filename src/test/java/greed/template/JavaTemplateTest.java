@@ -12,7 +12,7 @@ public class JavaTemplateTest {
 	    HashMap<String, Object> model = new CppTemplateTest().buildModel();
 
 	    FileInputStream tmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Template.java");
-        FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/GreedTest.java");
+        FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Test.java");
         String test = TemplateEngine.render(testTmplFile, model);
         model.put("TestCode", test);
         String code = TemplateEngine.render(tmplFile, model);

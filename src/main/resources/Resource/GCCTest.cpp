@@ -16,18 +16,25 @@ template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
 }
 ${<end}
 
-int nPassed = 0, nAll = 0;
-int nExample = ${NumOfExamples}, nCustom = 0;
+${<if Method.ReturnType.RealNumber}
+bool double_equal (const double &expected, const double &received) { return abs(expected - received) < 1e-9 || abs(received) > abs(expected) * (1.0 - 1e-9) && abs(received) < abs(expected) * (1.0 + 1e-9); }
 
-void do_test(${Method.Params}, ${Method.ReturnType} expected, int caseNo = -1) {
-    nAll++;
-    bool isExample = caseNo >= 0 && caseNo < nExample;
-    cout << (isExample ? "   Example" : "    Custom ") << " #" << (isExample ? caseNo : nCustom++) << " ... ";
+${<if Method.ReturnType.Array}
+bool double_vector_equal (const vector<double> &expected, const vector<double> &received) {
+    if (expected.size() != received.size()) return false;
+    int n = expected.size();
+    for (int i = 0; i < n; ++i)
+        if (!double_equal(expected[i], received[i])) return false;
+    return true;
+}
+${<end}
+${<end}
+
+bool do_test(${Method.Params}, ${Method.ReturnType} expected, int caseNo) {
+    cout << "  Testcase #" << caseNo << " ... ";
 
 ${<if RecordRuntime}
     time_t startClock = clock();
-    cout.setf(ios::fixed, ios::floatfield);
-    cout.precision(2);
 ${<end}
     ${ClassName} instance;
     ${Method.ReturnType} result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
@@ -35,18 +42,27 @@ ${<if RecordRuntime}
     double elapsed = (double)(clock() - startClock) / CLOCKS_PER_SEC;
 ${<end}
 
+${<if Method.ReturnType.RealNumber}
+${<if Method.ReturnType.Array}
+    if (double_vector_equal(expected, result)) {
+${<else}
+    if (double_equal(expected, result)) {
+${<end}
+${<else}
     if (result == expected) {
-        nPassed++;
+${<end}
         cout << "PASSED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
+        return true;
     }
     else {
         cout << "FAILED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
-        cout << "            Expected: " << pretty_print(expected) << endl;
-        cout << "            Received: " << pretty_print(result) << endl;
+        cout << "           Expected: " << pretty_print(expected) << endl;
+        cout << "           Received: " << pretty_print(result) << endl;
+        return false;
     }
 }
 
-void run_testcase(int no) {
+bool run_testcase(int no) {
     switch (no) {
 ${<foreach Examples e}
         case ${e.Num}: {
@@ -66,25 +82,35 @@ ${<else}
                 ${v}${end}
             };
 ${<end}
-            do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
-            break;
+            return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
         }
 ${<end}
 
         // Your custom testcase goes here
-        case -1:
+        case ${NumOfExamples}:
             break;
         default: break;
     }
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
+    cout.setf(ios::fixed,ios::floatfield);
+    cout.precision(2);
     cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
-    if (argc == 1)
-        for (int i = 0; i < nExample; ++i) run_testcase(i);
-    else
-        for (int i = 1; i < argc; ++i) run_testcase(atoi(argv[i]));
 
-    cout << endl << "Passed " << nPassed << "/" << nAll << endl;
+    int nPassed = 0, nAll = 0;
+    if (argc == 1)
+        for (int i = 0; i < ${NumOfExamples}; ++i) nAll++, nPassed += run_testcase(i);
+    else
+        for (int i = 1; i < argc; ++i) nAll++, nPassed += run_testcase(atoi(argv[i]));
+    cout << endl << "Passed : " << nPassed << "/" << nAll << " cases" << endl;
+
+${<if RecordScore}
+    int T = time(NULL) - ${CreateTime};
+    double PT = T / 60.0, TT = 75.0;
+    cout << "Time   : " << T / 60 << " minutes " << T % 60 << " secs" << endl;
+    cout << "Score  : " << ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT)) << " points" << endl;
+${<end}
     return 0;
 }
