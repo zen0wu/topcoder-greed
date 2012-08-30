@@ -19,6 +19,7 @@ public class TemplateEngine {
     private static void lazyInit() {
         if (engine == null)
             engine = new Engine();
+	    engine.registerNamedRenderer(new StringUtilRenderer());
     }
 
     public static void switchLanguage(Language language) {

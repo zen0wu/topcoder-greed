@@ -47,7 +47,11 @@ This tells me where I generate and fetch your code, for different contest and pr
 
 The default is `${Problem.Name}.cpp/java` in `${Contest.Name}/${Problem.Name}`. Take `TableSeating` in `SRM 249 DIV 1`, you can find your code in `workspace/code root/SRM 249/TableSeating.cpp`.
 
-This is especially useful for Java developers, since Java resolves packages by folder structure. You can declare your package in your code template(described below), and do the same in `pathPattern`.  Write your code with your favorite IDE. That's beyond awesome! Package declaration will be auto removed while compiling and submitting in the arena.
+This is especially useful for Java developers, since Java resolves packages by folder structure.
+You can declare your package in your code template(described below),
+and do the same in `pathPattern`, like `src/${Contest.Name;string(lower,removespace)}`.
+Write your code with your favorite IDE. That's beyond awesome!
+Package declaration will be auto removed while compiling and submitting in the arena.
 
 #### greed.templates.\<lang\>.tmplFile
 
