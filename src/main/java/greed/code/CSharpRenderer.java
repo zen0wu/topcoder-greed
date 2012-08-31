@@ -101,7 +101,6 @@ public class CSharpRenderer extends CppRenderer {
 		}
 
 		switch (paramType.getPrimitive()) {
-			case STRING: value = "\"" + value + "\""; break;
             case LONG: value += "L"; break;
 		}
 		return value;
