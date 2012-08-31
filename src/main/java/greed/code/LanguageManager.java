@@ -23,9 +23,11 @@ public class LanguageManager {
 	private LanguageManager() {
 		traitMap.put(Language.CPP, CStyleLanguageTrait.getInstance());
 		traitMap.put(Language.JAVA, CStyleLanguageTrait.getInstance());
+		traitMap.put(Language.CSHARP, CStyleLanguageTrait.getInstance());
 
 		rendererMap.put(Language.CPP, CppRenderer.instance);
 		rendererMap.put(Language.JAVA, JavaRenderer.instance);
+		rendererMap.put(Language.CSHARP, CSharpRenderer.instance);
 
 		processorMap.put(Language.JAVA, new JavaCodeProcessor());
 	}
