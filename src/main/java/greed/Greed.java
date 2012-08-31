@@ -26,7 +26,7 @@ import java.util.HashMap;
 @SuppressWarnings("unused")
 public class Greed {
     public static final String APP_NAME = "Greed";
-	public static final String APP_VERSION = "v1.0";
+	public static final String APP_VERSION = "v1.1";
 
     private Language currentLang;
     private Problem currentProb;
