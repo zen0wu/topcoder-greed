@@ -58,7 +58,6 @@ public class CppRenderer implements LanguageRenderer {
         }
 
         switch (paramType.getPrimitive()) {
-            case STRING: value = "\"" + value + "\""; break;
             case LONG: value += "LL"; break;
         }
         return value;

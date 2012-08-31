@@ -101,10 +101,6 @@ public class JavaRenderer extends CppRenderer {
 		if (paramType.isArray()) {
 			return value;
 		}
-
-		switch (paramType.getPrimitive()) {
-			case STRING: value = "\"" + value + "\""; break;
-		}
 		return value;
 	}
 }
