@@ -1,4 +1,4 @@
-Greed 1.0
+Greed 1.1
 =========
 
 Hi, this is _greed_, the missing topcoder arena plugin for algorithm contest.
@@ -12,7 +12,12 @@ Greed is good
 * Manage your code, in different _**folders**_, based on the contest and problem you're in
 * Generate code based on a fully-customizable _**template**_
 * Generate robust testing code, which BTW, is also _**customizable**_
-* Multi language support, including Java and C++. Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
+* Multi language support, including Java, C++, and C#(thanks to @jbransen). Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
+
+Release Note
+------------
+
+* __1.1__ - update C# version, thanks to @jbransen, major bug fix
 
 Quick start
 -----------
@@ -89,6 +94,7 @@ There're several built-in test templates.
 | ------------------ | :------: | --------- | ------- |
 | `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
 | `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
+| `res:/Test.cs`     | C#       | Mono on Mac OS X | Same as Java vesrion |
 
 If you're not satisfied with the default template, consider DIY your own!
 See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
@@ -119,8 +125,6 @@ Contribute to me
 
 Currently, I'm still immature, and under development.
 Any help is helpful and greatly appreciated.
-
-A note, C# support is not available in me now. And my developers seems not familiar with C#, if you're willing to add this, I'll very be grateful to you!
 
 You can contribute to me in 2 ways:
 
