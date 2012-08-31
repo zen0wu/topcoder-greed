@@ -41,7 +41,8 @@ Things you can do with this config,
 
 #### greed.codeRoot
 
-Change where I store your code, via `greed.codeRoot = ???`, this path is relative to your workspace root
+Change where I store your code, via `greed.codeRoot = ???`, this path is relative to your workspace root.
+Default set to `.`, which means workspace root.
 
 #### greed.templates.pathPattern and fileNamePattern
 
@@ -57,8 +58,7 @@ Package declaration will be auto removed while compiling and submitting in the a
 
 #### greed.templates.\<lang\>.tmplFile
 
-Set your own template file for your preferred language.
-
+For specifying your own template file for your preferred language,
 Just set this to the relative path of your template file in your workspace, done! 
 
 The default template for java, FYI, is
@@ -87,8 +87,8 @@ There're several built-in test templates.
 
 | Resource path      | Language | Tested on | Comment |
 | ------------------ | :------: | --------- | ------- |
-| `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Runtime error is not detected and terminates the whole program |
-| `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance, with runtime exception catching |
+| `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
+| `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
 
 If you're not satisfied with the default template, consider DIY your own!
 See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
