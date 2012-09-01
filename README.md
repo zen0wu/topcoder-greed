@@ -1,4 +1,4 @@
-Greed 1.1
+Greed
 =========
 
 Hi, this is _greed_, the missing topcoder arena plugin for algorithm contest.
