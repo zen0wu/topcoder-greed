@@ -7,22 +7,18 @@ import greed.model.Type;
 /**
  * Greed is good! Cheers!
  */
-public class JavaRenderer extends CppRenderer {
-    public static JavaRenderer instance = new JavaRenderer();
+public class CSharpLanguage extends CppLanguage {
+    public static CSharpLanguage instance = new CSharpLanguage();
 
-    protected JavaRenderer() {
+    protected CSharpLanguage() {
         super();
     }
 
     @Override
     public String renderPrimitive(Primitive primitive) {
         switch (primitive) {
-            case STRING:
-                return "String";
             case LONG:
                 return "long";
-            case BOOL:
-                return "boolean";
             default:
                 return super.renderPrimitive(primitive);
         }
@@ -39,16 +35,21 @@ public class JavaRenderer extends CppRenderer {
     public String renderParamValue(ParamValue paramValue) {
         Type paramType = paramValue.getParam().getType();
         String value = paramValue.getValue();
-        if (paramType.isArray())
+        if (paramType.isArray()) {
             return value;
-        if (paramType.getPrimitive() == Primitive.LONG)
-            return value + "L";
+        }
+
+        switch (paramType.getPrimitive()) {
+            case LONG:
+                value += "L";
+                break;
+        }
         return value;
     }
 
     @Override
     public String renderZeroValue(Type type) {
-        if (type.isArray()) return "new " + renderPrimitive(type.getPrimitive()) + "[0]";
+        if (type.isArray()) return "new " + renderPrimitive(type.getPrimitive()) + "[] { }";
         switch (type.getPrimitive()) {
             case BOOL:
                 return "false";

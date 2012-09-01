@@ -26,13 +26,13 @@ public class LanguageManager {
     private Map<Language, CodeProcessor> processorMap = new HashMap<Language, CodeProcessor>();
 
     private LanguageManager() {
-        traitMap.put(Language.CPP, CStyleLanguageTrait.getInstance());
-        traitMap.put(Language.JAVA, CStyleLanguageTrait.getInstance());
-        traitMap.put(Language.CSHARP, CStyleLanguageTrait.getInstance());
+        traitMap.put(Language.CPP, CppLanguage.instance);
+        traitMap.put(Language.JAVA, JavaLanguage.instance);
+        traitMap.put(Language.CSHARP, CSharpLanguage.instance);
 
-        rendererMap.put(Language.CPP, CppRenderer.instance);
-        rendererMap.put(Language.JAVA, JavaRenderer.instance);
-        rendererMap.put(Language.CSHARP, CSharpRenderer.instance);
+        rendererMap.put(Language.CPP, CppLanguage.instance);
+        rendererMap.put(Language.JAVA, JavaLanguage.instance);
+        rendererMap.put(Language.CSHARP, CSharpLanguage.instance);
 
         processorMap.put(Language.JAVA, new JavaCodeProcessor());
     }

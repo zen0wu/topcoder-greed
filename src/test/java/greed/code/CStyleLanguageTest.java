@@ -9,10 +9,10 @@ import org.junit.Test;
 /**
  * Greed is good! Cheers!
  */
-public class CStyleLanguageTraitTest {
+public class CStyleLanguageTest {
     @Test
     public void parseStringArrayTest() {
-        CStyleLanguageTrait trait = CStyleLanguageTrait.getInstance();
+        CppLanguage trait = CppLanguage.instance;
         StringBuffer sb = new StringBuffer();
         sb.append("{    \n");
         sb.append("\"Abcde\"\n, \"12345\", \n\n\n");
@@ -27,7 +27,7 @@ public class CStyleLanguageTraitTest {
 
     @Test
     public void parseOtherArrayTest() {
-        CStyleLanguageTrait trait = CStyleLanguageTrait.getInstance();
+        CppLanguage trait = CppLanguage.instance;
         StringBuffer sb = new StringBuffer();
         sb.append("{123LL,    ");
         sb.append("\n124LL\n,125LL,999LL,\n\n12LL\n,123LL\n    } \n");

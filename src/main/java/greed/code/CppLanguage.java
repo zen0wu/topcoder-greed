@@ -1,5 +1,6 @@
 package greed.code;
 
+import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;
 import greed.model.Type;
@@ -7,31 +8,39 @@ import greed.model.Type;
 /**
  * Greed is good! Cheers!
  */
-public class CSharpRenderer extends CppRenderer {
-    public static CSharpRenderer instance = new CSharpRenderer();
+public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
+    public static CppLanguage instance = new CppLanguage();
 
-    protected CSharpRenderer() {
-        super();
+    protected CppLanguage() {
     }
 
-    @Override
     public String renderPrimitive(Primitive primitive) {
         switch (primitive) {
+            case STRING:
+                return "string";
+            case DOUBLE:
+                return "double";
+            case INT:
+                return "int";
+            case BOOL:
+                return "bool";
             case LONG:
-                return "long";
-            default:
-                return super.renderPrimitive(primitive);
+                return "long long";
         }
+        return "";
     }
 
-    @Override
     public String renderType(Type type) {
         String typeName = renderPrimitive(type.getPrimitive());
-        if (type.isArray()) typeName += "[]";
+        if (type.isArray())
+            typeName = "vector<" + typeName + ">";
         return typeName;
     }
 
-    @Override
+    public String renderParam(Param param) {
+        return renderType(param.getType()) + " " + param.getName();
+    }
+
     public String renderParamValue(ParamValue paramValue) {
         Type paramType = paramValue.getParam().getType();
         String value = paramValue.getValue();
@@ -41,15 +50,25 @@ public class CSharpRenderer extends CppRenderer {
 
         switch (paramType.getPrimitive()) {
             case LONG:
-                value += "L";
+                value += "LL";
                 break;
         }
         return value;
     }
 
     @Override
+    public String renderParamList(Param[] params) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < params.length; ++i) {
+            if (i > 0) buf.append(", ");
+            buf.append(renderParam(params[i]));
+        }
+        return buf.toString();
+    }
+
+    @Override
     public String renderZeroValue(Type type) {
-        if (type.isArray()) return "new " + renderPrimitive(type.getPrimitive()) + "[] { }";
+        if (type.isArray()) return renderType(type) + "()";
         switch (type.getPrimitive()) {
             case BOOL:
                 return "false";
