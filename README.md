@@ -17,7 +17,13 @@ Greed is good
 Release Note
 ------------
 
-* __1.1__ - update C# version, thanks to @jbransen, major bug fix
+#### 1.2
+
+* bug fixing version, mainly fix bugs on "long long" in C++, C#, and Java
+
+#### 1.1
+
+* update C# version, thanks to @jbransen, major bug fix
 
 Quick start
 -----------

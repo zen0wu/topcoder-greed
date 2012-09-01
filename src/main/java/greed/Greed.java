@@ -28,7 +28,7 @@ import static greed.util.Configuration.Keys;
 @SuppressWarnings("unused")
 public class Greed {
     public static final String APP_NAME = "Greed";
-    public static final String APP_VERSION = "v1.1";
+    public static final String APP_VERSION = "v1.2";
 
     private Language currentLang;
     private Problem currentProb;

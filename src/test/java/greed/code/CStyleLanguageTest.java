@@ -29,12 +29,12 @@ public class CStyleLanguageTest {
     public void parseOtherArrayTest() {
         CppLanguage trait = CppLanguage.instance;
         StringBuffer sb = new StringBuffer();
-        sb.append("{123LL,    ");
-        sb.append("\n124LL\n,125LL,999LL,\n\n12LL\n,123LL\n    } \n");
+        sb.append("{123,    ");
+        sb.append("\n123\n,125,999,\n\n12\n,123\n    } \n");
         String[] parsedValueList = trait.parseValue(sb.toString(), new Param("arg", new Type(Primitive.LONG, 1))).getValueList();
         for (String pv : parsedValueList)
             System.out.println(pv);
         Assert.assertArrayEquals("Parsed value is " + parsedValueList, parsedValueList,
-                new String[]{"123LL, 124LL, 125LL, 999LL, 12LL, 123LL"});
+                new String[]{"123LL, 123LL, 125LL, 999LL, 12LL, 123LL"});
     }
 }
