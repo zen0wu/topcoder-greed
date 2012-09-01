@@ -24,7 +24,7 @@ public class TemplateEngine {
 
     public static void switchLanguage(Language language) {
         lazyInit();
-	    LanguageManager.getInstance().getRenderer(language).registerSelf(engine);
+	    LanguageManager.getInstance().registerRenderer(language, engine);
     }
 
     public static String render(InputStream templateStream, Map<String, Object> model) {

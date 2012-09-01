@@ -51,7 +51,7 @@ public class Greed {
 
     // Cache the editor
     public boolean isCacheable() {
-        return true;
+        return false;
     }
 
     // Called when open the coding frame
