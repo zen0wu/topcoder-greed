@@ -32,43 +32,43 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
         logTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         logTextArea.setMinimumSize(new Dimension(150, 60));
 
-	    JScrollPane scrollPane = new JScrollPane(logTextArea);
+        JScrollPane scrollPane = new JScrollPane(logTextArea);
 
-	    this.setLayout(new GridBagLayout());
-	    GridBagConstraints constraints = new GridBagConstraints();
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
 
-	    constraints.gridwidth = 5;
-	    constraints.gridheight = 4;
-	    constraints.gridx = 0;
-	    constraints.gridy = 0;
-	    constraints.weightx = 0.8;
-	    constraints.weighty = 0.5;
-	    constraints.fill = GridBagConstraints.BOTH;
-	    this.add(scrollPane, constraints);
+        constraints.gridwidth = 5;
+        constraints.gridheight = 4;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.weightx = 0.8;
+        constraints.weighty = 0.5;
+        constraints.fill = GridBagConstraints.BOTH;
+        this.add(scrollPane, constraints);
 
-	    reloadConfigButton = new JButton("Reload configuration");
-	    constraints.fill = GridBagConstraints.BOTH;
-	    constraints.gridwidth = 1;
-	    constraints.gridheight = 1;
-	    constraints.gridx = 5;
-	    constraints.gridy = 1;
-	    constraints.weightx = 0.01;
-	    constraints.weighty = 0.25;
-	    constraints.ipady = 5;
-	    constraints.insets = new Insets(10, 10, 3, 0);
-	    reloadConfigButton.setPreferredSize(new Dimension(135, 20));
-	    reloadConfigButton.setMaximumSize(new Dimension(150, 20));
-	    reloadConfigButton.setMargin(new Insets(0, 0, 0, 0));
+        reloadConfigButton = new JButton("Reload configuration");
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 5;
+        constraints.gridy = 1;
+        constraints.weightx = 0.01;
+        constraints.weighty = 0.25;
+        constraints.ipady = 5;
+        constraints.insets = new Insets(10, 10, 3, 0);
+        reloadConfigButton.setPreferredSize(new Dimension(135, 20));
+        reloadConfigButton.setMaximumSize(new Dimension(150, 20));
+        reloadConfigButton.setMargin(new Insets(0, 0, 0, 0));
         reloadConfigButton.addActionListener(this);
-	    this.add(reloadConfigButton, constraints);
+        this.add(reloadConfigButton, constraints);
 
-	    regenerateButton = new JButton("Regenerate code");
-	    constraints.fill = GridBagConstraints.BOTH;
-	    constraints.gridy = 2;
-	    constraints.insets = new Insets(3, 10, 10, 0);
-	    regenerateButton.setPreferredSize(new Dimension(135, 20));
-	    regenerateButton.setMaximumSize(new Dimension(150, 20));
-	    regenerateButton.setMargin(new Insets(0, 0, 0, 0));
+        regenerateButton = new JButton("Regenerate code");
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridy = 2;
+        constraints.insets = new Insets(3, 10, 10, 0);
+        regenerateButton.setPreferredSize(new Dimension(135, 20));
+        regenerateButton.setMaximumSize(new Dimension(150, 20));
+        regenerateButton.setMargin(new Insets(0, 0, 0, 0));
         regenerateButton.addActionListener(this);
         this.add(regenerateButton, constraints);
 
@@ -94,8 +94,7 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
             this.say("Reloading your configuration from \"" + Configuration.getWorkspace() + "/greed.conf\"");
             Log.i("Reload configuration");
             Configuration.reload();
-        }
-        else if (src == regenerateButton) {
+        } else if (src == regenerateButton) {
             this.say("Regeneration!");
             greed.generateCode();
         }

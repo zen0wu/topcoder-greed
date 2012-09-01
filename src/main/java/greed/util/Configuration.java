@@ -5,7 +5,8 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import greed.model.Language;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Greed is good! Cheers!
@@ -47,20 +48,20 @@ public class Configuration {
         public static final String OVERRIDE = "greed.override";
         public static final String LOG_LEVEL = "greed.logLevel";
         public static final String LOG_TO_STDERR = "greed.logToStderr";
-	    public static final String LOG_FOLDER = "greed.logFolder";
+        public static final String LOG_FOLDER = "greed.logFolder";
 
-	    public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
-	    public static final String RECORD_SCORE = "greed.test.recordScore";
+        public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
+        public static final String RECORD_SCORE = "greed.test.recordScore";
 
-	    public static String getTemplateKey(Language language) {
+        public static String getTemplateKey(Language language) {
             return "greed.templates." + Language.getName(language);
         }
 
         public static final String SUBKEY_TEMPLATE_FILE = "tmplFile";
-	    public static final String SUBKEY_TEST_TEMPLATE_FILE = "testTmplFile";
-	    public static final String SUBKEY_EXTENSION = "extension";
+        public static final String SUBKEY_TEST_TEMPLATE_FILE = "testTmplFile";
+        public static final String SUBKEY_EXTENSION = "extension";
         public static final String SUBKEY_CUTBEGIN = "cutBegin";
-	    public static final String SUBKEY_CUTEND = "cutEnd";
+        public static final String SUBKEY_CUTEND = "cutEnd";
     }
 
     private static final String DEFAULT_USER_CONFIG_FILENAME = "greed.conf";
@@ -73,8 +74,7 @@ public class Configuration {
 
         if (Debug.developmentMode) {
             conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
-        }
-        else {
+        } else {
             conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
         }
 
@@ -111,8 +111,8 @@ public class Configuration {
         return conf;
     }
 
-	public static void reload() {
-		conf = null;
-		lazyInit();
-	}
+    public static void reload() {
+        conf = null;
+        lazyInit();
+    }
 }

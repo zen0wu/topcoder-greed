@@ -13,11 +13,9 @@ public class FileSystem {
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
-            }
-            else
+            } else
                 return FileSystem.class.getResourceAsStream(resourcePath);
-        }
-        else {
+        } else {
             return new FileInputStream(Configuration.getWorkspace() + "/" + resourcePath);
         }
     }
@@ -41,7 +39,7 @@ public class FileSystem {
             writer.flush();
             writer.close();
         } catch (FileNotFoundException e) {
-	        Log.e("Write file error", e);
+            Log.e("Write file error", e);
         }
     }
 
@@ -49,12 +47,12 @@ public class FileSystem {
         return new File(Configuration.getWorkspace() + "/" + relativePath).exists();
     }
 
-	public static long getSize(String resourcePath) {
-		File f = new File(Configuration.getWorkspace() + "/" + resourcePath);
-		if (f.exists() && f.isFile())
-			return f.length();
-		return -1;
-	}
+    public static long getSize(String resourcePath) {
+        File f = new File(Configuration.getWorkspace() + "/" + resourcePath);
+        if (f.exists() && f.isFile())
+            return f.length();
+        return -1;
+    }
 
     public static void backup(String relativePath) {
         String absolutePath = Configuration.getWorkspace() + "/" + relativePath;

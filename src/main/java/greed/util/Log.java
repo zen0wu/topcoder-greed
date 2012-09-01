@@ -14,7 +14,7 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;
-    private static final String[] LEVEL_NAMES = new String[] { "DEBUG", "INFO", "WARN", "ERROR" };
+    private static final String[] LEVEL_NAMES = new String[]{"DEBUG", "INFO", "WARN", "ERROR"};
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.ENGLISH);
 
     private static int minimalLoggingLevel = 0;
@@ -27,10 +27,11 @@ public class Log {
         minimalLoggingLevel = LEVEL_NAMES.length + 1;
         if ("all".equals(levelName.toLowerCase())) minimalLoggingLevel = 0;
         else
-            for (int i = 0; i < 4; ++i) if (LEVEL_NAMES[i].equals(levelName.toUpperCase())) {
-                minimalLoggingLevel = i;
-                break;
-            }
+            for (int i = 0; i < 4; ++i)
+                if (LEVEL_NAMES[i].equals(levelName.toUpperCase())) {
+                    minimalLoggingLevel = i;
+                    break;
+                }
         // If logging is enabled and workspace exists
         if (minimalLoggingLevel < LEVEL_NAMES.length && Configuration.workspaceSet()) {
             logToErr = Configuration.getBoolean(Configuration.Keys.LOG_TO_STDERR);
@@ -52,7 +53,8 @@ public class Log {
         StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_BACKDEPTH];
         String dateString = DATE_FORMAT.format(new Date());
         String prefix = "    ";
-        if (level >= 0) prefix = trace.getClassName().substring(trace.getClassName().lastIndexOf(".") + 1) + "[" + LEVEL_NAMES[level] + "]:";
+        if (level >= 0)
+            prefix = trace.getClassName().substring(trace.getClassName().lastIndexOf(".") + 1) + "[" + LEVEL_NAMES[level] + "]:";
         String log = String.format("[%s] [%s.%s@line %d] %s %s",
                 dateString, trace.getClassName(), trace.getMethodName(), trace.getLineNumber(),
                 prefix, message);

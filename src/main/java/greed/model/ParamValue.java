@@ -11,14 +11,14 @@ public class ParamValue {
     public ParamValue(Param param, String value) {
         this.param = param;
         this.value = value;
-        this.valueList = new String[] { value };
+        this.valueList = new String[]{value};
     }
 
-	public ParamValue(Param param, String[] valueList) {
-		this.param = param;
-		this.value = "";
-		this.valueList = valueList;
-	}
+    public ParamValue(Param param, String[] valueList) {
+        this.param = param;
+        this.value = "";
+        this.valueList = valueList;
+    }
 
     public Param getParam() {
         return param;

@@ -19,12 +19,12 @@ public class TemplateEngine {
     private static void lazyInit() {
         if (engine == null)
             engine = new Engine();
-	    engine.registerNamedRenderer(new StringUtilRenderer());
+        engine.registerNamedRenderer(new StringUtilRenderer());
     }
 
     public static void switchLanguage(Language language) {
         lazyInit();
-	    LanguageManager.getInstance().registerRenderer(language, engine);
+        LanguageManager.getInstance().registerRenderer(language, engine);
     }
 
     public static String render(InputStream templateStream, Map<String, Object> model) {
@@ -51,8 +51,7 @@ public class TemplateEngine {
             }
             reader.close();
             stream.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }

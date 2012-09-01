@@ -14,35 +14,35 @@ import java.util.Map;
  * Greed is good! Cheers!
  */
 public class LanguageManager {
-	private static LanguageManager instance = null;
+    private static LanguageManager instance = null;
 
-	public static LanguageManager getInstance() {
-		if (instance == null) instance = new LanguageManager();
-		return instance;
-	}
+    public static LanguageManager getInstance() {
+        if (instance == null) instance = new LanguageManager();
+        return instance;
+    }
 
-	private Map<Language, LanguageTrait> traitMap = new HashMap<Language, LanguageTrait>();
-	private Map<Language, LanguageRenderer> rendererMap = new HashMap<Language, LanguageRenderer>();
-	private Map<Language, CodeProcessor> processorMap = new HashMap<Language, CodeProcessor>();
+    private Map<Language, LanguageTrait> traitMap = new HashMap<Language, LanguageTrait>();
+    private Map<Language, LanguageRenderer> rendererMap = new HashMap<Language, LanguageRenderer>();
+    private Map<Language, CodeProcessor> processorMap = new HashMap<Language, CodeProcessor>();
 
-	private LanguageManager() {
-		traitMap.put(Language.CPP, CStyleLanguageTrait.getInstance());
-		traitMap.put(Language.JAVA, CStyleLanguageTrait.getInstance());
-		traitMap.put(Language.CSHARP, CStyleLanguageTrait.getInstance());
+    private LanguageManager() {
+        traitMap.put(Language.CPP, CStyleLanguageTrait.getInstance());
+        traitMap.put(Language.JAVA, CStyleLanguageTrait.getInstance());
+        traitMap.put(Language.CSHARP, CStyleLanguageTrait.getInstance());
 
-		rendererMap.put(Language.CPP, CppRenderer.instance);
-		rendererMap.put(Language.JAVA, JavaRenderer.instance);
-		rendererMap.put(Language.CSHARP, CSharpRenderer.instance);
+        rendererMap.put(Language.CPP, CppRenderer.instance);
+        rendererMap.put(Language.JAVA, JavaRenderer.instance);
+        rendererMap.put(Language.CSHARP, CSharpRenderer.instance);
 
-		processorMap.put(Language.JAVA, new JavaCodeProcessor());
-	}
+        processorMap.put(Language.JAVA, new JavaCodeProcessor());
+    }
 
-	public LanguageTrait getTrait(Language language) {
-		return traitMap.get(language);
-	}
+    public LanguageTrait getTrait(Language language) {
+        return traitMap.get(language);
+    }
 
-	public void registerRenderer(Language language, Engine engine) {
-		final LanguageRenderer renderer = rendererMap.get(language);
+    public void registerRenderer(Language language, Engine engine) {
+        final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
             engine.registerRenderer(Primitive.class, new Renderer<Primitive>() {
                 @Override
@@ -78,7 +78,7 @@ public class LanguageManager {
                 @Override
                 public String render(Object o, String s, Locale locale) {
                     if (o instanceof Type)
-                        return renderer.renderZeroValue((Type)o);
+                        return renderer.renderZeroValue((Type) o);
                     return "";
                 }
 
@@ -94,13 +94,13 @@ public class LanguageManager {
 
                 @Override
                 public Class<?>[] getSupportedClasses() {
-                    return new Class<?>[] { Type.class };
+                    return new Class<?>[]{Type.class};
                 }
             });
         }
-	}
+    }
 
-	public CodeProcessor getProcessor(Language language) {
-		return processorMap.get(language);
-	}
+    public CodeProcessor getProcessor(Language language) {
+        return processorMap.get(language);
+    }
 }

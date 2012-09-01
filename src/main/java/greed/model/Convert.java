@@ -17,7 +17,7 @@ public class Convert {
         else {
             int sp = fullName.indexOf("DIV");
             String contestName = fullName.substring(0, sp - 1);
-            String divNum = fullName.substring(sp +     4);
+            String divNum = fullName.substring(sp + 4);
             return new Contest(contestName, Integer.parseInt(divNum));
         }
     }
@@ -38,7 +38,7 @@ public class Convert {
             params[i] = new Param(problem.getParamNames()[i], convertType(problem.getParamTypes()[i]));
         Method method = new Method(problem.getMethodName(), convertType(problem.getReturnType()), params);
 
-	    LanguageTrait trait = LanguageManager.getInstance().getTrait(language);
+        LanguageTrait trait = LanguageManager.getInstance().getTrait(language);
         Testcase[] cases = new Testcase[problem.getTestCases().length];
         for (int i = 0; i < cases.length; ++i) {
             TestCase tc = problem.getTestCases()[i];

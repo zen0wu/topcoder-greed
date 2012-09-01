@@ -54,8 +54,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener {
             String workspace = workspaceFolder.getText();
             if (checkSave(workspace))
                 this.dispose();
-        }
-        else if (src == cancelButton) {
+        } else if (src == cancelButton) {
             this.dispose();
         }
     }
@@ -64,8 +63,7 @@ public class ConfigurationDialog extends JDialog implements ActionListener {
         if ("".equals(workspace)) {
             showMessageBox("You must specify a workspace");
             return false;
-        }
-        else if (!new File(workspace).exists() || !new File(workspace).isDirectory()) {
+        } else if (!new File(workspace).exists() || !new File(workspace).isDirectory()) {
             showMessageBox("Invalid workspace, either a non-exist path, \nor a regular-file with the same name exists");
             return false;
         }

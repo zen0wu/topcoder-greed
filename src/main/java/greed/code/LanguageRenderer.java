@@ -10,9 +10,14 @@ import greed.model.Type;
  */
 public interface LanguageRenderer {
     public String renderPrimitive(Primitive primitive);
+
     public String renderType(Type type);
+
     public String renderParam(Param param);
+
     public String renderParamValue(ParamValue paramValue);
+
     public String renderParamList(Param[] params);
+
     public String renderZeroValue(Type type);
 }

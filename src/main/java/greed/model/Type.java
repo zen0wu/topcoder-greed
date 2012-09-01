@@ -24,11 +24,11 @@ public class Type {
         return dim > 0;
     }
 
-	public boolean isString() {
-		return this.primitive == Primitive.STRING;
-	}
+    public boolean isString() {
+        return this.primitive == Primitive.STRING;
+    }
 
-	public boolean isRealNumber() {
-		return this.primitive == Primitive.DOUBLE;
-	}
+    public boolean isRealNumber() {
+        return this.primitive == Primitive.DOUBLE;
+    }
 }
