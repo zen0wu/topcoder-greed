@@ -47,7 +47,7 @@ ${<if RecordRuntime}
 ${<end}
 
 		nAll++;
-		Console.Error.WriteLine(string.Format("  Testcase #{0} ... ", caseNo));
+		Console.Error.Write(string.Format("  Testcase #{0} ... ", caseNo));
 
 		if (exception != null) {
 			Console.Error.WriteLine("RUNTIME ERROR!");
