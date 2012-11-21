@@ -158,39 +158,44 @@ public class Greed {
     }
 
     private void setProblem(Contest contest, Problem problem, Language language) {
+        Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(language));
+        TemplateEngine.switchLanguage(language);
+
         // Create model map
         currentTemplateModel = new HashMap<String, Object>();
         currentTemplateModel.put("Contest", contest);
         currentTemplateModel.put("Problem", problem);
 
-        String relativePath = TemplateEngine.render(Configuration.getString(Keys.PATH_PATTERN), currentTemplateModel);
-        String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
-
         // Create source directory
-        String codeDir = Configuration.getString(Keys.CODE_ROOT);
-        codeDir += "/" + relativePath;
-        if (!FileSystem.exists(codeDir)) {
-            talkingWindow.say("I'm creating folder " + codeDir);
-            FileSystem.createFolder(codeDir);
+        String codeDir;
+        {
+            String codeRoot = Configuration.getString(Keys.CODE_ROOT);
+            String relativePath = TemplateEngine.render(Configuration.getString(Keys.PATH_PATTERN), currentTemplateModel);
+            codeDir = codeRoot + "/" + relativePath;
+
+            if (!FileSystem.exists(codeDir)) {
+                talkingWindow.say("I'm creating folder " + codeDir);
+                FileSystem.createFolder(codeDir);
+            }
         }
 
-        // Create source file if not exists
-        Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(language));
-        String filePath = codeDir + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
-        boolean exists = FileSystem.exists(filePath);
         boolean override = Configuration.getBoolean(Keys.OVERRIDE);
-        talkingWindow.say("Source code will be generated, \"" + filePath + "\"" + ", in your workspace");
-        if (exists)
-            talkingWindow.say("Seems the file has been created");
-        if (exists && !override) {
-            // Skip old files due to override options
-            talkingWindow.say("This time I'll not override it, if you say so.");
-        } else {
-            // Create code template
-            // First, set the language of template engine
-            TemplateEngine.switchLanguage(language);
+        String sourceFilePath;
+        {
+            String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
+            sourceFilePath = codeDir + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
+        }
+        boolean sourceFileExists = FileSystem.exists(sourceFilePath);
 
-            // Bind additional model
+        boolean doUnitTest = Configuration.getBoolean(Keys.UNIT_TEST);
+        String unitTestFilePath;
+        {
+            String unitTestFileName = TemplateEngine.render(Configuration.getString(Keys.UNIT_TEST_FILE_NAME_PATTERN), currentTemplateModel);
+            unitTestFilePath = codeDir + "/" + unitTestFileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
+        }
+        boolean unitTestFileExists = FileSystem.exists(unitTestFilePath);
+
+        if (!sourceFileExists || (doUnitTest && !unitTestFileExists) || override) {
             currentTemplateModel.put("ClassName", problem.getClassName());
             currentTemplateModel.put("Method", problem.getMethod());
             currentTemplateModel.put("Examples", problem.getTestcases());
@@ -204,9 +209,75 @@ public class Greed {
             currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
             currentTemplateModel.put("CutBegin", langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN));
             currentTemplateModel.put("CutEnd", langSpecConfig.getString(Keys.SUBKEY_CUTEND));
+        }
 
+        // Create source file if not exists
+        talkingWindow.say("Source code will be generated, \"" + sourceFilePath + "\"" + ", in your workspace");
+        if (sourceFileExists) {
+            talkingWindow.say("Seems the file has been created");
+        }
+        if (sourceFileExists && !override) {
+            // Skip old files due to override options
+            talkingWindow.say("This time I'll not override it, if you say so.");
+        } else {
             talkingWindow.say("I'm generating source code for you~");
-            // Generate test code
+            generateSourceFile(sourceFilePath, sourceFileExists, doUnitTest, langSpecConfig);
+        }
+
+        if (doUnitTest) {
+            // Create unit test file if not exists
+            talkingWindow.say("Unit test code will be generated, \"" + unitTestFilePath + "\"" + ", in your workspace");
+            if (unitTestFileExists) {
+                talkingWindow.say("Seems the file has been created");
+            }
+            if (unitTestFileExists && !override) {
+                // Skip old files due to override options
+                talkingWindow.say("This time I'll not override it, if you say so.");
+            } else {
+                talkingWindow.say("I'm generating unit test code for you~");
+                generateUnitTestFile(unitTestFilePath, unitTestFileExists, langSpecConfig);
+            }
+        }
+
+        talkingWindow.say("All set, good luck!");
+        talkingWindow.say("");
+    }
+
+    private void generateUnitTestFile(String unitTestFilePath, boolean unitTestFileExists, Config langSpecConfig) {
+        String sourceCode;
+        try {
+            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_UNIT_TEST_TEMPLATE_FILE);
+            talkingWindow.say("Using unit test template \"" + tmplPath + "\"");
+
+            InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
+            sourceCode = TemplateEngine.render(codeTmpl, currentTemplateModel);
+        } catch (FileNotFoundException e) {
+            talkingWindow.say("No unit test template, no testing code for you.");
+            Log.w("Unit test template not found, probably because user specify a non-exist testing template, resulting code without testing module");
+            return;
+        } catch (ConfigException e) {
+            talkingWindow.say("What's that about the unit test template? I didn't understand.");
+            Log.w("Incorrect unit test template configuration", e);
+            return;
+        }
+
+        if (unitTestFileExists) {
+            talkingWindow.say("Overriding, old files will be renamed");
+            if (FileSystem.getSize(unitTestFilePath) == sourceCode.length()) {
+                talkingWindow.say("Seems the current file is the same as the template.");
+                talkingWindow.say("OK, just use the current file, I'm not writing to it.");
+                return;
+            } else
+                FileSystem.backup(unitTestFilePath); // Backup the old files
+        }
+
+        // Write to file
+        FileSystem.writeFile(unitTestFilePath, sourceCode);
+    }
+
+    private void generateSourceFile(String sourceFilePath, boolean sourceFileExists, boolean doUnitTest, Config langSpecConfig) {
+        // Generate embedded test code
+        if (!doUnitTest) {
             try {
                 String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEST_TEMPLATE_FILE);
                 talkingWindow.say("Using test template \"" + tmplPath + "\"");
@@ -221,40 +292,40 @@ public class Greed {
                 talkingWindow.say("What's that about the testing template? I didn't understand.");
                 Log.w("Incorrect test template configuration", e);
             }
-
-            // Generate main code
-            String sourceCode;
-            try {
-                String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEMPLATE_FILE);
-                talkingWindow.say("Using source template \"" + tmplPath + "\"");
-
-                InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
-                sourceCode = TemplateEngine.render(codeTmpl, currentTemplateModel);
-            } catch (FileNotFoundException e) {
-                talkingWindow.say("Oh no, where's your source code template?");
-                talkingWindow.say("You have to start with a empty file yourself :<");
-                Log.e("Source code template not found, this is fatal error, source code will not be generated");
-                return;
-            } catch (ConfigException e) {
-                talkingWindow.say("No configuration for source code template, I'm giving up!");
-                Log.e("Incorrect code template configuration", e);
-                return;
-            }
-
-            if (exists) {
-                talkingWindow.say("Overriding, old files will be renamed");
-                if (FileSystem.getSize(filePath) == sourceCode.length()) {
-                    talkingWindow.say("Seems the current file is the same as the template.");
-                    talkingWindow.say("OK, just use the current file, I'm not writing to it.");
-                    return;
-                } else
-                    FileSystem.backup(filePath); // Backup the old files
-            }
-
-            // Write to file
-            FileSystem.writeFile(filePath, sourceCode);
+        } else {
+            currentTemplateModel.put("TestCode", "");
         }
-        talkingWindow.say("All set, good luck!");
-        talkingWindow.say("");
+
+        // Generate main code
+        String sourceCode;
+        try {
+            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEMPLATE_FILE);
+            talkingWindow.say("Using source template \"" + tmplPath + "\"");
+
+            InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
+            sourceCode = TemplateEngine.render(codeTmpl, currentTemplateModel);
+        } catch (FileNotFoundException e) {
+            talkingWindow.say("Oh no, where's your source code template?");
+            talkingWindow.say("You have to start with a empty file yourself :<");
+            Log.e("Source code template not found, this is fatal error, source code will not be generated");
+            return;
+        } catch (ConfigException e) {
+            talkingWindow.say("No configuration for source code template, I'm giving up!");
+            Log.e("Incorrect code template configuration", e);
+            return;
+        }
+
+        if (sourceFileExists) {
+            talkingWindow.say("Overriding, old files will be renamed");
+            if (FileSystem.getSize(sourceFilePath) == sourceCode.length()) {
+                talkingWindow.say("Seems the current file is the same as the template.");
+                talkingWindow.say("OK, just use the current file, I'm not writing to it.");
+                return;
+            } else
+                FileSystem.backup(sourceFilePath); // Backup the old files
+        }
+
+        // Write to file
+        FileSystem.writeFile(sourceFilePath, sourceCode);
     }
 }
