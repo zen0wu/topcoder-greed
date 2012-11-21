@@ -107,6 +107,18 @@ See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) pa
 
 And please, please, __contribute good templates to me__, including templates for different environments, and with more functionalities. Everyone will benefit from your templates. How cool is this!
 
+#### greed.test.unitTest
+
+If you've got a powerful IDE with great unit testing and debugging support, why mingle test code with your solution? For C# and Java, set `greed.test.unitTest` to `true`, and the unit tests will be generated in a separate file according to `greed.templates.<lang>.unitTestTmplFile`. Then you can link both files to an existing IDE project:
+
+![VS Add File Menu](https://raw.github.com/wiki/tomtung/topcoder-greed/VS-Add-Existing.png)
+
+![VS Link Existing File](https://raw.github.com/wiki/tomtung/topcoder-greed/VS-Add-Existing-As-Link.png)
+
+and you'll be able to utilize the IDE to easily test and debug each or all test cases:
+
+![Resharper NUnit Debugging](https://raw.github.com/wiki/tomtung/topcoder-greed/Resharper-NUnit-Debug.png)
+
 Want to learn more?
 -------------------
 Go to my [wiki](https://github.com/shivawu/topcoder-greed/wiki). 
