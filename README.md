@@ -16,14 +16,19 @@ Greed is good
 
 Release Note
 ------------
+#### 1.3
+
+* unit test code generation for C#(NUnit) and Java(JUnit), thanks to @tomtung
+* major rewriting
 
 #### 1.2
 
-* bug fixing version, mainly fix bugs on "long long" in C++, C#, and Java
+* minor bug fix, mainly fix bugs on "long long" in C++, C#, and Java
 
 #### 1.1
 
-* update C# version, thanks to @jbransen, major bug fix
+* update C# version, thanks to @jbransen
+* major bug fix
 
 Quick start
 -----------
@@ -109,7 +114,7 @@ And please, please, __contribute good templates to me__, including templates for
 
 #### greed.test.unitTest
 
-If you've got a powerful IDE with great unit testing and debugging support, why mingle test code with your solution? For C# and Java, set `greed.test.unitTest` to `true`, and the unit tests will be generated in a separate file according to `greed.templates.<lang>.unitTestTmplFile`. Then you can link both files to an existing IDE project:
+If you've got a powerful IDE with great unit testing and debugging support, why mingle test code with your solution? For C# and Java, set `greed.test.unitTest` to `true`, and the unit tests will be generated in a separate file according to `greed.templates.<lang>.unitTestTmplFile`(If not set or invalid, I will fallback to normal test code generation). Then you can link both files to an existing IDE project:
 
 ![VS Add File Menu](https://raw.github.com/wiki/tomtung/topcoder-greed/VS-Add-Existing.png)
 
