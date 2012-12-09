@@ -4,6 +4,10 @@ import com.floreysoft.jmte.Engine;
 import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
 import com.floreysoft.jmte.Renderer;
+import greed.code.lang.CSharpLanguage;
+import greed.code.lang.CppLanguage;
+import greed.code.lang.JavaLanguage;
+import greed.code.transform.JavaPackageRemover;
 import greed.model.*;
 
 import java.util.HashMap;
@@ -23,7 +27,7 @@ public class LanguageManager {
 
     private Map<Language, LanguageTrait> traitMap = new HashMap<Language, LanguageTrait>();
     private Map<Language, LanguageRenderer> rendererMap = new HashMap<Language, LanguageRenderer>();
-    private Map<Language, CodeProcessor> processorMap = new HashMap<Language, CodeProcessor>();
+    private Map<Language, CodeTransformer> processorMap = new HashMap<Language, CodeTransformer>();
 
     private LanguageManager() {
         traitMap.put(Language.CPP, CppLanguage.instance);
@@ -34,7 +38,7 @@ public class LanguageManager {
         rendererMap.put(Language.JAVA, JavaLanguage.instance);
         rendererMap.put(Language.CSHARP, CSharpLanguage.instance);
 
-        processorMap.put(Language.JAVA, new JavaCodeProcessor());
+        processorMap.put(Language.JAVA, new JavaPackageRemover());
     }
 
     public LanguageTrait getTrait(Language language) {
@@ -100,7 +104,7 @@ public class LanguageManager {
         }
     }
 
-    public CodeProcessor getProcessor(Language language) {
+    public CodeTransformer getProcessor(Language language) {
         return processorMap.get(language);
     }
 }

@@ -1,5 +1,6 @@
-package greed.code;
+package greed.code.lang;
 
+import greed.code.LanguageRenderer;
 import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;

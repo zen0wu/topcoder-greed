@@ -1,5 +1,7 @@
-package greed.code;
+package greed.code.lang;
 
+import greed.code.LanguageRenderer;
+import greed.code.LanguageTrait;
 import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;
@@ -27,7 +29,7 @@ public abstract class CStyleLanguage implements LanguageTrait, LanguageRenderer 
         if (param.getType().getPrimitive() == Primitive.STRING) {
             boolean inString = false;
             ArrayList<String> valueList = new ArrayList<String>();
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             // TODO: escape \" in string
             for (int i = 0; i < value.length(); ++i) {
                 char c = value.charAt(i);
@@ -46,7 +48,7 @@ public abstract class CStyleLanguage implements LanguageTrait, LanguageRenderer 
             return new ParamValue(param, valueList.toArray(new String[0]));
         } else {
             String[] valueList = value.split(",");
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             Param paramWithPrim = new Param(param.getName(), new Type(param.getType().getPrimitive(), 0));
             for (int i = 0; i < valueList.length; i++) {
                 if (i > 0) buf.append(", ");

@@ -1,9 +1,12 @@
-package greed.code;
+package greed.code.transform;
+
+import greed.code.CodeByLine;
+import greed.code.CodeTransformer;
 
 /**
  * Greed is good! Cheers!
  */
-public class JavaCodeProcessor implements CodeProcessor {
+public class JavaPackageRemover implements CodeTransformer {
     @Override
     public CodeByLine process(CodeByLine input) {
         CodeByLine code = new CodeByLine();

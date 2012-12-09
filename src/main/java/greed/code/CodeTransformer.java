@@ -3,6 +3,6 @@ package greed.code;
 /**
  * Greed is good! Cheers!
  */
-public interface CodeProcessor {
+public interface CodeTransformer {
     public CodeByLine process(CodeByLine input);
 }

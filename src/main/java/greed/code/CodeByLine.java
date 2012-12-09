@@ -18,6 +18,16 @@ public class CodeByLine {
         return lines;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        for (String line: lines) {
+            buffer.append(line);
+            buffer.append("\n");
+        }
+        return buffer.toString();
+    }
+
     public static CodeByLine fromInputStream(InputStream stream) throws IOException {
         return innerCreate(new BufferedReader(new InputStreamReader(stream)));
     }

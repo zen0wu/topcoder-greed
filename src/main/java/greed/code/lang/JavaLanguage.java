@@ -1,4 +1,4 @@
-package greed.code;
+package greed.code.lang;
 
 import greed.model.ParamValue;
 import greed.model.Primitive;
@@ -7,18 +7,22 @@ import greed.model.Type;
 /**
  * Greed is good! Cheers!
  */
-public class CSharpLanguage extends CppLanguage {
-    public static CSharpLanguage instance = new CSharpLanguage();
+public class JavaLanguage extends CppLanguage {
+    public static JavaLanguage instance = new JavaLanguage();
 
-    protected CSharpLanguage() {
+    protected JavaLanguage() {
         super();
     }
 
     @Override
     public String renderPrimitive(Primitive primitive) {
         switch (primitive) {
+            case STRING:
+                return "String";
             case LONG:
                 return "long";
+            case BOOL:
+                return "boolean";
             default:
                 return super.renderPrimitive(primitive);
         }
@@ -35,21 +39,16 @@ public class CSharpLanguage extends CppLanguage {
     public String renderParamValue(ParamValue paramValue) {
         Type paramType = paramValue.getParam().getType();
         String value = paramValue.getValue();
-        if (paramType.isArray()) {
+        if (paramType.isArray())
             return value;
-        }
-
-        switch (paramType.getPrimitive()) {
-            case LONG:
-                value += "L";
-                break;
-        }
+        if (paramType.getPrimitive() == Primitive.LONG)
+            return value + "L";
         return value;
     }
 
     @Override
     public String renderZeroValue(Type type) {
-        if (type.isArray()) return "new " + renderPrimitive(type.getPrimitive()) + "[] { }";
+        if (type.isArray()) return "new " + renderPrimitive(type.getPrimitive()) + "[0]";
         switch (type.getPrimitive()) {
             case BOOL:
                 return "false";
