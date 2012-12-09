@@ -29,8 +29,10 @@ public class BlockCleaner implements CodeTransformer {
         for (String line: input.getLines()) {
             if (line.trim().equals(startTag)) {
                 inBlock = true;
+                buffer.add(line);
             }
             else if (line.trim().equals(endTag)) {
+                buffer.add(line);
                 if (totalLen > 0)
                     res.getLines().addAll(buffer);
                 inBlock = false;
