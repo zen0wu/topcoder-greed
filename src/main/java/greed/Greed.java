@@ -33,7 +33,7 @@ import static greed.util.Configuration.Keys;
 @SuppressWarnings("unused")
 public class Greed {
     public static final String APP_NAME = "Greed";
-    public static final String APP_VERSION = "v1.2";
+    public static final String APP_VERSION = "v1.3";
 
     private Language currentLang;
     private Problem currentProb;
