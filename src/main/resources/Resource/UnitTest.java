@@ -4,7 +4,7 @@ import org.junit.Test;
 public class ${ClassName}Test {
 ${<foreach Examples e}
 	@Test
-	public void Example${e.Num}()
+	public void example${e.Num}()
 	{
 ${<foreach e.Input in}
 ${<if !in.Param.Type.Array}
