@@ -8,7 +8,7 @@ import greed.code.CodeTransformer;
  */
 public class JavaPackageRemover implements CodeTransformer {
     @Override
-    public CodeByLine process(CodeByLine input) {
+    public CodeByLine transform(CodeByLine input) {
         CodeByLine code = new CodeByLine();
 
         // remove package declaration

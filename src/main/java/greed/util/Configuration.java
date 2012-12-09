@@ -105,9 +105,9 @@ public class Configuration {
         return conf.getInt(key);
     }
 
-    public static Config getConfig(String key) {
+    public static Config getLanguageConfig(Language lang) {
         lazyInit();
-        return conf.getConfig(key);
+        return conf.getConfig(Keys.getTemplateKey(lang));
     }
 
     public static Config getConfig() {

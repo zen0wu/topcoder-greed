@@ -6,6 +6,10 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import greed.code.CodeByLine;
 import greed.code.LanguageManager;
+import greed.code.transform.AppendingTransformer;
+import greed.code.transform.BlockCleaner;
+import greed.code.transform.BlockRemover;
+import greed.code.transform.ContinuousBlankLineRemover;
 import greed.model.*;
 import greed.template.TemplateEngine;
 import greed.ui.ConfigurationDialog;
@@ -73,35 +77,18 @@ public class Greed {
         String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
 
         // Create source file if not exists
-        Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(currentLang));
+        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
         String filePath = codeDir + "/" + relativePath + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
-
-        // Get begincut and endcut tag
-        String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
-        String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
 
         try {
             CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
 
-            if (LanguageManager.getInstance().getProcessor(currentLang) != null)
-                code = LanguageManager.getInstance().getProcessor(currentLang).process(code);
+            if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
+                code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);
 
-            // Cut the code
-            boolean cutting = false;
-            StringBuilder buffer = new StringBuilder();
-            for (String line : code.getLines()) {
-                if (line.equals(beginCut))
-                    cutting = true;
-                else if (line.equals(endCut))
-                    cutting = false;
-                else if (!cutting) {
-                    buffer.append(line);
-                    buffer.append("\n");
-                }
-            }
+            code = postprocessCode(code);
 
-            buffer.append(getSignature());
-            return buffer.toString();
+            return code.toString();
         } catch (IOException e) {
             talkingWindow.say("Errr... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
             talkingWindow.say("Now I'm giving out a empty string!");
@@ -159,7 +146,7 @@ public class Greed {
     }
 
     private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
-        Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(language));
+        Config langSpecConfig = Configuration.getLanguageConfig(language);
         TemplateEngine.switchLanguage(language);
 
         // Create model map
@@ -300,7 +287,9 @@ public class Greed {
 
     private String generateCodeByTmpl(String tmplPath, HashMap<String, Object> model) throws FileNotFoundException {
         InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
-        return TemplateEngine.render(codeTmpl, model);
+        CodeByLine code = CodeByLine.fromString(TemplateEngine.render(codeTmpl, model));
+        code = preprocessCode(code);
+        return code.toString();
     }
 
     private void writeFileWithBackup(String path, String content, boolean exists) {
@@ -315,5 +304,25 @@ public class Greed {
 
             FileSystem.writeFile(path, content);
         }
+    }
+
+    private CodeByLine preprocessCode(CodeByLine input) {
+        // Get begincut and endcut tag
+        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
+        String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
+        String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
+
+        input = new ContinuousBlankLineRemover().transform(input);
+        return new BlockCleaner(beginCut, endCut).transform(input);
+    }
+
+    private CodeByLine postprocessCode(CodeByLine input) {
+        // Get begincut and endcut tag
+        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
+        String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
+        String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
+
+        input = new BlockRemover(beginCut, endCut).transform(input);
+        return new AppendingTransformer(getSignature()).transform(input);
     }
 }

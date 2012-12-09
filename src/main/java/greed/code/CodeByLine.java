@@ -14,6 +14,10 @@ public class CodeByLine {
         lines = new ArrayList<String>();
     }
 
+    public CodeByLine(CodeByLine copy) {
+        lines = new ArrayList<String>(copy.lines);
+    }
+
     public List<String> getLines() {
         return lines;
     }
@@ -32,8 +36,11 @@ public class CodeByLine {
         return innerCreate(new BufferedReader(new InputStreamReader(stream)));
     }
 
-    public static CodeByLine fromString(String code) throws IOException {
-        return innerCreate(new BufferedReader(new StringReader(code)));
+    public static CodeByLine fromString(String code) {
+        String[] lines = code.split("\n");
+        CodeByLine res = new CodeByLine();
+        for (String line: lines) res.getLines().add(line);
+        return res;
     }
 
     private static CodeByLine innerCreate(BufferedReader reader) throws IOException {
