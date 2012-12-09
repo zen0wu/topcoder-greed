@@ -135,10 +135,10 @@ public class Greed {
 
         talkingWindow.say("Hmmm, it's a problem with " + currentProb.getScore() + " points. Good choice!");
 
-        generateCode();
+        generateCode(false);
     }
 
-    public void generateCode() {
+    public void generateCode(boolean forceOverride) {
         // Check whether workspace is set
         if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
             talkingWindow.setEnabled(false);
@@ -149,7 +149,7 @@ public class Greed {
 
         talkingWindow.setEnabled(true);
         try {
-            setProblem(currentContest, currentProb, currentLang);
+            setProblem(currentContest, currentProb, currentLang, forceOverride);
         } catch (Throwable e) {
             talkingWindow.say("Oops, something wrong! It says \"" + e.getMessage() + "\"");
             talkingWindow.say("Please see the logs for details.");
@@ -157,7 +157,7 @@ public class Greed {
         }
     }
 
-    private void setProblem(Contest contest, Problem problem, Language language) {
+    private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
         Config langSpecConfig = Configuration.getConfig(Keys.getTemplateKey(language));
         TemplateEngine.switchLanguage(language);
 
@@ -179,7 +179,7 @@ public class Greed {
             }
         }
 
-        boolean override = Configuration.getBoolean(Keys.OVERRIDE);
+        boolean override = Configuration.getBoolean(Keys.OVERRIDE) || forceOverride;
         String sourceFilePath;
         {
             String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);

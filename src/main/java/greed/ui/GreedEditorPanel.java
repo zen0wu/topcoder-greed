@@ -96,7 +96,7 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
             Configuration.reload();
         } else if (src == regenerateButton) {
             this.say("Regeneration!");
-            greed.generateCode();
+            greed.generateCode(true);
         }
     }
 
