@@ -43,6 +43,7 @@ public class Configuration {
         public static final String CODE_ROOT = "greed.codeRoot";
 
         public static final String FILE_NAME_PATTERN = "greed.templates.fileNamePattern";
+        public static final String UNIT_TEST_FILE_NAME_PATTERN = "greed.templates.unitTestFileNamePattern";
         public static final String PATH_PATTERN = "greed.templates.pathPattern";
 
         public static final String OVERRIDE = "greed.override";
@@ -52,6 +53,7 @@ public class Configuration {
 
         public static final String RECORD_RUNTIME = "greed.test.recordRuntime";
         public static final String RECORD_SCORE = "greed.test.recordScore";
+        public static final String UNIT_TEST = "greed.test.unitTest";
 
         public static String getTemplateKey(Language language) {
             return "greed.templates." + Language.getName(language);
@@ -59,6 +61,7 @@ public class Configuration {
 
         public static final String SUBKEY_TEMPLATE_FILE = "tmplFile";
         public static final String SUBKEY_TEST_TEMPLATE_FILE = "testTmplFile";
+        public static final String SUBKEY_UNIT_TEST_TEMPLATE_FILE = "unitTestTmplFile";
         public static final String SUBKEY_EXTENSION = "extension";
         public static final String SUBKEY_CUTBEGIN = "cutBegin";
         public static final String SUBKEY_CUTEND = "cutEnd";
@@ -75,6 +78,7 @@ public class Configuration {
         if (Debug.developmentMode) {
             conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
         } else {
+
             conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
         }
 
