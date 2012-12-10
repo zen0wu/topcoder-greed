@@ -32,9 +32,6 @@ import static greed.util.Configuration.Keys;
  */
 @SuppressWarnings("unused")
 public class Greed {
-    public static final String APP_NAME = "Greed";
-    public static final String APP_VERSION = "v1.3";
-
     private Language currentLang;
     private Problem currentProb;
     private Contest currentContest;
@@ -53,7 +50,7 @@ public class Greed {
     // Greed signature in the code
     public String getSignature() {
         return String.format("%s Powered by %s %s",
-                LanguageManager.getInstance().getTrait(currentLang).getCommentPrefix(), APP_NAME, APP_VERSION);
+                LanguageManager.getInstance().getTrait(currentLang).getCommentPrefix(), AppInfo.getAppName(), AppInfo.getVersion());
     }
 
     // Cache the editor
@@ -101,7 +98,7 @@ public class Greed {
         Log.i("Start using called");
         talkingWindow.clear();
         if (firstUsing) {
-            talkingWindow.say(String.format("Hi, this is %s.", APP_NAME));
+            talkingWindow.say(String.format("Hi, this is %s.", AppInfo.getAppName()));
         } else {
             talkingWindow.say(String.format("So we meet again :>"));
         }
