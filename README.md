@@ -14,6 +14,13 @@ Greed is good
 * Generate robust testing code, which BTW, is also _**customizable**_
 * Multi language support, including Java, C++, and C#(thanks to @jbransen). Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
 
+Downloads
+---------
+
+Due to the shutdown of Github's Downloads page, the package cannot be downloaded here.
+I'll find a way.
+For now, just go to the original [download](https://github.com/shivawu/topcoder-greed/downloads) page(will be removed several days ago).
+
 Release Note
 ------------
 #### 1.3
