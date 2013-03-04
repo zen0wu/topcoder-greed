@@ -1,5 +1,6 @@
 package greed.ui;
 
+import greed.AppInfo;
 import greed.Greed;
 import greed.util.Configuration;
 import greed.util.Log;
@@ -72,7 +73,7 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
         regenerateButton.addActionListener(this);
         this.add(regenerateButton, constraints);
 
-        TitledBorder border = new TitledBorder(new EmptyBorder(5, 3, 3, 1), Greed.APP_NAME + " " + Greed.APP_VERSION);
+        TitledBorder border = new TitledBorder(new EmptyBorder(5, 3, 3, 1), AppInfo.getAppName() + " " + AppInfo.getVersion());
         border.setTitleColor(Color.decode("0xccff99"));
         this.setBorder(border);
     }
