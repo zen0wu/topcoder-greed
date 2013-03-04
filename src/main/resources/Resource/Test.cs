@@ -17,13 +17,13 @@ ${<else}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
-				${e.Output.Param.Type.Primitive} expected = ${e.Output};
+				${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
-				${e.Output.Param.Type.Primitive}[] expected = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
+				${e.Output.Param.Type.Primitive}[] __expected = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
 					${v}${end}
 				};
 ${<end}
-				DoTest(${foreach e.Input in , }${in.Param.Name}${end}, expected, cs);
+				DoTest(${foreach e.Input in , }${in.Param.Name}${end}, __expected, cs);
 				break;
 			}
 ${<end}
@@ -31,19 +31,19 @@ ${<end}
 		}
 	}
 
-	static void DoTest(${Method.Params}, ${Method.ReturnType} expected, int caseNo) {
+	static void DoTest(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
 ${<if RecordRuntime}
 		DateTime startTime = DateTime.Now;
 ${<end}
 		Exception exception = null;
 		${ClassName} instance = new ${ClassName}();
-		${Method.ReturnType} result = ${Method.ReturnType;ZeroValue};
+		${Method.ReturnType} __result = ${Method.ReturnType;ZeroValue};
 		try {
-			result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+			__result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
 		}
 		catch (Exception e) { exception = e; }
 ${<if RecordRuntime}
-		TimeSpan elapsed = new TimeSpan(DateTime.Now.Ticks - startTime.Ticks);
+		TimeSpan __elapsed = new TimeSpan(DateTime.Now.Ticks - startTime.Ticks);
 ${<end}
 
 		nAll++;
@@ -53,14 +53,14 @@ ${<end}
 			Console.Error.WriteLine("RUNTIME ERROR!");
 			Console.Error.WriteLine(exception);
 		}
-		else if (${if Method.ReturnType.Array}Equals(result, expected)${else}${if Method.ReturnType.RealNumber}DoubleEquals(expected, result)${else}result == expected${end}${end}) {
-			Console.Error.WriteLine("PASSED! "${if RecordRuntime} + string.Format("({0:0.00} seconds)", elapsed.TotalSeconds)${end});
+		else if (${if Method.ReturnType.Array}Equals(__result, __expected)${else}${if Method.ReturnType.RealNumber}DoubleEquals(__expected, __result)${else}__result == __expected${end}${end}) {
+			Console.Error.WriteLine("PASSED! "${if RecordRuntime} + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds)${end});
 			nPassed++;
 		}
 		else {
-			Console.Error.WriteLine("FAILED! "${if RecordRuntime} + string.Format("({0:0.00} seconds)", elapsed.TotalSeconds)${end});
-			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(expected)${else}expected${end});
-			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(result)${else}result${end});
+			Console.Error.WriteLine("FAILED! "${if RecordRuntime} + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds)${end});
+			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}__expected${end});
+			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}__result${end});
 		}
 	}
 

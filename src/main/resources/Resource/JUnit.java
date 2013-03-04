@@ -23,15 +23,15 @@ ${<else}
 		};
 ${<end}
 	
-		${Method.ReturnType} result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
+		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
 		
 ${<if Method.ReturnType.RealNumber}
-		Assert.assertEquals(expected, result, 1e-9);
+		Assert.assertEquals(expected, __result, 1e-9);
 ${<else}
 ${<if ReturnsArray}
-		Assert.assertArrayEquals(expected, result);
+		Assert.assertArrayEquals(expected, __result);
 ${<else}
-		Assert.assertEquals(expected, result);
+		Assert.assertEquals(expected, __result);
 ${<end}
 ${<end}
 	}

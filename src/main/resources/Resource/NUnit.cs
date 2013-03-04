@@ -25,14 +25,14 @@ ${<else}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
-		${e.Output.Param.Type.Primitive} expected = ${e.Output};
+		${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
-		${e.Output.Param.Type.Primitive}[] expected = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
+		${e.Output.Param.Type.Primitive}[] __expected = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
 			${v}${end}
 		};
 ${<end}
-		${Method.ReturnType} result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
-		Assert.AreEqual(result, expected);
+		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
+		Assert.AreEqual(__result, __expected);
 	}
 
 ${<end}

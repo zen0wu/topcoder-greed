@@ -30,40 +30,40 @@ bool double_vector_equal (const vector<double> &expected, const vector<double> &
 ${<end}
 ${<end}
 
-bool do_test(${Method.Params}, ${Method.ReturnType} expected, int caseNo) {
+bool do_test(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
     cout << "  Testcase #" << caseNo << " ... ";
 
 ${<if RecordRuntime}
     time_t startClock = clock();
 ${<end}
     ${ClassName} instance;
-    ${Method.ReturnType} result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+    ${Method.ReturnType} __result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
 ${<if RecordRuntime}
     double elapsed = (double)(clock() - startClock) / CLOCKS_PER_SEC;
 ${<end}
 
 ${<if Method.ReturnType.RealNumber}
 ${<if Method.ReturnType.Array}
-    if (double_vector_equal(expected, result)) {
+    if (double_vector_equal(__expected, __result)) {
 ${<else}
-    if (double_equal(expected, result)) {
+    if (double_equal(__expected, __result)) {
 ${<end}
 ${<else}
-    if (result == expected) {
+    if (__result == __expected) {
 ${<end}
         cout << "PASSED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
         return true;
     }
     else {
         cout << "FAILED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
-        cout << "           Expected: " << pretty_print(expected) << endl;
-        cout << "           Received: " << pretty_print(result) << endl;
+        cout << "           Expected: " << pretty_print(__expected) << endl;
+        cout << "           Received: " << pretty_print(__result) << endl;
         return false;
     }
 }
 
-bool run_testcase(int no) {
-    switch (no) {
+bool run_testcase(int __no) {
+    switch (__no) {
 ${<foreach Examples e}
         case ${e.Num}: {
 ${<foreach e.Input in}
@@ -76,13 +76,13 @@ ${<else}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
-            ${e.Output.Param.Type.Primitive} expected = ${e.Output};
+            ${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
-            ${e.Output.Param.Type.Primitive} expected[] = {${foreach e.Output.ValueList v ,}
+            ${e.Output.Param.Type.Primitive} __expected[] = {${foreach e.Output.ValueList v ,}
                 ${v}${end}
             };
 ${<end}
-            return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(expected)${else}expected${end}, no);
+            return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(__expected)${else}__expected${end}, no);
         }
 ${<end}
 

@@ -17,13 +17,13 @@ ${<else}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
-				${e.Output.Param.Type.Primitive} expected = ${e.Output};
+				${e.Output.Param.Type.Primitive} __excepted = ${e.Output};
 ${<else}
-				${e.Output.Param.Type.Primitive} expected[] = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
+				${e.Output.Param.Type.Primitive} __excepted[] = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
 					${v}${end}
 				};
 ${<end}
-				doTest(${foreach e.Input in , }${in.Param.Name}${end}, expected, cs);
+				doTest(${foreach e.Input in , }${in.Param.Name}${end}, __excepted, cs);
 				break;
 			}
 ${<end}
@@ -31,15 +31,15 @@ ${<end}
 		}
 	}
 
-	static void doTest(${Method.Params}, ${Method.ReturnType} expected, int caseNo) {
+	static void doTest(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
 ${<if RecordRuntime}
 		long startTime = System.currentTimeMillis();
 ${<end}
 		Throwable exception = null;
 		${ClassName} instance = new ${ClassName}();
-		${Method.ReturnType} result = ${Method.ReturnType;ZeroValue};
+		${Method.ReturnType} __result = ${Method.ReturnType;ZeroValue};
 		try {
-			result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+			__result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
 		}
 		catch (Throwable e) { exception = e; }
 ${<if RecordRuntime}
@@ -53,14 +53,14 @@ ${<end}
 			System.err.println("RUNTIME ERROR!");
 			exception.printStackTrace();
 		}
-		else if (${if Method.ReturnType.Array}equals(result, expected)${else}${if Method.ReturnType.String}expected.equals(result)${else}${if Method.ReturnType.RealNumber}doubleEquals(expected, result)${else}result == expected${end}${end}${end}) {
+		else if (${if Method.ReturnType.Array}equals(__result, __expected)${else}${if Method.ReturnType.String}__expected.equals(__result)${else}${if Method.ReturnType.RealNumber}doubleEquals(__expected, __result)${else}__result == __expected${end}${end}${end}) {
 			System.err.println("PASSED! "${if RecordRuntime} + String.format("(%.2f seconds)", elapsed)${end});
 			nPassed++;
 		}
 		else {
 			System.err.println("FAILED! "${if RecordRuntime} + String.format("(%.2f seconds)", elapsed)${end});
-			System.err.println("           Expected: " + ${if Method.ReturnType.Array}toString(expected)${else}expected${end});
-			System.err.println("           Received: " + ${if Method.ReturnType.Array}toString(result)${else}result${end});
+			System.err.println("           Expected: " + ${if Method.ReturnType.Array}toString(__expected)${else}__expected${end});
+			System.err.println("           Received: " + ${if Method.ReturnType.Array}toString(__result)${else}__result${end});
 		}
 	}
 
