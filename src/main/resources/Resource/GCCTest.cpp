@@ -82,7 +82,7 @@ ${<else}
                 ${v}${end}
             };
 ${<end}
-            return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(__expected)${else}__expected${end}, no);
+            return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(__expected)${else}__expected${end}, __no);
         }
 ${<end}
 

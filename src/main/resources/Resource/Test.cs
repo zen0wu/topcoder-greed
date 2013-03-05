@@ -1,8 +1,8 @@
-	static void RunTestcase(int cs) {
-		switch (cs) {
+	static void RunTestcase(int __case) {
+		switch (__case) {
 			// Your custom testcase goes here
 			case -1:
-				//DoTest(${foreach Method.Params p , }${p.Name}${end}, expected, cs);
+				//DoTest(${foreach Method.Params p , }${p.Name}${end}, expected, __case);
 				break;
 
 ${<foreach Examples e}
@@ -23,7 +23,7 @@ ${<else}
 					${v}${end}
 				};
 ${<end}
-				DoTest(${foreach e.Input in , }${in.Param.Name}${end}, __expected, cs);
+				DoTest(${foreach e.Input in , }${in.Param.Name}${end}, __expected, __case);
 				break;
 			}
 ${<end}

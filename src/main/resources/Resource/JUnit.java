@@ -16,9 +16,9 @@ ${<else}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
-		${e.Output.Param.Type.Primitive} expected = ${e.Output};
+		${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
-		${e.Output.Param.Type.Primitive} expected[] = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
+		${e.Output.Param.Type.Primitive} __expected[] = new ${e.Output.Param.Type} {${foreach e.Output.ValueList v ,}
 			${v}${end}
 		};
 ${<end}
@@ -26,12 +26,12 @@ ${<end}
 		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
 		
 ${<if Method.ReturnType.RealNumber}
-		Assert.assertEquals(expected, __result, 1e-9);
+		Assert.assertEquals(__expected, __result, 1e-9);
 ${<else}
 ${<if ReturnsArray}
-		Assert.assertArrayEquals(expected, __result);
+		Assert.assertArrayEquals(__expected, __result);
 ${<else}
-		Assert.assertEquals(expected, __result);
+		Assert.assertEquals(__expected, __result);
 ${<end}
 ${<end}
 	}
