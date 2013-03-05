@@ -17,12 +17,15 @@ Greed is good
 Downloads
 ---------
 
-Due to the shutdown of Github's Downloads page, the package cannot be downloaded here.
-I'll find a way.
-For now, just go to the original [download](https://github.com/shivawu/topcoder-greed/downloads) page(will be removed several days ago).
+The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/greed-1.3a.jar)!
+
+For previous versions, go to Github's original [download page](https://github.com/shivawu/topcoder-greed/downloads).
 
 Release Note
 ------------
+#### 1.3a
+* Major template bug fix , thanks to @ashashwat
+
 #### 1.3
 
 * unit test code generation for C#(NUnit) and Java(JUnit), thanks to @tomtung
