@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+DIR=`dirname $(readlink -f $0)`
 
 DEVELOP_MODE=true
 
@@ -8,4 +10,4 @@ echo "development mode: $DEVELOP_MODE"
 echo "current path: `pwd`"
 
 #java -DdevelopmentMode=$DEVELOP_MODE -DprojectDir=`pwd` -cp lib/ContestApplet.jar com.topcoder.client.contestApplet.runner.generic www.topcoder.com 5001 http://tunnel1.topcoder.com/tunne?dummy TopCoder
-javaws -J-DdevelopmentMode=$DEVELOP_MODE -J-DprojectDir=`pwd` ContestAppletProd.jnlp
+javaws -J-DdevelopmentMode=$DEVELOP_MODE -J-DprojectDir="$DIR/.." $DIR/ContestAppletProd.jnlp
