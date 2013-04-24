@@ -36,11 +36,12 @@ bool do_test(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
 ${<if RecordRuntime}
     time_t startClock = clock();
 ${<end}
-    ${ClassName} instance;
-    ${Method.ReturnType} __result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+    ${ClassName} *instance = new ${ClassName}();
+    ${Method.ReturnType} __result = instance->${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
 ${<if RecordRuntime}
     double elapsed = (double)(clock() - startClock) / CLOCKS_PER_SEC;
 ${<end}
+    delete instance;
 
 ${<if Method.ReturnType.RealNumber}
 ${<if Method.ReturnType.Array}
