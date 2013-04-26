@@ -17,7 +17,7 @@ Greed is good
 Downloads
 ---------
 
-The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/greed-1.3a.jar)!
+The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.4.jar)!
 
 For previous versions, go to Github's original [download page](https://github.com/shivawu/topcoder-greed/downloads).
 
