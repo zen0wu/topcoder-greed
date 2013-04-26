@@ -23,8 +23,9 @@ For previous versions, go to Github's original [download page](https://github.co
 
 Release Note
 ------------
-#### 1.3a
+#### 1.4
 * Major template bug fix , thanks to @ashashwat
+* Template bug when allocating large space, thanks to @wookayin
 
 #### 1.3
 
