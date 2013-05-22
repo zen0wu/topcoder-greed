@@ -12,7 +12,7 @@
    </security>
    <resources> 
       <j2se version="1.4+" max-heap-size="128m"/> 
-      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-client-7.0.3.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-client-7.0.5.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/basic_type_serialization-1.0.1.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/client-socket-SNAPSHOT.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/concurrent-SNAPSHOT.jar" />

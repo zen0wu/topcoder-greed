@@ -78,7 +78,6 @@ public class Configuration {
         if (Debug.developmentMode) {
             conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
         } else {
-
             conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
         }
 

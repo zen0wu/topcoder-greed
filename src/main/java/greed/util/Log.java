@@ -39,7 +39,7 @@ public class Log {
             String logFolder = Configuration.getString(Configuration.Keys.LOG_FOLDER);
             FileSystem.createFolder(logFolder);
 
-            int month = GregorianCalendar.getInstance().get(Calendar.MONTH);
+            int month = GregorianCalendar.getInstance().get(Calendar.MONTH) + 1;
             int day = GregorianCalendar.getInstance().get(Calendar.DAY_OF_MONTH);
             try {
                 logger = FileSystem.createWriter(logFolder + "/greed-" + month + "-" + day + ".log", true);

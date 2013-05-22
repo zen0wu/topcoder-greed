@@ -1,9 +1,8 @@
 package greed;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import greed.util.Debug;
+
+import java.io.*;
 
 /**
  * @author WuCY
@@ -19,14 +18,29 @@ public class AppInfo {
     public static String getVersion() {
         if (VERSION == null) {
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("version")));
-                VERSION = reader.readLine().trim();
-                reader.close();
-            }
-            catch (IOException e) {
-                VERSION = "UNKNOWN";
-            }
+                VERSION = Debug.developmentMode
+                        ? readVersionFromStream(new FileInputStream("version"))
+                        : readVersionFromStream(AppInfo.class.getResourceAsStream("/version"));
+            } catch (FileNotFoundException e) {}
         }
         return VERSION;
+    }
+
+    private static String readVersionFromStream(InputStream is) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(is));
+            return reader.readLine().trim();
+        }
+        catch (IOException e) {}
+        finally {
+            if (reader != null)
+                try { reader.close(); } catch (IOException e) {}
+        }
+        return "UNKNOWN";
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getVersion());
     }
 }
