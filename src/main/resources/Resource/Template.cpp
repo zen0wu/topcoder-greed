@@ -10,11 +10,7 @@
 #include <sstream>
 #include <typeinfo>
 
-#ifdef DEBUG
-    #define debug(args...) {dbg,args;std::cout<<std::endl;}
-#else
-    #define debug(args...) // Just strip off all debug tokens
-#endif
+#define debug(args...) // Just strip off all debug tokens
 
 using namespace std;
 
