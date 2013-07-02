@@ -1,18 +1,24 @@
 package greed.code;
 
-import com.floreysoft.jmte.Engine;
-import com.floreysoft.jmte.NamedRenderer;
-import com.floreysoft.jmte.RenderFormatInfo;
-import com.floreysoft.jmte.Renderer;
 import greed.code.lang.CSharpLanguage;
 import greed.code.lang.CppLanguage;
 import greed.code.lang.JavaLanguage;
+import greed.code.lang.PythonLanguage;
 import greed.code.transform.JavaPackageRemover;
-import greed.model.*;
+import greed.model.Language;
+import greed.model.Param;
+import greed.model.ParamValue;
+import greed.model.Primitive;
+import greed.model.Type;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import com.floreysoft.jmte.Engine;
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
+import com.floreysoft.jmte.Renderer;
 
 /**
  * Greed is good! Cheers!
@@ -33,10 +39,12 @@ public class LanguageManager {
         traitMap.put(Language.CPP, CppLanguage.instance);
         traitMap.put(Language.JAVA, JavaLanguage.instance);
         traitMap.put(Language.CSHARP, CSharpLanguage.instance);
+        traitMap.put(Language.PYTHON, PythonLanguage.instance);
 
         rendererMap.put(Language.CPP, CppLanguage.instance);
         rendererMap.put(Language.JAVA, JavaLanguage.instance);
         rendererMap.put(Language.CSHARP, CSharpLanguage.instance);
+        rendererMap.put(Language.PYTHON, PythonLanguage.instance);
 
         postTransformerMap.put(Language.JAVA, new JavaPackageRemover());
     }
