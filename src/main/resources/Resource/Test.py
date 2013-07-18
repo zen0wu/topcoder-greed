@@ -1,6 +1,22 @@
-# TEST CODE FOR PYTHON
+# TEST CODE FOR PYTHON {{{
 import sys
 import time
+
+def tc_equal(expected, received):
+    try:
+        _t = type(expected)
+        received = _t(received)
+        if _t == list or _t == tuple:
+            if len(expected) != len(received): return False
+            return all(tc_equal(e, r) for (e, r) in zip(expected, received))
+        elif _t == float:
+            eps = 1e-9
+            if abs(expected - received) < eps: return True
+            if abs(received) > abs(expected) * (1.0 - eps) and abs(received) < abs(expected) * (1.0 + eps): return True
+        else:
+            return expected == received
+    except:
+        return False
 
 def do_test(${Method.Params}, __expected, caseNo):
     sys.stdout.write("  Testcase #%d ... " % caseNo)
@@ -21,10 +37,10 @@ ${<end}
 
     if exception is not None:
         sys.stdout.write("RUNTIME ERROR: \\n")
-        sys.stdout.write(exception + "\n")
+        sys.stdout.write(exception + "\\n")
         return 0
 
-    if __result == __expected:
+    if tc_equal(__result, __expected):
         sys.stdout.write("PASSED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
         return 1
     else:
@@ -41,7 +57,7 @@ ${<if !in.Param.Type.Array}
         ${in.Param.Name} = ${in}
 ${<else}
         ${in.Param.Name} = (${foreach in.ValueList v ,}
-            ${v}${end},
+            ${v}${end}
         )
 ${<end}
 ${<end}
@@ -49,7 +65,7 @@ ${<if !e.Output.Param.Type.Array}
         __expected = ${e.Output}
 ${<else}
         __expected = (${foreach e.Output.ValueList v ,}
-            ${v}${end},
+            ${v}${end}
         )
 ${<end}
 
@@ -87,4 +103,5 @@ ${<end}
 if __name__ == '__main__':
     run_tests()
 
+# }}}
 
