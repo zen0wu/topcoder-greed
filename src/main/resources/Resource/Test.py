@@ -2,6 +2,22 @@
 import sys
 import time
 
+def tc_equal(expected, received):
+    try:
+        _t = type(expected)
+        received = _t(received)
+        if _t == list or _t == tuple:
+            if len(expected) != len(received): return False
+            return all(tc_equal(e, r) for (e, r) in zip(expected, received))
+        elif _t == float:
+            eps = 1e-9
+            if abs(expected - received) < eps: return True
+            if abs(received) > abs(expected) * (1.0 - eps) and abs(received) < abs(expected) * (1.0 + eps): return True
+        else:
+            return expected == received
+    except:
+        return False
+
 def do_test(${Method.Params}, __expected, caseNo):
     sys.stdout.write("  Testcase #%d ... " % caseNo)
 
@@ -24,7 +40,7 @@ ${<end}
         sys.stdout.write(exception + "\n")
         return 0
 
-    if __result == __expected:
+    if tc_equal(__result, __expected):
         sys.stdout.write("PASSED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
         return 1
     else:
