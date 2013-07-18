@@ -1,4 +1,4 @@
-# TEST CODE FOR PYTHON
+# TEST CODE FOR PYTHON {{{
 import sys
 import time
 
@@ -37,7 +37,7 @@ ${<end}
 
     if exception is not None:
         sys.stdout.write("RUNTIME ERROR: \\n")
-        sys.stdout.write(exception + "\n")
+        sys.stdout.write(exception + "\\n")
         return 0
 
     if tc_equal(__result, __expected):
@@ -57,7 +57,7 @@ ${<if !in.Param.Type.Array}
         ${in.Param.Name} = ${in}
 ${<else}
         ${in.Param.Name} = (${foreach in.ValueList v ,}
-            ${v}${end},
+            ${v}${end}
         )
 ${<end}
 ${<end}
@@ -65,7 +65,7 @@ ${<if !e.Output.Param.Type.Array}
         __expected = ${e.Output}
 ${<else}
         __expected = (${foreach e.Output.ValueList v ,}
-            ${v}${end},
+            ${v}${end}
         )
 ${<end}
 
@@ -103,4 +103,5 @@ ${<end}
 if __name__ == '__main__':
     run_tests()
 
+# }}}
 

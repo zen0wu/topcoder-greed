@@ -101,12 +101,12 @@ public class PythonTemplateTest {
         assertThat(testCode, containsString("arg1 = 15"));
         assertThat(testCode, containsString("arg2 = (\n" +
             "            919, 111, 234,\n" +
-            "            234, 567, 555,\n" +
+            "            234, 567, 555\n" +
             "        )"
         ));
         assertThat(testCode, containsString("__expected = (\n" +
             "            \"abcd\", \"efg\",\n" +
-            "            \"123\", \"456\",\n" +
+            "            \"123\", \"456\"\n" +
             "        )"
         ));
         assertThat(testCode, containsString("return do_test(arg1, arg2, arg3, __expected,"));
