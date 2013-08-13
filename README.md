@@ -12,12 +12,12 @@ Greed is good
 * Manage your code, in different _**folders**_, based on the contest and problem you're in
 * Generate code based on a fully-customizable _**template**_
 * Generate robust testing code, which BTW, is also _**customizable**_
-* Multi language support, including Java, C++, and C#(thanks to @jbransen). Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
+* Multi language support, including Java, C++, C#(thanks to @jbransen) adn Python(thanks to @@wookayin. Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
 
 Downloads
 ---------
 
-The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.4.jar)!
+The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.5.jar)!
 
 For previous versions, go to Github's original [download page](https://github.com/shivawu/topcoder-greed/downloads).
 
@@ -120,7 +120,7 @@ There're several built-in test templates.
 | `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
 | `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
 | `res:/Test.cs`     | C#       | Mono on Mac OS X | Same as Java vesrion |
-
+| `res:/Test.py`     | Python   | Python 2.7 on Windows7| |
 If you're not satisfied with the default template, consider DIY your own!
 See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
 
