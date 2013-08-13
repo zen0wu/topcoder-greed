@@ -12,7 +12,7 @@ Greed is good
 * Manage your code, in different _**folders**_, based on the contest and problem you're in
 * Generate code based on a fully-customizable _**template**_
 * Generate robust testing code, which BTW, is also _**customizable**_
-* Multi language support, including Java, C++, C#(thanks to @jbransen) adn Python(thanks to @@wookayin. Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
+* Multi language support, including Java, C++, C#(thanks to @jbransen) adn Python(thanks to @@wookayin). Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
 
 Downloads
 ---------
