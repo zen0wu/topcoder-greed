@@ -23,6 +23,9 @@ For previous versions, go to Github's original [download page](https://github.co
 
 Release Note
 ------------
+#### 1.5
+* Python support. Thanks to @wookayin, now Greed is one of the first plugins who support Python!
+
 #### 1.4
 * Major template bug fix , thanks to @ashashwat
 * Template bug when allocating large space, thanks to @wookayin
