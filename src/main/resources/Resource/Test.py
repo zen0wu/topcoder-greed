@@ -40,7 +40,7 @@ ${<end}
         sys.stdout.write(exception + "\\n")
         return 0
 
-    if tc_equal(__result, __expected):
+    if tc_equal(__expected, __result):
         sys.stdout.write("PASSED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
         return 1
     else:
