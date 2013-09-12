@@ -5,6 +5,8 @@ import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;
 import greed.model.Type;
+import greed.util.Configuration;
+import greed.model.Language;
 
 /**
  * Greed is good! Cheers!
@@ -26,7 +28,7 @@ public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
             case BOOL:
                 return "bool";
             case LONG:
-                return "long long";
+                return Configuration.getLanguageConfig(Language.CPP).getString(Configuration.Keys.SUBKEY_LONG_LONG_NAME);
         }
         return "";
     }
