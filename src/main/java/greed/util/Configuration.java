@@ -65,6 +65,7 @@ public class Configuration {
         public static final String SUBKEY_EXTENSION = "extension";
         public static final String SUBKEY_CUTBEGIN = "cutBegin";
         public static final String SUBKEY_CUTEND = "cutEnd";
+        public static final String SUBKEY_LONG_TYPE_NAME = "longTypeName";
     }
 
     private static final String DEFAULT_USER_CONFIG_FILENAME = "greed.conf";
