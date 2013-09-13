@@ -28,7 +28,7 @@ public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
             case BOOL:
                 return "bool";
             case LONG:
-                return Configuration.getLanguageConfig(Language.CPP).getString(Configuration.Keys.SUBKEY_LONG_LONG_NAME);
+                return Configuration.getLanguageConfig(Language.CPP).getString(Configuration.Keys.SUBKEY_LONG_TYPE_NAME);
         }
         return "";
     }
