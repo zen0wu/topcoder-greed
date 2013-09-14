@@ -1,3 +1,4 @@
+# IDEA
 out
 target
 build
@@ -5,3 +6,10 @@ tmp
 .idea
 *.iml
 .gradle
+
+# Eclipse
+.settings
+.classpath
+.project
+target/
+bin/
