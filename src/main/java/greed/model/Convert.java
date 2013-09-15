@@ -12,14 +12,21 @@ public class Convert {
     public static Contest convertContest(com.topcoder.client.contestant.ProblemComponentModel problem) {
         String fullName = problem.getProblem().getRound().getContestName();
         boolean hasDivision = fullName.contains("DIV");
-        if (!hasDivision)
-            return new Contest(fullName, null);
-        else {
+        Integer div = null;
+        String contestName;
+        if (! hasDivision) {
+            contestName = fullName;
+        } else {
             int sp = fullName.indexOf("DIV");
-            String contestName = fullName.substring(0, sp - 1);
+            contestName = fullName.substring(0, sp - 1);
             String divNum = fullName.substring(sp + 4);
-            return new Contest(contestName, Integer.parseInt(divNum));
+            div = Integer.parseInt(divNum);
         }
+        if (contestName.contains("/") ) {
+            contestName = contestName.replace("/", "-");
+        }
+        
+        return new Contest(contestName, div);
     }
 
     public static Language convertLanguage(com.topcoder.shared.language.Language lang) {
