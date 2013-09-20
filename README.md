@@ -115,12 +115,13 @@ You can do __meta programming__ with your testing code template.
 
 There're several built-in test templates.
 
-| Resource path      | Language | Tested on | Comment |
-| ------------------ | :------: | --------- | ------- |
-| `res:/GCCTest.cpp` |  C++     | GCC on Mac OS X & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
-| `res:/Test.java`   | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
-| `res:/Test.cs`     | C#       | Mono on Mac OS X | Same as Java vesrion |
-| `res:/Test.py`     | Python   | Python 2.7 on Windows7| |
+| Resource path        | Language | Tested on | Comment |
+| -------------------- | :------: | --------- | ------- |
+| `res:/GCCTest.cpp`   | C++      | GCC on Mac OS X, Linux & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
+| `res:/GCC11Test.cpp` | C++      | GCC on Linux with -std=c++0x compiler argument  | Mostly the same as GCCTest.cpp. Uses the initializer lists c++11 feature to setup vector arguments/return values which results in cleaner code |
+| `res:/Test.java`     | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
+| `res:/Test.cs`       | C#       | Mono on Mac OS X | Same as Java vesrion |
+| `res:/Test.py`       | Python   | Python 2.7 on Windows7| |
 If you're not satisfied with the default template, consider DIY your own!
 See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
 
