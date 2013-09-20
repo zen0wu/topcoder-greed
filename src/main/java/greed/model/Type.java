@@ -31,4 +31,9 @@ public class Type {
     public boolean isRealNumber() {
         return this.primitive == Primitive.DOUBLE;
     }
+
+    public boolean isLongInteger() {
+        return this.primitive == Primitive.LONG;
+    }
+
 }
