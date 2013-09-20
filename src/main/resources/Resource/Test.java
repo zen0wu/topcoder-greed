@@ -32,6 +32,17 @@ ${<end}
 	}
 
 	static void doTest(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
+${<foreach Method.Params p}
+${<if p.Type.String}
+${<if p.Type.Array}
+		for (int i = 0; i < ${p.Name}.length; i++) {
+			${p.Name}[i] = new String(${p.Name}[i]);
+		}
+${<else}
+        ${p.Name} = new String(${p.Name});
+${<end}
+${<end}
+${<end}
 ${<if RecordRuntime}
 		long startTime = System.currentTimeMillis();
 ${<end}
