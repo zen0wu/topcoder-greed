@@ -11,7 +11,7 @@ def tc_equal(expected, received):
         elif _t == float:
             eps = 1e-9
             d = abs(received - expected)
-            return not math.isnan(received) and not isnan(expected) and d <= eps * max(1.0, abs(expected))
+            return not math.isnan(received) and not math.isnan(expected) and d <= eps * max(1.0, abs(expected))
         else:
             return expected == received
     except:
