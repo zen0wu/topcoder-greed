@@ -69,7 +69,7 @@ ${<end}
 
 ${<if Method.ReturnType.RealNumber}
 	static boolean doubleEquals(double a, double b) {
-		return Math.abs(a - b) < 1e-9 || Math.abs(a) > Math.abs(b) * (1.0 - 1e-9) && Math.abs(a) < Math.abs(b) * (1.0 + 1e-9);
+	    return b==b && Math.abs(b - a) <= 1e-9 * Math.max(1.0, Math.abs(a));
 	}
 
 ${<end}
