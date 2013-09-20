@@ -17,7 +17,7 @@ template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
 ${<end}
 
 ${<if Method.ReturnType.RealNumber}
-bool double_equal(const double &expected, const double &received) { return (received==received) && fabs(received - expected) <= 1e-9 * max(1.0, fabs(expected)); }
+bool double_equal(const double &a, const double &b) { return !isnan(b) && !isnan(a) && fabs(b - a) <= 1e-9 * max(1.0, fabs(b - a) ); }
 
 ${<if Method.ReturnType.Array}
 bool double_vector_equal (const vector<double> &expected, const vector<double> &received) {
