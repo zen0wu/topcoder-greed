@@ -52,9 +52,10 @@ public abstract class CStyleLanguage implements LanguageTrait, LanguageRenderer 
             Param paramWithPrim = new Param(param.getName(), new Type(param.getType().getPrimitive(), 0));
             for (int i = 0; i < valueList.length; i++) {
                 if (i > 0) buf.append(", ");
-                buf.append(renderParamValue(new ParamValue(paramWithPrim, valueList[i].trim())));
+                valueList[i] = renderParamValue(new ParamValue(paramWithPrim, valueList[i].trim())); 
+                buf.append(valueList[i]);
             }
-            return new ParamValue(param, buf.toString());
+            return new ParamValue(param, buf.toString(), valueList);
         }
     }
 }

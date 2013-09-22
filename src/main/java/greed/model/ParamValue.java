@@ -16,7 +16,20 @@ public class ParamValue {
 
     public ParamValue(Param param, String[] valueList) {
         this.param = param;
-        this.value = "";
+        StringBuilder buf = new StringBuilder();
+        String sep = "";
+        for (String s : valueList) {
+            buf.append(sep);
+            sep = ", ";
+            buf.append(s);
+        }
+        this.value = buf.toString();
+        this.valueList = valueList;
+    }
+    
+    public ParamValue(Param param, String value, String[] valueList) {
+        this.param = param;
+        this.value = value;
         this.valueList = valueList;
     }
 
