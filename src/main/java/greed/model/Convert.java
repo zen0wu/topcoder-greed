@@ -42,7 +42,7 @@ public class Convert {
     public static Problem convertProblem(com.topcoder.client.contestant.ProblemComponentModel problem, Language language) {
         Param[] params = new Param[problem.getParamNames().length];
         for (int i = 0; i < params.length; ++i)
-            params[i] = new Param(problem.getParamNames()[i], convertType(problem.getParamTypes()[i]));
+            params[i] = new Param(problem.getParamNames()[i], convertType(problem.getParamTypes()[i]), i);
         Method method = new Method(problem.getMethodName(), convertType(problem.getReturnType()), params);
 
         LanguageTrait trait = LanguageManager.getInstance().getTrait(language);
@@ -52,7 +52,7 @@ public class Convert {
             ParamValue[] input = new ParamValue[tc.getInput().length];
             for (int j = 0; j < input.length; j++)
                 input[j] = trait.parseValue(tc.getInput()[j], params[j]);
-            ParamValue output = trait.parseValue(tc.getOutput(), new Param("expected", method.getReturnType()));
+            ParamValue output = trait.parseValue(tc.getOutput(), new Param("expected", method.getReturnType(), params.length));
             cases[i] = new Testcase(i, input, output);
         }
 
