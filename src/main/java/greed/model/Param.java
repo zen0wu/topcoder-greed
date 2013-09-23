@@ -6,12 +6,12 @@ package greed.model;
 public class Param {
     private String name;
     private Type type;
-    private int num;
+    private int index;
 
-    public Param(String name, Type type, int num) {
+    public Param(String name, Type type, int index) {
         this.name = name;
         this.type = type;
-        this.num = num;
+        this.index = index;
     }
 
     public String getName() {
@@ -22,7 +22,7 @@ public class Param {
         return type;
     }
     
-    public int getNum() {
-        return num;
+    public int getIndex() {
+        return index;
     }
 }
