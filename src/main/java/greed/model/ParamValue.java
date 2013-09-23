@@ -27,12 +27,6 @@ public class ParamValue {
         this.valueList = valueList;
     }
     
-    public ParamValue(Param param, String value, String[] valueList) {
-        this.param = param;
-        this.value = value;
-        this.valueList = valueList;
-    }
-
     public Param getParam() {
         return param;
     }
