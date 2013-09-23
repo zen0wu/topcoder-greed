@@ -17,6 +17,14 @@ def tc_equal(expected, received):
     except:
         return False
 
+def pretty_str(x):
+    if type(x) == str:
+        return '"%s"' % x
+    elif type(x) == tuple:
+        return '(%s)' % (','.join( (pretty_str(y) for y in x) ) )
+    else:
+        return str(x)
+        
 def do_test(${Method.Params}, __expected, caseNo):
     sys.stdout.write("  Testcase #%d ... " % caseNo)
 
@@ -44,8 +52,8 @@ ${<end}
         return 1
     else:
         sys.stdout.write("FAILED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
-        sys.stdout.write("           Expected: " + str(__expected) + "\\n")
-        sys.stdout.write("           Received: " + str(__result) + "\\n")
+        sys.stdout.write("           Expected: " + pretty_str(__expected) + "\\n")
+        sys.stdout.write("           Received: " + pretty_str(__result) + "\\n")
         return 0
 
 def run_testcase(__no):
