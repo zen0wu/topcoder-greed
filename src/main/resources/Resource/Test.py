@@ -1,6 +1,5 @@
 # TEST CODE FOR PYTHON {{{
-import sys
-import time
+import sys, time , math
 
 def tc_equal(expected, received):
     try:
@@ -11,8 +10,8 @@ def tc_equal(expected, received):
             return all(tc_equal(e, r) for (e, r) in zip(expected, received))
         elif _t == float:
             eps = 1e-9
-            if abs(expected - received) < eps: return True
-            if abs(received) > abs(expected) * (1.0 - eps) and abs(received) < abs(expected) * (1.0 + eps): return True
+            d = abs(received - expected)
+            return not math.isnan(received) and not math.isnan(expected) and d <= eps * max(1.0, abs(expected))
         else:
             return expected == received
     except:
