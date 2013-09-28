@@ -61,9 +61,9 @@ public class PythonTemplateTest {
         Type double0 = new Type(Primitive.DOUBLE, 0);
         Type double1 = new Type(Primitive.DOUBLE, 1);
 
-        Param param1 = new Param("arg1", int0);
-        Param param2 = new Param("arg2", long1);
-        Param param3 = new Param("arg3", str1);
+        Param param1 = new Param("arg1", int0, 0);
+        Param param2 = new Param("arg2", long1, 1);
+        Param param3 = new Param("arg3", str1, 2);
 
         Type retType = str1;    // string list
         Method method = new Method("TestMethod", retType, new Param[] { param1, param2, param3} );
@@ -75,7 +75,7 @@ public class PythonTemplateTest {
                 new ParamValue(param1, "15"),
                 new ParamValue(param2, valueList0),
                 new ParamValue(param3, valueList1)
-            }, new ParamValue(new Param("return", retType), valueList2));
+            }, new ParamValue(new Param("return", retType, 0), valueList2));
 
         Problem problem = new Problem("Test", 250, "TestClass", method, new Testcase[]{case0});
 
