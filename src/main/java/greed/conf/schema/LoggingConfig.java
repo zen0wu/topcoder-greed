@@ -1,4 +1,4 @@
-package greed.conf;
+package greed.conf.schema;
 
 import greed.conf.meta.Required;
 
