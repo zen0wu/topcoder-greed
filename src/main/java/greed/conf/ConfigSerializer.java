@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import greed.conf.meta.ConfigObjectClass;
+import greed.conf.meta.Conflict;
 import greed.conf.meta.MapParam;
 import greed.conf.meta.Required;
 import greed.conf.schema.GreedConfig;
@@ -23,24 +24,7 @@ import java.util.Map;
  */
 public class ConfigSerializer {
 
-    private static GreedConfig theConfig = null;
-
-    public static void reloadConfig() throws ConfigException {
-        theConfig = null;
-        ConfigSerializer serializer = new ConfigSerializer();
-        theConfig = serializer.serializeAndCheck("greed", Configuration.getConfig().getConfig("greed"), GreedConfig.class);
-    }
-
-    public static GreedConfig getGreedConfig() throws ConfigException {
-        if (theConfig == null) {
-            reloadConfig();
-        }
-        return theConfig;
-    }
-
-    ConfigSerializer() {
-
-    }
+    public ConfigSerializer() {}
 
     @SuppressWarnings("unchecked")
     public <T> T serializeAndCheck(String path, Object obj, Class<T> configClass) throws ConfigException {
@@ -67,7 +51,6 @@ public class ConfigSerializer {
         try {
             T configObject = configClass.newInstance();
             for (Field field: configClass.getDeclaredFields()) {
-
                 if (!rawConf.hasPath(field.getName())) {
                     if (field.isAnnotationPresent(Required.class))
                         throw new ConfigException(String.format("Missing required config key at %s.%s", path, field.getName()));
@@ -75,8 +58,11 @@ public class ConfigSerializer {
                 }
 
                 Method setter = findSetter(configClass, field.getName());
-                Class<?> fieldType = field.getType();
+                if (setter == null) {
+                    throw new ConfigException(String.format("FATAL: Unable to find setter for %s in class %s", field.getName(), configClass.getName()));
+                }
 
+                Class<?> fieldType = field.getType();
                 if (fieldType.isPrimitive() || String.class.equals(fieldType)) {
                     setter.invoke(configObject, serializeAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
                 }
@@ -107,17 +93,40 @@ public class ConfigSerializer {
                     throw new ConfigException(String.format("Field %s with unknown type %s at path %s", field.getName(), fieldType.getSimpleName(), path));
                 }
             }
+
+            // Check for conflict
+            for (Field field: configClass.getDeclaredFields()) {
+                Method getter = findGetter(configClass, field.getName());
+                if (getter.invoke(configObject) == null)
+                    continue;
+
+                if (field.isAnnotationPresent(Conflict.class)) {
+                    for (String conflictField: field.getAnnotation(Conflict.class).withField()) {
+                        Method cgetter = findGetter(configClass, conflictField);
+                        if (cgetter.invoke(configObject) != null) {
+                            throw new ConfigException(String.format("Conflict fields of %s and %s at path %s", field.getName(), conflictField, path));
+                        }
+                    }
+                }
+            }
+
             return configObject;
         } catch (InstantiationException e) {
-            Log.e("Unable to reflect on class " + configClass.getName(), e);
-            throw new ConfigException("Exception while reflecting on " + configClass.getName(), e);
+            throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
         } catch (IllegalAccessException e) {
-            Log.e("Unable to reflect on class " + configClass.getName(), e);
-            throw new ConfigException("Exception while reflecting on " + configClass.getName(), e);
+            throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
         } catch (InvocationTargetException e) {
-            Log.e("Unable to reflect on class " + configClass.getName(), e);
-            throw new ConfigException("Exception while reflecting on " + configClass.getName(), e);
+            throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
         }
+    }
+
+    private Method findGetter(Class<?> clazz, String fieldName) {
+        String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+        for (Method method: clazz.getMethods()) {
+            if (method.getName().equals(methodName))
+                return method;
+        }
+        return null;
     }
 
     private Method findSetter(Class<?> clazz, String fieldName) {
