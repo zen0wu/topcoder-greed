@@ -8,8 +8,8 @@ import java.io.*;
 public class FileSystem {
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
-        if (resourcePath.startsWith("res:")) {
-            resourcePath = Configuration.JAR_RESOURCE_PATH + resourcePath.substring(4);
+        if (resourcePath.startsWith("builtin ")) {
+            resourcePath = Configuration.TEMPLATE_PATH + "/" + resourcePath.substring(8);
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
@@ -45,6 +45,11 @@ public class FileSystem {
 
     public static boolean exists(String relativePath) {
         return new File(Configuration.getWorkspace() + "/" + relativePath).exists();
+    }
+
+    public static String getParentPath(String relativePath) {
+        File f = new File(relativePath);
+        return f.getParent();
     }
 
     public static long getSize(String resourcePath) {

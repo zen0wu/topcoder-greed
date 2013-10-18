@@ -2,8 +2,10 @@ package greed.ui;
 
 import greed.AppInfo;
 import greed.Greed;
+import greed.conf.ConfigException;
 import greed.util.Configuration;
 import greed.util.Log;
+import greed.util.Utils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -94,7 +96,12 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
         if (src == reloadConfigButton) {
             this.say("Reloading your configuration from \"" + Configuration.getWorkspace() + "/greed.conf\"");
             Log.i("Reload configuration");
-            Configuration.reload();
+            try {
+                Utils.reinitialize();
+            } catch (ConfigException e) {
+                Log.e("Exception while reloading config", e);
+                this.say("Oops, error saying \"" + e.getMessage() + "\". Go fix it!");
+            }
         } else if (src == regenerateButton) {
             this.say("Regeneration!");
             greed.generateCode(true);

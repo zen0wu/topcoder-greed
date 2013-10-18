@@ -6,14 +6,14 @@ import greed.code.CodeTransformer;
 import java.util.ArrayList;
 
 /**
- * @author WuCY
+ * Greed is good! Cheers!
  */
-public class BlockCleaner implements CodeTransformer {
+public class EmptyCutBlockCleaner implements CodeTransformer {
 
     private String startTag;
     private String endTag;
 
-    public BlockCleaner(String startTag, String endTag) {
+    public EmptyCutBlockCleaner(String startTag, String endTag) {
         this.startTag = startTag;
         this.endTag = endTag;
     }

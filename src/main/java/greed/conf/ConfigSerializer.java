@@ -7,15 +7,13 @@ import greed.conf.meta.ConfigObjectClass;
 import greed.conf.meta.Conflict;
 import greed.conf.meta.MapParam;
 import greed.conf.meta.Required;
-import greed.conf.schema.GreedConfig;
-import greed.util.Configuration;
-import greed.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +46,7 @@ public class ConfigSerializer {
         }
 
         Config rawConf = (obj instanceof ConfigObject) ? ((ConfigObject) obj).toConfig() : (Config) obj;
+        HashSet<String> setted = new HashSet<String>();
         try {
             T configObject = configClass.newInstance();
             for (Field field: configClass.getDeclaredFields()) {
@@ -57,12 +56,13 @@ public class ConfigSerializer {
                     continue;
                 }
 
-                Method setter = findSetter(configClass, field.getName());
+                Method setter = findSetter(configClass, field);
                 if (setter == null) {
                     throw new ConfigException(String.format("FATAL: Unable to find setter for %s in class %s", field.getName(), configClass.getName()));
                 }
 
                 Class<?> fieldType = field.getType();
+                setted.add(field.getName());
                 if (fieldType.isPrimitive() || String.class.equals(fieldType)) {
                     setter.invoke(configObject, serializeAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
                 }
@@ -96,14 +96,12 @@ public class ConfigSerializer {
 
             // Check for conflict
             for (Field field: configClass.getDeclaredFields()) {
-                Method getter = findGetter(configClass, field.getName());
-                if (getter.invoke(configObject) == null)
+                if (!setted.contains(field.getName()))
                     continue;
 
                 if (field.isAnnotationPresent(Conflict.class)) {
                     for (String conflictField: field.getAnnotation(Conflict.class).withField()) {
-                        Method cgetter = findGetter(configClass, conflictField);
-                        if (cgetter.invoke(configObject) != null) {
+                        if (setted.contains(conflictField)) {
                             throw new ConfigException(String.format("Conflict fields of %s and %s at path %s", field.getName(), conflictField, path));
                         }
                     }
@@ -120,17 +118,8 @@ public class ConfigSerializer {
         }
     }
 
-    private Method findGetter(Class<?> clazz, String fieldName) {
-        String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-        for (Method method: clazz.getMethods()) {
-            if (method.getName().equals(methodName))
-                return method;
-        }
-        return null;
-    }
-
-    private Method findSetter(Class<?> clazz, String fieldName) {
-        String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    private Method findSetter(Class<?> clazz, Field field) {
+        String methodName = "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
         for (Method method: clazz.getMethods()) {
             if (method.getName().equals(methodName))
                 return method;

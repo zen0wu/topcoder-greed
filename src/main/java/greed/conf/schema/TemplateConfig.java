@@ -10,6 +10,9 @@ public class TemplateConfig {
     @Required
     private boolean override;
 
+    @Required
+    private String templateFile;
+
     @Optional
     private String outputKey;
 
@@ -43,6 +46,8 @@ public class TemplateConfig {
     }
 
     public String getOutputFile() {
+        if (getOutputFileExtension() == null || getOutputFileName() == null)
+            return null;
         return getOutputFileName() + "." + getOutputFileExtension();
     }
 
@@ -80,5 +85,13 @@ public class TemplateConfig {
 
     public void setAfterGen(CommandConfig afterGen) {
         this.afterGen = afterGen;
+    }
+
+    public String getTemplateFile() {
+        return templateFile;
+    }
+
+    public void setTemplateFile(String templateFile) {
+        this.templateFile = templateFile;
     }
 }

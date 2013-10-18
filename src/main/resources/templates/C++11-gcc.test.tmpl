@@ -27,14 +27,10 @@ ${<end}
 bool do_test(${Method.Params}, ${Method.ReturnType} __expected, int caseNo) {
     cout << "  Testcase #" << caseNo << " ... ";
 
-${<if RecordRuntime}
     time_t startClock = clock();
-${<end}
     ${ClassName} *instance = new ${ClassName}();
     ${Method.ReturnType} __result = instance->${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
-${<if RecordRuntime}
     double elapsed = (double)(clock() - startClock) / CLOCKS_PER_SEC;
-${<end}
     delete instance;
 
 ${<if Method.ReturnType.RealNumber}
@@ -46,11 +42,11 @@ ${<end}
 ${<else}
     if (__result == __expected) {
 ${<end}
-        cout << "PASSED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
+        cout << "PASSED!" << " (" << elapsed << " seconds)" << endl;
         return true;
     }
     else {
-        cout << "FAILED!" ${if RecordRuntime}<< " (" << elapsed << " seconds)" ${end}<< endl;
+        cout << "FAILED!" << " (" << elapsed << " seconds)" << endl;
         cout << "           Expected: " << pretty_print(__expected) << endl;
         cout << "           Received: " << pretty_print(__result) << endl;
         return false;
@@ -101,11 +97,9 @@ int main(int argc, char *argv[]) {
         for (int i = 1; i < argc; ++i) nAll++, nPassed += run_testcase(atoi(argv[i]));
     cout << endl << "Passed : " << nPassed << "/" << nAll << " cases" << endl;
 
-${<if RecordScore}
     int T = time(NULL) - ${CreateTime};
     double PT = T / 60.0, TT = 75.0;
     cout << "Time   : " << T / 60 << " minutes " << T % 60 << " secs" << endl;
     cout << "Score  : " << ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT)) << " points" << endl;
-${<end}
     return 0;
 }

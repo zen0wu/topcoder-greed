@@ -4,7 +4,7 @@ import greed.code.CodeByLine;
 import greed.code.CodeTransformer;
 
 /**
- * @author WuCY
+ * Greed is good! Cheers!
  */
 public class TransformerList implements CodeTransformer {
 

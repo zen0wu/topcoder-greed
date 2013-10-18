@@ -2,30 +2,25 @@ package greed;
 
 import com.topcoder.client.contestant.ProblemComponentModel;
 import com.topcoder.shared.problem.Renderer;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigException;
 import greed.code.CodeByLine;
 import greed.code.LanguageManager;
 import greed.code.transform.AppendingTransformer;
-import greed.code.transform.BlockCleaner;
-import greed.code.transform.BlockRemover;
+import greed.code.transform.CutBlockRemover;
+import greed.code.transform.EmptyCutBlockCleaner;
 import greed.code.transform.ContinuousBlankLineRemover;
+import greed.conf.schema.GreedConfig;
+import greed.conf.schema.LanguageConfig;
+import greed.conf.schema.TemplateConfig;
 import greed.model.*;
 import greed.template.TemplateEngine;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
-import greed.util.Configuration;
-import greed.util.Debug;
-import greed.util.FileSystem;
-import greed.util.Log;
+import greed.util.*;
 
 import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-
-import static greed.util.Configuration.Keys;
 
 /**
  * Greed is good! Cheers!
@@ -42,7 +37,7 @@ public class Greed {
 
     public Greed() {
         // Entrance of all program
-        Log.i("Create Greed Plugin");
+        Log.i("Create Greed Plugin Instance");
         this.talkingWindow = new GreedEditorPanel(this);
         this.firstUsing = true;
     }
@@ -68,32 +63,6 @@ public class Greed {
     public void setSource(String source) {
     }
 
-    public String getSource() {
-        String codeDir = Configuration.getString(Keys.CODE_ROOT);
-        String relativePath = TemplateEngine.render(Configuration.getString(Keys.PATH_PATTERN), currentTemplateModel);
-        String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
-
-        // Create source file if not exists
-        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
-        String filePath = codeDir + "/" + relativePath + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
-
-        try {
-            CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
-
-            if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
-                code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);
-
-            code = postprocessCode(code);
-
-            return code.toString();
-        } catch (IOException e) {
-            talkingWindow.say("Errr... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
-            talkingWindow.say("Now I'm giving out a empty string!");
-            Log.e("Error getting the source", e);
-            return "";
-        }
-    }
-
     public void startUsing() {
         Log.i("Start using called");
         talkingWindow.clear();
@@ -103,6 +72,13 @@ public class Greed {
             talkingWindow.say(String.format("So we meet again :>"));
         }
         firstUsing = false;
+
+        try {
+            Utils.initialize();
+        } catch (greed.conf.ConfigException e) {
+            Log.e("Exception while loading config", e);
+            talkingWindow.say("Something wrong when loading config saying \"" + e.getMessage() + "\", try fix it.");
+        }
     }
 
     public void stopUsing() {
@@ -118,8 +94,7 @@ public class Greed {
         currentLang = Convert.convertLanguage(language);
         currentProb = Convert.convertProblem(componentModel, currentLang);
 
-        talkingWindow.say("Hmmm, it's a problem with " + currentProb.getScore() + " points. Good choice!");
-
+        talkingWindow.say("Hmm, it's a problem with " + currentProb.getScore() + " points. Good choice!");
         generateCode(false);
     }
 
@@ -143,150 +118,112 @@ public class Greed {
     }
 
     private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
-        Config langSpecConfig = Configuration.getLanguageConfig(language);
-        TemplateEngine.switchLanguage(language);
+        GreedConfig config = Utils.getGreedConfig();
+        LanguageConfig langConfig = config.getLanguage().get(Language.getName(language));
+        if (langConfig == null) {
+            talkingWindow.say("Unsupported language " + language.toString());
+            return;
+        }
 
         // Create model map
         currentTemplateModel = new HashMap<String, Object>();
         currentTemplateModel.put("Contest", contest);
         currentTemplateModel.put("Problem", problem);
+        // Bind problem template model
+        currentTemplateModel.put("ClassName", problem.getClassName());
+        currentTemplateModel.put("Method", problem.getMethod());
+        currentTemplateModel.put("Examples", problem.getTestcases());
+        currentTemplateModel.put("NumOfExamples", problem.getTestcases().length);
+        boolean useArray = problem.getMethod().getReturnType().isArray();
+        currentTemplateModel.put("ReturnsArray", useArray);
+        for (Param param : problem.getMethod().getParams()) useArray |= param.getType().isArray();
+        currentTemplateModel.put("HasArray", useArray);
+        currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
+        currentTemplateModel.put("CutBegin", langConfig.getCutBegin());
+        currentTemplateModel.put("CutEnd", langConfig.getCutEnd());
 
-        // Create source directory
-        String codeDir;
-        {
-            String codeRoot = Configuration.getString(Keys.CODE_ROOT);
-            String relativePath = TemplateEngine.render(Configuration.getString(Keys.PATH_PATTERN), currentTemplateModel);
-            codeDir = codeRoot + "/" + relativePath;
+        TemplateEngine.switchLanguage(language);
 
-            if (!FileSystem.exists(codeDir)) {
-                talkingWindow.say("I'm creating folder " + codeDir);
-                FileSystem.createFolder(codeDir);
+        // Generate templates
+        for (String templateName : langConfig.getTemplates()) {
+            TemplateConfig template = langConfig.getTemplateDef().get(templateName);
+
+            talkingWindow.say(String.format("Generating template [" + templateName + "]"));
+            // Generate code from templates
+            String code;
+            try {
+                CodeByLine codeLines = CodeByLine.fromString(TemplateEngine.render(
+                        FileSystem.getInputStream(template.getTemplateFile()),
+                        currentTemplateModel
+                ));
+                codeLines = new EmptyCutBlockCleaner(langConfig.getCutBegin(), langConfig.getCutEnd()).transform(codeLines);
+                codeLines = new ContinuousBlankLineRemover().transform(codeLines);
+                code = codeLines.toString();
+            } catch (FileNotFoundException e) {
+                talkingWindow.say("Template file \"" + template.getTemplateFile() + "\" not found");
+                continue;
             }
-        }
 
-        String sourceFilePath;
-        {
-            String fileName = TemplateEngine.render(Configuration.getString(Keys.FILE_NAME_PATTERN), currentTemplateModel);
-            sourceFilePath = codeDir + "/" + fileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
-        }
-        boolean sourceFileExists = FileSystem.exists(sourceFilePath);
+            // Output to model
+            if (template.getOutputKey() != null) {
+                currentTemplateModel.put(template.getOutputKey(), code);
+            }
 
-        boolean doUnitTest = Configuration.getBoolean(Keys.UNIT_TEST);
-        String unitTestFilePath;
-        {
-            String unitTestFileName = TemplateEngine.render(Configuration.getString(Keys.UNIT_TEST_FILE_NAME_PATTERN), currentTemplateModel);
-            unitTestFilePath = codeDir + "/" + unitTestFileName + "." + langSpecConfig.getString(Keys.SUBKEY_EXTENSION);
-        }
-        boolean unitTestFileExists = FileSystem.exists(unitTestFilePath);
+            // Output to file
+            if (template.getOutputFile() != null) {
+                String filePath = config.getCodeRoot() + "/" +
+                        TemplateEngine.render(template.getOutputFile(), currentTemplateModel);
+                String fileFolder = FileSystem.getParentPath(filePath);
+                if (!FileSystem.exists(fileFolder)) {
+                    talkingWindow.say("Creating folder " + fileFolder);
+                    FileSystem.createFolder(fileFolder);
+                }
 
-        // If exists and not overriding, return
-        talkingWindow.say("Source code will be generated, \"" + sourceFilePath + "\"" + ", in your workspace");
-        boolean override = Configuration.getBoolean(Keys.OVERRIDE) || forceOverride;
-        if (sourceFileExists && !override) {
-            // Skip old files due to override options
-            talkingWindow.say("You told me not to override");
-            return;
-        }
-        talkingWindow.say("I'm generating source code for you~");
+                boolean exists = FileSystem.exists(filePath);
+                boolean override = forceOverride || template.isOverride();
+                talkingWindow.say("Writing to " + filePath);
+                if (exists && !override) {
+                    talkingWindow.say("Skip due to override policy");
+                    continue;
+                }
+                writeFileWithBackup(filePath, code, exists);
+            }
 
-        {
-            // Bind problem template model
-            currentTemplateModel.put("ClassName", problem.getClassName());
-            currentTemplateModel.put("Method", problem.getMethod());
-            currentTemplateModel.put("Examples", problem.getTestcases());
-            currentTemplateModel.put("NumOfExamples", problem.getTestcases().length);
-            boolean useArray = problem.getMethod().getReturnType().isArray();
-            currentTemplateModel.put("ReturnsArray", useArray);
-            for (Param param : problem.getMethod().getParams()) useArray |= param.getType().isArray();
-            currentTemplateModel.put("HasArray", useArray);
-            currentTemplateModel.put("RecordRuntime", Configuration.getBoolean(Keys.RECORD_RUNTIME));
-            currentTemplateModel.put("RecordScore", Configuration.getBoolean(Keys.RECORD_SCORE));
-            currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
-            currentTemplateModel.put("CutBegin", langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN));
-            currentTemplateModel.put("CutEnd", langSpecConfig.getString(Keys.SUBKEY_CUTEND));
+            // TODO: After gen hook
         }
-
-        // Generate unit test code
-        String unitTestCode = null;
-        if (doUnitTest) {
-            unitTestCode = generateUnitTestCode(unitTestFilePath, langSpecConfig);
-            if (unitTestCode == null)
-                talkingWindow.say("I tried, but failed. Fallback to normal test code.");
-        }
-        // Generate test code, if unit test generation is disabled, or failed
-        if (unitTestCode == null) {
-            String testCode = generateTestCode(langSpecConfig);
-            if (testCode != null)
-                currentTemplateModel.put("TestCode", testCode);
-        }
-        // Generate main source code
-        String sourceCode = generateSourceCode(langSpecConfig);
-
-        // Write to file
-        writeFileWithBackup(sourceFilePath, sourceCode, sourceFileExists);
-        writeFileWithBackup(unitTestFilePath, unitTestCode, unitTestFileExists);
 
         talkingWindow.say("All set, good luck!");
         talkingWindow.say("");
     }
 
-    private String generateUnitTestCode(String unitTestFilePath, Config langSpecConfig) {
-        String sourceCode;
-        try {
-            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_UNIT_TEST_TEMPLATE_FILE);
-            talkingWindow.say("Using unit test template \"" + tmplPath + "\"");
+    public String getSource() {
+        GreedConfig config = Utils.getGreedConfig();
+        LanguageConfig langConfig = config.getLanguage().get(Language.getName(currentLang));
 
-            return generateCodeByTmpl(tmplPath, currentTemplateModel);
-        } catch (FileNotFoundException e) {
-            talkingWindow.say("No unit test template, no unit test.");
-            Log.w("Unit test template not found, probably because user specify a non-exist testing template, resulting code without testing module");
-        } catch (ConfigException e) {
-            talkingWindow.say("What's that about the unit test template? I didn't understand.");
-            Log.w("Incorrect unit test template configuration", e);
+        String filePath = config.getCodeRoot() +
+                TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
+
+        talkingWindow.say("Submitting " + filePath);
+        if (!FileSystem.exists(filePath)) {
+            talkingWindow.say("Cannot found your source code");
+            return "";
         }
-        return null;
-    }
 
-    private String generateTestCode(Config langSpecConfig) {
         try {
-            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEST_TEMPLATE_FILE);
-            talkingWindow.say("Using test template \"" + tmplPath + "\"");
+            CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
 
-            return generateCodeByTmpl(tmplPath, currentTemplateModel);
-        } catch (FileNotFoundException e) {
-            talkingWindow.say("No testing template, no testing code for you.");
-            Log.w("Testing template not found, probably because user specify a non-exist testing template, resulting code without testing module");
-        } catch (ConfigException e) {
-            talkingWindow.say("What's that about the testing template? I didn't understand.");
-            Log.w("Incorrect test template configuration", e);
+            if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
+                code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);
+
+            code = new CutBlockRemover(langConfig.getCutBegin(), langConfig.getCutEnd()).transform(code);
+            code = new AppendingTransformer(getSignature()).transform(code);
+
+            return code.toString();
+        } catch (IOException e) {
+            talkingWindow.say("Err... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
+            Log.e("Error getting the source", e);
+            return "";
         }
-        return null;
-    }
-
-    private String generateSourceCode(Config langSpecConfig) {
-        // Generate main code
-        String sourceCode;
-        try {
-            String tmplPath = langSpecConfig.getString(Keys.SUBKEY_TEMPLATE_FILE);
-            talkingWindow.say("Using source template \"" + tmplPath + "\"");
-
-            return generateCodeByTmpl(tmplPath, currentTemplateModel);
-        } catch (FileNotFoundException e) {
-            talkingWindow.say("Oh no, where's your source code template?");
-            talkingWindow.say("You have to start with a empty file yourself :<");
-            Log.e("Source code template not found, this is fatal error, source code will not be generated");
-        } catch (ConfigException e) {
-            talkingWindow.say("Incorrect configuration for source code template, I'm giving up!");
-            Log.e("Incorrect code template configuration", e);
-        }
-        return null;
-    }
-
-    private String generateCodeByTmpl(String tmplPath, HashMap<String, Object> model) throws FileNotFoundException {
-        InputStream codeTmpl = FileSystem.getInputStream(tmplPath);
-        CodeByLine code = CodeByLine.fromString(TemplateEngine.render(codeTmpl, model));
-        code = preprocessCode(code);
-        return code.toString();
     }
 
     private void writeFileWithBackup(String path, String content, boolean exists) {
@@ -294,32 +231,12 @@ public class Greed {
             if (exists) {
                 talkingWindow.say("Overriding \"" + path + "\", old files will be renamed");
                 if (FileSystem.getSize(path) == content.length()) {
-                    talkingWindow.say("Seems the current file is the same as the code to write, skip!");
+                    talkingWindow.say("Seems the current file is the same as the code to write, skipped");
                 } else
                     FileSystem.backup(path); // Backup the old files
             }
 
             FileSystem.writeFile(path, content);
         }
-    }
-
-    private CodeByLine preprocessCode(CodeByLine input) {
-        // Get begincut and endcut tag
-        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
-        String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
-        String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
-
-        input = new ContinuousBlankLineRemover().transform(input);
-        return new BlockCleaner(beginCut, endCut).transform(input);
-    }
-
-    private CodeByLine postprocessCode(CodeByLine input) {
-        // Get begincut and endcut tag
-        Config langSpecConfig = Configuration.getLanguageConfig(currentLang);
-        String beginCut = langSpecConfig.getString(Keys.SUBKEY_CUTBEGIN);
-        String endCut = langSpecConfig.getString(Keys.SUBKEY_CUTEND);
-
-        input = new BlockRemover(beginCut, endCut).transform(input);
-        return new AppendingTransformer(getSignature()).transform(input);
     }
 }

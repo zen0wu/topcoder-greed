@@ -28,9 +28,7 @@ def pretty_str(x):
 def do_test(${Method.Params}, __expected, caseNo):
     sys.stdout.write("  Testcase #%d ... " % caseNo)
 
-${<if RecordRuntime}
     startTime = time.time()
-${<end}
     instance = ${ClassName}()
     exception = None
     try:
@@ -38,9 +36,7 @@ ${<end}
     except:
         import traceback
         exception = traceback.format_exc()
-${<if RecordRuntime}
     elapsed = time.time() - startTime   # in sec
-${<end}
 
     if exception is not None:
         sys.stdout.write("RUNTIME ERROR: \\n")
@@ -48,10 +44,10 @@ ${<end}
         return 0
 
     if tc_equal(__expected, __result):
-        sys.stdout.write("PASSED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
+        sys.stdout.write("PASSED! " + ("(%.3f seconds)" % elapsed) + "\\n")
         return 1
     else:
-        sys.stdout.write("FAILED! " ${if RecordRuntime}+ ("(%.3f seconds)" % elapsed)${end} + "\\n")
+        sys.stdout.write("FAILED! " + ("(%.3f seconds)" % elapsed) + "\\n")
         sys.stdout.write("           Expected: " + pretty_str(__expected) + "\\n")
         sys.stdout.write("           Received: " + pretty_str(__result) + "\\n")
         return 0
@@ -99,13 +95,11 @@ def run_tests():
 
     sys.stdout.write("\\nPassed : %d / %d cases\\n" % (nPassed, nAll))
 
-${<if RecordScore}
     T = time.time() - ${CreateTime}
     PT, TT = (T / 60.0, 75.0)
     points = ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))
     sys.stdout.write("Time   : %d minutes %d secs\\n" % (int(T/60), T%60))
     sys.stdout.write("Score  : %.2f points\\n" % points)
-${<end}
 
 if __name__ == '__main__':
     run_tests()

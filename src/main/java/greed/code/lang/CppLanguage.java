@@ -5,8 +5,8 @@ import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;
 import greed.model.Type;
-import greed.util.Configuration;
 import greed.model.Language;
+import greed.util.Utils;
 
 /**
  * Greed is good! Cheers!
@@ -28,7 +28,7 @@ public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
             case BOOL:
                 return "bool";
             case LONG:
-                return Configuration.getLanguageConfig(Language.CPP).getString(Configuration.Keys.SUBKEY_LONG_TYPE_NAME);
+                return Utils.getGreedConfig().getLanguage().get(Language.getName(Language.CPP)).getLongIntTypeName();
         }
         return "";
     }
@@ -61,7 +61,7 @@ public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
 
     @Override
     public String renderParamList(Param[] params) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < params.length; ++i) {
             if (i > 0) buf.append(", ");
             buf.append(renderParam(params[i]));

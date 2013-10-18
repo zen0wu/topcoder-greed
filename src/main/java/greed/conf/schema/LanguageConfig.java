@@ -2,6 +2,7 @@ package greed.conf.schema;
 
 import greed.conf.meta.ConfigObjectClass;
 import greed.conf.meta.MapParam;
+import greed.conf.meta.Optional;
 import greed.conf.meta.Required;
 
 import java.util.HashMap;
@@ -21,8 +22,14 @@ public class LanguageConfig {
     private String[] templates;
 
     @Required
+    private String submitTemplate;
+
+    @Required
     @MapParam(value = TemplateConfig.class)
     private HashMap<String, TemplateConfig> templateDef;
+
+    @Optional
+    private String longIntTypeName;
 
     public String getCutBegin() {
         return cutBegin;
@@ -54,5 +61,21 @@ public class LanguageConfig {
 
     public void setTemplateDef(HashMap<String, TemplateConfig> templateDef) {
         this.templateDef = templateDef;
+    }
+
+    public String getSubmitTemplate() {
+        return submitTemplate;
+    }
+
+    public void setSubmitTemplate(String submitTemplate) {
+        this.submitTemplate = submitTemplate;
+    }
+
+    public String getLongIntTypeName() {
+        return longIntTypeName;
+    }
+
+    public void setLongIntTypeName(String longIntTypeName) {
+        this.longIntTypeName = longIntTypeName;
     }
 }

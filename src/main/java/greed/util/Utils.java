@@ -8,17 +8,25 @@ import greed.conf.schema.GreedConfig;
  */
 public class Utils {
     private static boolean initialized = false;
+    private static GreedConfig greedConfig = null;
 
     public static void initialize() throws ConfigException {
         if (!initialized) {
             initialized = true;
-            GreedConfig config = Configuration.loadConfig();
-            Log.initialize(config.getLogging());
+            greedConfig = Configuration.loadConfig();
+            Log.initialize(greedConfig.getLogging());
         }
     }
 
     public static void reinitialize() throws ConfigException {
         initialized = false;
         initialize();
+    }
+
+    public static GreedConfig getGreedConfig() {
+        if (greedConfig == null) {
+            Log.e("Uninitialized config");
+        }
+        return greedConfig;
     }
 }

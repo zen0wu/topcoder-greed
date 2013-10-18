@@ -4,14 +4,14 @@ import greed.code.CodeByLine;
 import greed.code.CodeTransformer;
 
 /**
- * @author WuCY
+ * Greed is good! Cheers!
  */
-public class BlockRemover implements CodeTransformer {
+public class CutBlockRemover implements CodeTransformer {
 
     private String startTag;
     private String endTag;
 
-    public BlockRemover(String startTag, String endTag) {
+    public CutBlockRemover(String startTag, String endTag) {
         this.startTag = startTag;
         this.endTag = endTag;
     }
