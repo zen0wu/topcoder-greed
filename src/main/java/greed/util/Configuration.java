@@ -124,9 +124,7 @@ public class Configuration {
         return conf;
     }
 
-    private static GreedConfig greedConfig = null;
-
-    private static void loadConfig() throws ConfigException {
+    static GreedConfig loadConfig() throws ConfigException {
         Config conf;
         if (Debug.developmentMode) {
             conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
@@ -142,21 +140,10 @@ public class Configuration {
         }
 
         conf = conf.resolve();
-        greedConfig = new ConfigSerializer().serializeAndCheck("greed", conf.getConfig("greed"), GreedConfig.class);
+        return new ConfigSerializer().serializeAndCheck("greed", conf.getConfig("greed"), GreedConfig.class);
     }
 
-    public static GreedConfig getGreedConfig() throws ConfigException {
-        if (greedConfig == null) {
-            loadConfig();
-        }
-        return greedConfig;
-    }
-
-    public static void reloadConfig() throws ConfigException {
-        greedConfig = null;
-        loadConfig();
-    }
-
+    @Deprecated
     public static void reload() {
         conf = null;
         lazyInit();
