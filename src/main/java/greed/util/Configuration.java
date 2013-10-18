@@ -3,6 +3,9 @@ package greed.util;
 import com.topcoder.client.contestApplet.common.LocalPreferences;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import greed.conf.ConfigException;
+import greed.conf.ConfigSerializer;
+import greed.conf.schema.GreedConfig;
 import greed.model.Language;
 
 import java.io.File;
@@ -16,7 +19,8 @@ public class Configuration {
     // Workspace related
     private static LocalPreferences pref = LocalPreferences.getInstance();
 
-    private static final String GREED_WORKSPACE = "greed.workspace";
+    private static final String GREED_WORKSPACE_KEY = "greed.workspace";
+    public static final String JAR_RESOURCE_PATH = "/Resource";
 
     public static boolean workspaceSet() {
         String workspace = getWorkspace();
@@ -24,11 +28,11 @@ public class Configuration {
     }
 
     public static String getWorkspace() {
-        return pref.getProperty(GREED_WORKSPACE);
+        return pref.getProperty(GREED_WORKSPACE_KEY);
     }
 
     public static void setWorkspace(String workspace) {
-        pref.setProperty(GREED_WORKSPACE, workspace);
+        pref.setProperty(GREED_WORKSPACE_KEY, workspace);
         try {
             pref.savePreferences();
         } catch (IOException e) {
@@ -90,29 +94,67 @@ public class Configuration {
         }
     }
 
+    @Deprecated
     public static String getString(String key) {
         lazyInit();
         return conf.getString(key);
     }
 
+    @Deprecated
     public static boolean getBoolean(String key) {
         lazyInit();
         return conf.getBoolean(key);
     }
 
+    @Deprecated
     public static int getInt(String key) {
         lazyInit();
         return conf.getInt(key);
     }
 
+    @Deprecated
     public static Config getLanguageConfig(Language lang) {
         lazyInit();
         return conf.getConfig(Keys.getTemplateKey(lang));
     }
 
+    @Deprecated
     public static Config getConfig() {
         lazyInit();
         return conf;
+    }
+
+    private static GreedConfig greedConfig = null;
+
+    private static void loadConfig() throws ConfigException {
+        Config conf;
+        if (Debug.developmentMode) {
+            conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
+        } else {
+            conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
+        }
+
+        String workspace = getWorkspace();
+        File userConfFile = new File(workspace, DEFAULT_USER_CONFIG_FILENAME);
+        if (userConfFile.exists()) {
+            Config userConf = ConfigFactory.parseFile(userConfFile);
+            conf = userConf.withoutPath(RESERVED_CONFPATH).withFallback(conf);
+        }
+
+        conf = conf.resolve();
+        greedConfig = new ConfigSerializer().serializeAndCheck("greed", conf.getConfig("greed"), GreedConfig.class);
+    }
+
+    public static GreedConfig getGreedConfig() throws ConfigException {
+        if (greedConfig == null) {
+            loadConfig();
+        }
+        return greedConfig;
+    }
+
+    public static void reloadConfig() throws ConfigException {
+        greedConfig = null;
+        loadConfig();
     }
 
     public static void reload() {

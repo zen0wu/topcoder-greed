@@ -9,7 +9,7 @@ public class FileSystem {
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
         if (resourcePath.startsWith("res:")) {
-            resourcePath = Configuration.getString(Configuration.Keys.JAR_RESOURCE) + resourcePath.substring(4);
+            resourcePath = Configuration.JAR_RESOURCE_PATH + resourcePath.substring(4);
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
