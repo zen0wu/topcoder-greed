@@ -1,13 +1,11 @@
 package greed.conf.schema;
 
-import greed.conf.meta.Conflict;
-import greed.conf.meta.Optional;
-import greed.conf.meta.Required;
-import greed.conf.meta.Stub;
+import greed.conf.meta.*;
 
 /**
  * Greed is good! Cheers!
  */
+@ConfigObjectClass
 public class TemplateConfig {
     @Required
     private boolean override;

@@ -1,10 +1,12 @@
 package greed.conf.schema;
 
+import greed.conf.meta.ConfigObjectClass;
 import greed.conf.meta.Required;
 
 /**
  * Greed is good! Cheers!
  */
+@ConfigObjectClass
 public class LoggingConfig {
     @Required
     private String logLevel;

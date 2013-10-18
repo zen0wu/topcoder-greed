@@ -1,5 +1,6 @@
 package greed.conf.schema;
 
+import greed.conf.meta.ConfigObjectClass;
 import greed.conf.meta.MapParam;
 import greed.conf.meta.Required;
 
@@ -8,6 +9,7 @@ import java.util.HashMap;
 /**
  * Greed is good! Cheers!
  */
+@ConfigObjectClass
 public class LanguageConfig {
     @Required
     private String cutBegin;

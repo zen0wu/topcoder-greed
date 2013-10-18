@@ -12,11 +12,10 @@ public class ConfigTest {
             System.out.println(conf.getConfig("greed").toString());
         System.out.println(conf.getConfig("greed.language.cpp").resolve().toString());
         Config config = conf.getConfig("greed.templateDef.testcases.afterGen").resolve();
-        System.out.println(conf.getAnyRef("greed.logging.logToStderr").getClass());
+        System.out.println(conf.getObject("greed.templateDef"));
         for (String s: config.getStringList("arguments")) {
             System.out.println(s);
         }
-
 
         conf = ConfigFactory.parseFile(new File(System.getProperty("user.dir") + "/src/main/resources/default.conf")).resolve();
         if (conf.hasPath("greed"))
