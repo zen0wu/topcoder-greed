@@ -1,21 +1,62 @@
 package greed.template;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import greed.conf.ConfigException;
 import greed.model.Language;
+import greed.util.Utils;
 
-import java.io.FileInputStream;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class JavaTemplateTest {
-    public static void main(String[] args) throws Exception {
+
+    private InputStream codeTemplate;
+    private InputStream testTemplate;
+    private InputStream testJunitTemplate;
+
+    Map<String, Object> model = TestModelFixtures.buildStubbingModel();
+
+    @BeforeClass
+    public static void initializeGreed() throws ConfigException {
+        // TODO : Why at all do we need this?
+        Utils.initialize();
+    }
+
+    @Before
+    public void setupTemplates() throws IOException {
+        this.codeTemplate = getClass().getResourceAsStream("/templates/Java.source.tmpl");
+        assertThat(this.codeTemplate, notNullValue());
+
+        this.testTemplate = getClass().getResourceAsStream("/templates/Java.test.tmpl");
+        assertThat(this.testTemplate, notNullValue());
+
+        this.testJunitTemplate = getClass().getResourceAsStream("/templates/Java-junit.unittest.tmpl");
+        assertThat(this.testTemplate, notNullValue());
+
         TemplateEngine.switchLanguage(Language.JAVA);
+    }
 
-        HashMap<String, Object> model = new CppTemplateTest().buildModel();
-
-        FileInputStream tmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Template.java");
-        FileInputStream testTmplFile = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/Resource/Test.java");
-        String test = TemplateEngine.render(testTmplFile, model);
+    @Test
+    public void renderJavaCode() {
+        String test = TemplateEngine.render(testTemplate, model);
         model.put("TestCode", test);
-        String code = TemplateEngine.render(tmplFile, model);
+        String code = TemplateEngine.render(codeTemplate, model);
         System.out.println(code);
+
+        // TODO verify to make test fail on malfunctioning
+    }
+
+    @Test
+    public void renderJavaCode_junit() {
+        String code = TemplateEngine.render(testJunitTemplate, model);
+        System.out.println(code);
+
+        // TODO verify to make test fail on malfunctioning
     }
 }
