@@ -7,8 +7,8 @@ import greed.model.Type;
 /**
  * Greed is good! Cheers!
  */
-public class CSharpLanguage extends CppLanguage {
-    public static CSharpLanguage instance = new CSharpLanguage();
+public class CSharpLanguage extends CStyleLanguage {
+    public static final CSharpLanguage instance = new CSharpLanguage();
 
     protected CSharpLanguage() {
         super();
@@ -17,11 +17,18 @@ public class CSharpLanguage extends CppLanguage {
     @Override
     public String renderPrimitive(Primitive primitive) {
         switch (primitive) {
+            case STRING:
+                return "string";
+            case DOUBLE:
+                return "double";
+            case INT:
+                return "int";
+            case BOOL:
+                return "bool";
             case LONG:
                 return "long";
-            default:
-                return super.renderPrimitive(primitive);
         }
+        return "";
     }
 
     @Override
@@ -39,10 +46,8 @@ public class CSharpLanguage extends CppLanguage {
             return value;
         }
 
-        switch (paramType.getPrimitive()) {
-            case LONG:
-                value += "L";
-                break;
+        if(paramType.getPrimitive() == Primitive.LONG) {
+            value += "L";
         }
         return value;
     }

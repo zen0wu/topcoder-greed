@@ -7,8 +7,8 @@ import greed.model.Type;
 /**
  * Greed is good! Cheers!
  */
-public class JavaLanguage extends CppLanguage {
-    public static JavaLanguage instance = new JavaLanguage();
+public class JavaLanguage extends CStyleLanguage {
+    public static final JavaLanguage instance = new JavaLanguage();
 
     protected JavaLanguage() {
         super();
@@ -23,9 +23,12 @@ public class JavaLanguage extends CppLanguage {
                 return "long";
             case BOOL:
                 return "boolean";
-            default:
-                return super.renderPrimitive(primitive);
+            case INT:
+                return "int";
+            case DOUBLE:
+                return "double";
         }
+        return "";
     }
 
     @Override
