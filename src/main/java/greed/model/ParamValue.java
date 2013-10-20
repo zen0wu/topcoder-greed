@@ -39,7 +39,7 @@ public class ParamValue {
         return valueList;
     }
     
-    public int getValueListLength {
+    public int getValueListLength() {
         return valueList.length();
     }
 
