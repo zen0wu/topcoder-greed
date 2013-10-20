@@ -38,6 +38,10 @@ public class ParamValue {
     public String[] getValueList() {
         return valueList;
     }
+    
+    public int getValueListLength {
+        return valueList.length();
+    }
 
     public boolean isMultiLine() {
         return valueList.length > 1;
