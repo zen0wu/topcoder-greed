@@ -40,7 +40,7 @@ public class ParamValue {
     }
     
     public int getValueListLength() {
-        return valueList.length();
+        return valueList.length;
     }
 
     public boolean isMultiLine() {
