@@ -37,7 +37,7 @@ public class AppInfo {
             if (reader != null)
                 try { reader.close(); } catch (IOException e) {}
         }
-        return "UNKNOWN";
+        return "[UNKNOWN]";
     }
 
     public static void main(String[] args) {
