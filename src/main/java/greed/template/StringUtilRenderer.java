@@ -17,6 +17,10 @@ public class StringUtilRenderer implements NamedRenderer {
                 result = result.toLowerCase();
             if (param.toLowerCase().contains("removespace"))
                 result = result.replaceAll("\\s", "");
+            if (param.toLowerCase().contains("unquote")) {
+                if (result.length() >= 2 && result.charAt(0) == '"' && result.charAt(result.length() - 1) == '"')
+                    result = result.substring(1, result.length() - 1);
+            }
             return result;
         }
         return "";
