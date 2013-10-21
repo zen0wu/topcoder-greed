@@ -46,9 +46,17 @@ public class TemplateConfig {
     }
 
     public String getOutputFile() {
-        if (getOutputFileExtension() == null || getOutputFileName() == null)
+        String name = getOutputFileName();
+        String ext = getOutputFileExtension();
+        StringBuilder fullName = new StringBuilder();
+        if (name != null)
+            fullName.append(name);
+        if (ext != null && ext.length() > 0)
+            fullName.append('.').append(ext);
+        if (fullName.length() > 0)
+            return fullName.toString();
+        else
             return null;
-        return getOutputFileName() + "." + getOutputFileExtension();
     }
 
     public void setOutputFile(String outputFile) {
