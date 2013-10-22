@@ -24,17 +24,21 @@ dependencies {
 }
 
 // Dist task
-task dist(dependsOn: ['clean', 'fatJar']) << {
-    copy {
-        from 'build/libs'
-        into 'dist'
-        include '*.jar'
-        rename { it.replace('topcoder-greed', 'Greed') }
+task dist(dependsOn: ['clean', 'fatJar']) {
+    description = 'Clean, build, and copy the package to the dist folder'
+    doLast {
+        copy {
+            from 'build/libs'
+            into 'dist'
+            include '*.jar'
+            rename { it.replace('topcoder-greed', 'Greed') }
+        }
     }
 }
 
 // Gradle Wrapper
 task wrapper(type: Wrapper) {
+    description = 'Create gradle wrapper'
     gradleVersion = '1.8'
     jarFile = 'gradle/wrapper.jar'
 }
