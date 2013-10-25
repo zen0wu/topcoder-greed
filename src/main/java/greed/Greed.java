@@ -138,6 +138,11 @@ public class Greed {
         currentTemplateModel.put("ReturnsArray", useArray);
         for (Param param : problem.getMethod().getParams()) useArray |= param.getType().isArray();
         currentTemplateModel.put("HasArray", useArray);
+
+        boolean useString = problem.getMethod().getReturnType().isString();
+        currentTemplateModel.put("ReturnsString", useString);
+        for (Param param : problem.getMethod().getParams()) useString |= param.getType().isString();        
+        currentTemplateModel.put("HasString", useString);
         currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
         currentTemplateModel.put("CutBegin", langConfig.getCutBegin());
         currentTemplateModel.put("CutEnd", langConfig.getCutEnd());
