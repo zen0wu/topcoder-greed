@@ -32,6 +32,7 @@ public class AppInfo {
             reader = new BufferedReader(new InputStreamReader(is));
             return reader.readLine().trim();
         }
+        catch (NullPointerException e) {}
         catch (IOException e) {}
         finally {
             if (reader != null)
