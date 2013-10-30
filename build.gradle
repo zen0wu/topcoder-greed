@@ -22,6 +22,9 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'junit:junit:4.9'
 }
+fatJar {
+    from "version"
+}
 
 // Dist task
 task dist(dependsOn: ['clean', 'fatJar']) {
