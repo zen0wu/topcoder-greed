@@ -27,6 +27,9 @@ public class AppInfo {
     }
 
     private static String readVersionFromStream(InputStream is) {
+        if (is == null) {
+            return "[UNKNOWN]";
+        }
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
