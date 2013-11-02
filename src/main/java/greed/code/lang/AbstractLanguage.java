@@ -31,6 +31,7 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
         value = value.trim();
         value = value.substring(1, value.length() - 1);
         value = value.replaceAll("\n", "");
+        value = value.trim(); //need a second trim in case it is an empty list {  }
         if (param.getType().getPrimitive() == Primitive.STRING) {
             boolean inString = false;
             ArrayList<String> valueList = new ArrayList<String>();
@@ -51,6 +52,9 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
             }
 
             return new ParamValue(param, valueList.toArray(new String[0]));
+        } else if (value.length() == 0) {
+            //Empty array
+            return new ParamValue( param, new String[]{} ); 
         } else {
             String[] valueList = value.split(",");
             Param paramWithPrim = new Param(param.getName(), new Type(param.getType().getPrimitive(), 0), param.getIndex());
