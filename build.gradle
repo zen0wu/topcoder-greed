@@ -22,8 +22,10 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'junit:junit:4.9'
 }
+
+// Fat jar tricks to include "version" files
 fatJar {
-    from "version"
+    from 'version'
 }
 
 // Dist task
