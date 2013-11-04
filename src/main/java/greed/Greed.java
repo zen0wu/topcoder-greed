@@ -205,7 +205,7 @@ public class Greed {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(currentLang));
 
-        String filePath = config.getCodeRoot() +
+        String filePath = config.getCodeRoot() + "/" +
                 TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
 
         talkingWindow.say("Submitting " + filePath);

@@ -38,4 +38,4 @@ end
 
 puts "Executing javaws with argumnets: "
 puts java_opts.map{ |x| "  " + x }.join "\n"
-%x[javaws #{java_opts.join ' '} #{HOME_DIR}/scripts/ContestAppletProd.jnlp]
+system "javaws #{java_opts.join ' '} #{HOME_DIR}/scripts/ContestAppletProd.jnlp"
