@@ -5,17 +5,22 @@ package greed.model;
  */
 public class Problem {
     private String name;
+
     private int score;
     private String className;
     private Method method;
+
+    private ProblemDescription description;
+
     private Testcase[] testcases;
 
-    public Problem(String name, int score, String className, Method method, Testcase[] testcases) {
+    public Problem(String name, int score, String className, Method method, Testcase[] testcases, ProblemDescription description) {
         this.name = name;
         this.score = score;
         this.className = className;
         this.method = method;
         this.testcases = testcases;
+        this.description = description;
     }
 
     public String getName() {
@@ -36,5 +41,9 @@ public class Problem {
 
     public Testcase[] getTestcases() {
         return testcases;
+    }
+
+    public ProblemDescription getDescription() {
+        return description;
     }
 }

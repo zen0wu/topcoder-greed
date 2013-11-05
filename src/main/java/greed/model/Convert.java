@@ -54,14 +54,29 @@ public class Convert {
                 input[j] = trait.parseValue(tc.getInput()[j], params[j]);
             ParamValue output = trait.parseValue(tc.getOutput(), new Param("expected", method.getReturnType(), params.length));
             cases[i] = new Testcase(i, input, output);
+
+            if (tc.getAnnotation() != null)
+                cases[i].setAnnotation(tc.getAnnotation().toXML());
         }
+
+        String[] notes = new String[problem.getNotes().length];
+        for (int i = 0; i < notes.length; ++i)
+            notes[i] = problem.getNotes()[i].toXML();
+        String[] constraints = new String[problem.getConstraints().length];
+        for (int i = 0; i < constraints.length; ++i)
+            constraints[i] = problem.getConstraints()[i].toXML();
 
         return new Problem(
                 problem.getProblem().getName(),
                 problem.getPoints().intValue(),
                 problem.getClassName(),
                 method,
-                cases
+                cases,
+                new ProblemDescription(
+                        problem.getIntro().toXML(),
+                        notes,
+                        constraints
+                )
         );
     }
 

@@ -17,12 +17,14 @@ public class ParamValue {
     public ParamValue(Param param, String[] valueList) {
         this.param = param;
         StringBuilder buf = new StringBuilder();
+        buf.append("{ ");
         String sep = "";
         for (String s : valueList) {
             buf.append(sep);
             sep = ", ";
             buf.append(s);
         }
+        buf.append(" }");
         this.value = buf.toString();
         this.valueList = valueList;
     }
