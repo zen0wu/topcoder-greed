@@ -27,7 +27,7 @@ public class TemplateConfig {
     private String outputFileExtension;
 
     @Optional
-    private CommandConfig afterGen;
+    private CommandConfig afterFileGen;
 
     public boolean isOverride() {
         return override;
@@ -87,12 +87,12 @@ public class TemplateConfig {
         this.outputFileExtension = outputFileExtension;
     }
 
-    public CommandConfig getAfterGen() {
-        return afterGen;
+    public CommandConfig getAfterFileGen() {
+        return afterFileGen;
     }
 
-    public void setAfterGen(CommandConfig afterGen) {
-        this.afterGen = afterGen;
+    public void setAfterFileGen(CommandConfig afterFileGen) {
+        this.afterFileGen = afterFileGen;
     }
 
     public String getTemplateFile() {

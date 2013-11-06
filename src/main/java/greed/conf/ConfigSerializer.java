@@ -46,7 +46,7 @@ public class ConfigSerializer {
         }
 
         Config rawConf = (obj instanceof ConfigObject) ? ((ConfigObject) obj).toConfig() : (Config) obj;
-        HashSet<String> setted = new HashSet<String>();
+        HashSet<String> hasSet = new HashSet<String>();
         try {
             T configObject = configClass.newInstance();
             for (Field field: configClass.getDeclaredFields()) {
@@ -62,7 +62,7 @@ public class ConfigSerializer {
                 }
 
                 Class<?> fieldType = field.getType();
-                setted.add(field.getName());
+                hasSet.add(field.getName());
                 if (fieldType.isPrimitive() || String.class.equals(fieldType)) {
                     setter.invoke(configObject, serializeAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
                 }
@@ -96,12 +96,12 @@ public class ConfigSerializer {
 
             // Check for conflict
             for (Field field: configClass.getDeclaredFields()) {
-                if (!setted.contains(field.getName()))
+                if (!hasSet.contains(field.getName()))
                     continue;
 
                 if (field.isAnnotationPresent(Conflict.class)) {
                     for (String conflictField: field.getAnnotation(Conflict.class).withField()) {
-                        if (setted.contains(conflictField)) {
+                        if (hasSet.contains(conflictField)) {
                             throw new ConfigException(String.format("Conflict fields of %s and %s at path %s", field.getName(), conflictField, path));
                         }
                     }

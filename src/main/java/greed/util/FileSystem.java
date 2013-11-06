@@ -55,6 +55,10 @@ public class FileSystem {
         return f.getParent();
     }
 
+    public static File getRawFile(String relativePath) {
+        return new File(Configuration.getWorkspace() + "/" + relativePath);
+    }
+
     public static long getSize(String resourcePath) {
         File f = new File(Configuration.getWorkspace() + "/" + resourcePath);
         if (f.exists() && f.isFile())

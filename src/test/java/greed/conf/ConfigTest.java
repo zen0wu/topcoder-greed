@@ -1,10 +1,8 @@
-package greed;
+package greed.conf;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.junit.Test;
-
-import java.io.File;
 
 public class ConfigTest {
     @Test

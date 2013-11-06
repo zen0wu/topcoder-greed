@@ -8,6 +8,7 @@ import greed.code.transform.AppendingTransformer;
 import greed.code.transform.CutBlockRemover;
 import greed.code.transform.EmptyCutBlockCleaner;
 import greed.code.transform.ContinuousBlankLineRemover;
+import greed.conf.schema.CommandConfig;
 import greed.conf.schema.GreedConfig;
 import greed.conf.schema.LanguageConfig;
 import greed.conf.schema.TemplateConfig;
@@ -192,9 +193,19 @@ public class Greed {
                     continue;
                 }
                 writeFileWithBackup(filePath, code, exists);
-            }
 
-            // TODO: After gen hook
+                if (template.getAfterFileGen() != null) {
+                    CommandConfig afterGen = template.getAfterFileGen();
+                    String[] commands = new String[afterGen.getArguments().length + 1];
+                    commands[0] = afterGen.getExecute();
+                    for (int i = 1; i < commands.length; ++i) {
+                        commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
+                    }
+
+                    talkingWindow.say(String.format("Running command [%s], at [%s]", StringUtil.join(commands, ", "), fileFolder));
+                    talkingWindow.say("Exit code: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
+                }
+            }
         }
 
         talkingWindow.say("All set, good luck!");
