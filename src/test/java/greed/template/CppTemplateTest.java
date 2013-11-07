@@ -30,13 +30,13 @@ public class CppTemplateTest {
 
     @Before
     public void setupTemplates() throws IOException {
-        this.codeTemplate = getClass().getResourceAsStream("/templates/C++.source.tmpl");
+        this.codeTemplate = getClass().getResourceAsStream("/templates/C++/source.cpp.tmpl");
         assertThat(this.codeTemplate, notNullValue());
 
-        this.testTemplate = getClass().getResourceAsStream("/templates/C++-gcc.test.tmpl");
+        this.testTemplate = getClass().getResourceAsStream("/templates/C++/gcc.test.cpp.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        this.testCXX11Template = getClass().getResourceAsStream("/templates/C++11-gcc.test.tmpl");
+        this.testCXX11Template = getClass().getResourceAsStream("/templates/C++/gcc11.test.cpp.tmpl");
         assertThat(this.testCXX11Template, notNullValue());
 
         TemplateEngine.switchLanguage(Language.CPP);
