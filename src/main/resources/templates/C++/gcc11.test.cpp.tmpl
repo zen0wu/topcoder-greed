@@ -1,12 +1,16 @@
-template <typename T> string pretty_print(T t) { stringstream s; typeid(T) == typeid(string) ? s << "\\"" << t << "\\"" : s << t; return s.str(); }
+template <typename T> string to_str(T t) { stringstream s; typeid(T) == typeid(string) ? s << "\\"" << t << "\\"" : s << t; return s.str(); }
 
 ${<if ReturnsArray}
 // Vector print
-template <typename T> ostream &operator << (ostream &out, vector<T> arr) {
-    out << "{ ";
-    for (int i = 0; i < arr.size(); ++i) out << (i == 0 ? "" : ", ") << pretty_print(arr[i]);
-    out << " }";
-    return out;
+template <typename T> string to_str(vector<T> t) {
+    stringstream s;
+    s << "[";
+    for (int i = 0; i < t.size(); ++i) {
+        if (i > 0) s << ", ";
+        s << to_str(t[i]);
+    }
+    s << "]";
+    return s.str();
 }
 ${<end}
 
@@ -47,8 +51,8 @@ ${<end}
     }
     else {
         cout << "FAILED!" << " (" << elapsed << " seconds)" << endl;
-        cout << "           Expected: " << pretty_print(__expected) << endl;
-        cout << "           Received: " << pretty_print(__result) << endl;
+        cout << "           Expected: " << to_str(__expected) << endl;
+        cout << "           Received: " << to_str(__result) << endl;
         return false;
     }
 }
