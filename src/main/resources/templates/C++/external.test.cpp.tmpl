@@ -131,7 +131,6 @@ int main(int argc, char *argv[]) {
     cout.precision(2);
     cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
 
-    int nPassed = 0, nAll = 0;
     set<int> cases;
     for (int i = 1; i < argc; ++i) cases.insert(atoi(argv[i]));
     run_test(cases);
