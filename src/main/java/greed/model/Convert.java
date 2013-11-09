@@ -38,6 +38,31 @@ public class Convert {
         if ("C#".equals(langName)) return Language.CSHARP;
         return null;
     }
+    
+    private static String getRidOfTopElement(String xml)
+    {
+        // Unfortunately, since the parameter is not guaranteed to be strictly
+        //  correct XML, we cannot rely on the usual XML parser. 
+        xml = xml.trim();
+        int i = 0, j = xml.length() - 1;
+        if (    (xml.length() >= 4)
+             && (xml.charAt(i) == '<')
+             && (xml.charAt(j) == '>')
+           ) {
+            i++; j--;
+            while ( (i < xml.length()) && (xml.charAt(i) != '>') ) {
+                i++;
+            }
+            while ( (j >= 0) && (xml.charAt(j) != '<') ) {
+                j--;
+            }
+            if (i < j) {
+                xml = xml.substring(i + 1, j);
+            }
+            xml.trim();
+        }
+        return xml;
+    }
 
     public static Problem convertProblem(com.topcoder.client.contestant.ProblemComponentModel problem, Language language) {
         Param[] params = new Param[problem.getParamNames().length];
@@ -55,8 +80,12 @@ public class Convert {
             ParamValue output = trait.parseValue(tc.getOutput(), new Param("expected", method.getReturnType(), params.length));
             cases[i] = new Testcase(i, input, output);
 
-            if (tc.getAnnotation() != null)
-                cases[i].setAnnotation(tc.getAnnotation().toXML());
+            if (tc.getAnnotation() != null) {
+                String ann = getRidOfTopElement(tc.getAnnotation().toXML());
+                if ( ann.length() != 0 ) {
+                    cases[i].setAnnotation(ann);
+                }
+            }
         }
 
         String[] notes = new String[problem.getNotes().length];
