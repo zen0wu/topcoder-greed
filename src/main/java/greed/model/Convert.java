@@ -59,7 +59,7 @@ public class Convert {
             if (i < j) {
                 xml = xml.substring(i + 1, j);
             }
-            xml.trim();
+            xml = xml.trim();
         }
         return xml;
     }
