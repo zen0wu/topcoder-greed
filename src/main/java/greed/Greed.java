@@ -198,6 +198,8 @@ public class Greed {
                     CommandConfig afterGen = template.getAfterFileGen();
                     String[] commands = new String[afterGen.getArguments().length + 1];
                     commands[0] = afterGen.getExecute();
+                    currentTemplateModel.put("GeneratedFileName", new java.io.File(filePath).getName());
+                    currentTemplateModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath));
                     for (int i = 1; i < commands.length; ++i) {
                         commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
                     }
