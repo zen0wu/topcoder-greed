@@ -10,6 +10,7 @@ import greed.util.Utils;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,25 +18,38 @@ import java.awt.event.ActionListener;
 /**
  * Greed is good! Cheers!
  */
-public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionListener {
-    private JTextArea logTextArea;
+public class GreedEditorPanel extends JPanel implements InteractiveWindow, ActionListener {
+
+    private static final String NORMAL_PREFIX = "";
+    private static final String ERROR_PREFIX = "";
+
+    private JTextPane interactiveWindow;
     private JButton reloadConfigButton;
     private JButton regenerateButton;
+
+    private Style normalStyle, errorStyle;
 
     private Greed greed;
 
     public GreedEditorPanel(Greed greed) {
         this.greed = greed;
 
-        logTextArea = new JTextArea();
-        logTextArea.setEditable(false);
-        logTextArea.setMargin(new Insets(10, 10, 10, 10));
-        logTextArea.setBackground(Color.BLACK);
-        logTextArea.setForeground(Color.WHITE);
-        logTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        logTextArea.setMinimumSize(new Dimension(150, 60));
+        interactiveWindow = new JTextPane();
+        interactiveWindow.setEditable(false);
+        interactiveWindow.setMargin(new Insets(10, 10, 10, 10));
+        interactiveWindow.setBackground(Color.BLACK);
+        interactiveWindow.setForeground(Color.WHITE);
+        interactiveWindow.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        interactiveWindow.setMinimumSize(new Dimension(150, 60));
 
-        JScrollPane scrollPane = new JScrollPane(logTextArea);
+        normalStyle = interactiveWindow.addStyle("Normal Style", null);
+        StyleConstants.setForeground(normalStyle, Color.WHITE);
+        StyleConstants.setBold(normalStyle, false);
+        errorStyle = interactiveWindow.addStyle("Error Style", null);
+        StyleConstants.setForeground(errorStyle, Color.RED);
+        StyleConstants.setBold(errorStyle, true);
+
+        JScrollPane scrollPane = new JScrollPane(interactiveWindow);
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -81,29 +95,19 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
     }
 
     @Override
-    public void say(String message) {
-        logTextArea.append(" - " + message + "\n");
-    }
-
-    @Override
-    public void clear() {
-        logTextArea.setText("");
-    }
-
-    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object src = actionEvent.getSource();
         if (src == reloadConfigButton) {
-            this.say("Reloading your configuration from \"" + Configuration.getWorkspace() + "/greed.conf\"");
+            this.showLine("Reloading your configuration from \"" + Configuration.getWorkspace() + "/greed.conf\"");
             Log.i("Reload configuration");
             try {
                 Utils.reinitialize();
             } catch (ConfigException e) {
                 Log.e("Exception while reloading config", e);
-                this.say("Oops, error saying \"" + e.getMessage() + "\". Go fix it!");
+                this.showLine("Oops, error saying \"" + e.getMessage() + "\". Go fix it!");
             }
         } else if (src == regenerateButton) {
-            this.say("Regeneration!");
+            this.showLine("Regeneration!");
             greed.generateCode(true);
         }
     }
@@ -115,11 +119,98 @@ public class GreedEditorPanel extends JPanel implements TalkingWindow, ActionLis
         regenerateButton.setEnabled(enabled);
     }
 
-    public static void main(String[] args) {
+    private boolean atLineStart = true;
+    private int indentLevel = 0;
+
+    @Override
+    public void clear() {
+        interactiveWindow.setText("");
+        indentLevel = 0;
+        atLineStart = true;
+    }
+
+    @Override
+    public void showLine(String message) {
+        if (!atLineStart) {
+            appendText("\n", normalStyle);
+            atLineStart = true;
+        }
+        showIndentation();
+        appendText(NORMAL_PREFIX + message + "\n", normalStyle);
+    }
+
+    @Override
+    public void show(String message) {
+        if (atLineStart) {
+            atLineStart = false;
+            showIndentation();
+            appendText(NORMAL_PREFIX, normalStyle);
+        }
+        appendText(message, normalStyle);
+    }
+
+    private void showIndentation() {
+        for (int i = 0; i < indentLevel; ++i)
+            appendText("  ", normalStyle);
+    }
+
+    private void appendText(String text, Style style) {
+        StyledDocument doc = interactiveWindow.getStyledDocument();
+        try {
+            doc.insertString(doc.getLength(), text, style);
+        } catch (BadLocationException e) {
+            Log.e("Cannot write to editor panel", e);
+        }
+    }
+
+    @Override
+    public void indent() {
+        indentLevel++;
+    }
+
+    @Override
+    public void unindent() {
+        if (indentLevel > 0)
+            indentLevel--;
+    }
+
+    @Override
+    public void error(String message) {
+        if (!atLineStart) {
+            appendText("\n", normalStyle);
+            atLineStart = true;
+        }
+        showIndentation();
+        appendText(ERROR_PREFIX + message + "\n", errorStyle);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         JFrame frame = new JFrame();
-        frame.add(new GreedEditorPanel(null));
+        GreedEditorPanel greedEditorPanel = new GreedEditorPanel(null);
+        frame.add(greedEditorPanel);
+        frame.setSize(500, 500);
+
+        greedEditorPanel.showLine("Line 1");
+        greedEditorPanel.indent();
+        greedEditorPanel.showLine("Line 2");
+        greedEditorPanel.showLine("Line 3");
+        greedEditorPanel.indent();
+        greedEditorPanel.showLine("Line 4");
+        greedEditorPanel.show("Line 5...");
+        greedEditorPanel.unindent();
+        greedEditorPanel.unindent();
+        greedEditorPanel.show("done");
+        greedEditorPanel.showLine("Line 6");
+        greedEditorPanel.error("Error 1");
+        greedEditorPanel.indent();
+        greedEditorPanel.error("Error 2");
+        greedEditorPanel.showLine("Line 7");
+
         frame.pack();
         frame.setVisible(true);
+
+        Thread.sleep(5000);
+        greedEditorPanel.clear();
     }
 
 }

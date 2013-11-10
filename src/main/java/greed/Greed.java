@@ -68,9 +68,9 @@ public class Greed {
         Log.i("Start using called");
         talkingWindow.clear();
         if (firstUsing) {
-            talkingWindow.say(String.format("Hi, this is %s.", AppInfo.getAppName()));
+            talkingWindow.showLine(String.format("Greetings from %s.", AppInfo.getAppName()));
         } else {
-            talkingWindow.say(String.format("So we meet again :>"));
+            talkingWindow.showLine(String.format("We meet again :>"));
         }
         firstUsing = false;
 
@@ -78,7 +78,7 @@ public class Greed {
             Utils.initialize();
         } catch (greed.conf.ConfigException e) {
             Log.e("Exception while loading config", e);
-            talkingWindow.say("Something wrong when loading config saying \"" + e.getMessage() + "\", try fix it.");
+            talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
         }
     }
 
@@ -95,7 +95,8 @@ public class Greed {
         currentLang = Convert.convertLanguage(language);
         currentProb = Convert.convertProblem(componentModel, currentLang);
 
-        talkingWindow.say("Hmm, it's a problem with " + currentProb.getScore() + " points. Good choice!");
+        talkingWindow.showLine(String.format("Problem : %s", currentProb.getName()));
+        talkingWindow.showLine(String.format("Score   : %d", currentProb.getScore()));
         generateCode(false);
     }
 
@@ -103,8 +104,8 @@ public class Greed {
         // Check whether workspace is set
         if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
             talkingWindow.setEnabled(false);
-            talkingWindow.say("It seems that you haven't set your workspace, go set it!");
-            Log.e("Workspace not set");
+            talkingWindow.error("Workspace not configured, go set it!");
+            Log.e("Workspace not configured");
             return;
         }
 
@@ -112,8 +113,8 @@ public class Greed {
         try {
             setProblem(currentContest, currentProb, currentLang, forceOverride);
         } catch (Throwable e) {
-            talkingWindow.say("Oops, something wrong! It says \"" + e.getMessage() + "\"");
-            talkingWindow.say("Please see the logs for details.");
+            talkingWindow.error(e.getMessage());
+            talkingWindow.showLine("Please see the logs for details.");
             Log.e("Set problem failed", e);
         }
     }
@@ -122,7 +123,7 @@ public class Greed {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(language));
         if (langConfig == null) {
-            talkingWindow.say("Unsupported language " + language.toString());
+            talkingWindow.error("Unsupported language " + language.toString());
             return;
         }
 
@@ -154,7 +155,8 @@ public class Greed {
         for (String templateName : langConfig.getTemplates()) {
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
 
-            talkingWindow.say(String.format("Generating template [" + templateName + "]"));
+            talkingWindow.showLine(String.format("Generating template [" + templateName + "]"));
+            talkingWindow.indent();
             // Generate code from templates
             String code;
             try {
@@ -166,7 +168,7 @@ public class Greed {
                 codeLines = new ContinuousBlankLineRemover().transform(codeLines);
                 code = codeLines.toString();
             } catch (FileNotFoundException e) {
-                talkingWindow.say("Template file \"" + template.getTemplateFile() + "\" not found");
+                talkingWindow.error("Template file \"" + template.getTemplateFile() + "\" not found");
                 continue;
             }
 
@@ -181,15 +183,17 @@ public class Greed {
                         TemplateEngine.render(template.getOutputFile(), currentTemplateModel);
                 String fileFolder = FileSystem.getParentPath(filePath);
                 if (!FileSystem.exists(fileFolder)) {
-                    talkingWindow.say("Creating folder " + fileFolder);
+                    talkingWindow.showLine("Creating folder " + fileFolder);
                     FileSystem.createFolder(fileFolder);
                 }
 
                 boolean exists = FileSystem.exists(filePath);
                 boolean override = forceOverride || template.isOverride();
-                talkingWindow.say("Writing to " + filePath);
+                talkingWindow.showLine("Wrote to " + filePath);
                 if (exists && !override) {
-                    talkingWindow.say("Skip due to override policy");
+                    talkingWindow.indent();
+                    talkingWindow.showLine("Skip due to override policy");
+                    talkingWindow.unindent();
                     continue;
                 }
                 writeFileWithBackup(filePath, code, exists);
@@ -204,14 +208,18 @@ public class Greed {
                         commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
                     }
 
-                    talkingWindow.say(String.format("Running command [%s], at [%s]", StringUtil.join(commands, ", "), fileFolder));
-                    talkingWindow.say("Exit code: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
+                    talkingWindow.showLine("After generation action: ");
+                    talkingWindow.indent();
+                    talkingWindow.showLine(String.format("Running command [%s], at [%s]", StringUtil.join(commands, ", "), fileFolder));
+                    talkingWindow.showLine("Exit code: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
+                    talkingWindow.unindent();
                 }
             }
+            talkingWindow.unindent();
         }
 
-        talkingWindow.say("All set, good luck!");
-        talkingWindow.say("");
+        talkingWindow.showLine("All set, good luck!");
+        talkingWindow.showLine("");
     }
 
     public String getSource() {
@@ -221,9 +229,9 @@ public class Greed {
         String filePath = config.getCodeRoot() + "/" +
                 TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
 
-        talkingWindow.say("Submitting " + filePath);
+        talkingWindow.showLine("Submitting " + filePath);
         if (!FileSystem.exists(filePath)) {
-            talkingWindow.say("Cannot found your source code");
+            talkingWindow.showLine("Cannot found your source code");
             return "";
         }
 
@@ -238,7 +246,7 @@ public class Greed {
 
             return code.toString();
         } catch (IOException e) {
-            talkingWindow.say("Err... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
+            talkingWindow.showLine("Err... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
             Log.e("Error getting the source", e);
             return "";
         }
@@ -247,9 +255,9 @@ public class Greed {
     private void writeFileWithBackup(String path, String content, boolean exists) {
         if (content != null) {
             if (exists) {
-                talkingWindow.say("Overriding \"" + path + "\", old files will be renamed");
+                talkingWindow.showLine("Overriding \"" + path + "\", old files will be renamed");
                 if (FileSystem.getSize(path) == content.length()) {
-                    talkingWindow.say("Seems the current file is the same as the code to write, skipped");
+                    talkingWindow.showLine("Seems the current file is the same as the code to write, skipped");
                 } else
                     FileSystem.backup(path); // Backup the old files
             }
