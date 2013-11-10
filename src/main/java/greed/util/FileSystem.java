@@ -54,9 +54,15 @@ public class FileSystem {
         File f = new File(relativePath);
         return f.getParent();
     }
-
     public static File getRawFile(String relativePath) {
-        return new File(Configuration.getWorkspace() + "/" + relativePath);
+        File f = new File(Configuration.getWorkspace() + "/" + relativePath);
+        try {
+            return f.getCanonicalFile();
+        } catch (IOException e) {
+            // leave f untouched, possibly the file path does not exist, so
+            // fixing the non-canonical path is not important
+            return f;
+        }
     }
 
     public static long getSize(String resourcePath) {
