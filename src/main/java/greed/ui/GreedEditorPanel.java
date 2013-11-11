@@ -131,12 +131,12 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
 
     @Override
     public void showLine(String message) {
-        if (!atLineStart) {
-            appendText("\n", normalStyle);
-            atLineStart = true;
+        if (atLineStart) {
+            showIndentation();
+            appendText(NORMAL_PREFIX, normalStyle);
         }
-        showIndentation();
-        appendText(NORMAL_PREFIX + message + "\n", normalStyle);
+        appendText(message + "\n", normalStyle);
+        atLineStart = true;
     }
 
     @Override

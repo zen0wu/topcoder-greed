@@ -68,9 +68,9 @@ public class Greed {
         Log.i("Start using called");
         talkingWindow.clear();
         if (firstUsing) {
-            talkingWindow.showLine(String.format("Greetings from %s.", AppInfo.getAppName()));
+            talkingWindow.showLine(String.format("Greetings from %s", AppInfo.getAppName()));
         } else {
-            talkingWindow.showLine(String.format("We meet again :>"));
+            talkingWindow.showLine(String.format("Hello again :>"));
         }
         firstUsing = false;
 
@@ -95,8 +95,8 @@ public class Greed {
         currentLang = Convert.convertLanguage(language);
         currentProb = Convert.convertProblem(componentModel, currentLang);
 
-        talkingWindow.showLine(String.format("Problem : %s", currentProb.getName()));
-        talkingWindow.showLine(String.format("Score   : %d", currentProb.getScore()));
+        talkingWindow.showLine(String.format("Problem :  %s", currentProb.getName()));
+        talkingWindow.showLine(String.format("Score   :  %d", currentProb.getScore()));
         generateCode(false);
     }
 
@@ -155,7 +155,7 @@ public class Greed {
         for (String templateName : langConfig.getTemplates()) {
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
 
-            talkingWindow.showLine(String.format("Generating template [" + templateName + "]"));
+            talkingWindow.show(String.format("Generating template [" + templateName + "]"));
             talkingWindow.indent();
             // Generate code from templates
             String code;
@@ -183,38 +183,47 @@ public class Greed {
                         TemplateEngine.render(template.getOutputFile(), currentTemplateModel);
                 String fileFolder = FileSystem.getParentPath(filePath);
                 if (!FileSystem.exists(fileFolder)) {
-                    talkingWindow.showLine("Creating folder " + fileFolder);
                     FileSystem.createFolder(fileFolder);
                 }
 
                 boolean exists = FileSystem.exists(filePath);
                 boolean override = forceOverride || template.isOverride();
-                talkingWindow.showLine("Wrote to " + filePath);
+                talkingWindow.show(" -> " + filePath);
                 if (exists && !override) {
-                    talkingWindow.indent();
-                    talkingWindow.showLine("Skip due to override policy");
-                    talkingWindow.unindent();
+                    talkingWindow.show(" (skipped)");
                     continue;
                 }
-                writeFileWithBackup(filePath, code, exists);
+                if (exists) {
+                    if (FileSystem.getSize(filePath) == code.length()) {
+                        talkingWindow.show(" (skipped, same size)");
+                    } else {
+                        talkingWindow.show(" (overwrite)");
+                        FileSystem.backup(filePath); // Backup the old files
+                        FileSystem.writeFile(filePath, code);
+                    }
+                }
+                else
+                    FileSystem.writeFile(filePath, code);
 
                 if (template.getAfterFileGen() != null) {
                     CommandConfig afterGen = template.getAfterFileGen();
                     String[] commands = new String[afterGen.getArguments().length + 1];
                     commands[0] = afterGen.getExecute();
                     currentTemplateModel.put("GeneratedFileName", new java.io.File(filePath).getName());
-                    currentTemplateModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath));
+                    currentTemplateModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath).getPath());
                     for (int i = 1; i < commands.length; ++i) {
                         commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
                     }
 
+                    talkingWindow.showLine("");
                     talkingWindow.showLine("After generation action: ");
                     talkingWindow.indent();
-                    talkingWindow.showLine(String.format("Running command [%s], at [%s]", StringUtil.join(commands, ", "), fileFolder));
-                    talkingWindow.showLine("Exit code: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
+                    talkingWindow.showLine(String.format("(%s)$ %s", fileFolder, StringUtil.join(commands, " ")));
+                    talkingWindow.show("Exit status: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
                     talkingWindow.unindent();
                 }
             }
+            talkingWindow.showLine(" ");
             talkingWindow.unindent();
         }
 
@@ -229,40 +238,29 @@ public class Greed {
         String filePath = config.getCodeRoot() + "/" +
                 TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
 
-        talkingWindow.showLine("Submitting " + filePath);
+        talkingWindow.showLine("Getting source code from " + filePath);
+        talkingWindow.indent();
+        String result = "";
         if (!FileSystem.exists(filePath)) {
-            talkingWindow.showLine("Cannot found your source code");
-            return "";
+            talkingWindow.error("Source code file doesn't exist");
         }
+        else {
+            try {
+                CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
 
-        try {
-            CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
+                if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
+                    code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);
 
-            if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
-                code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);
+                code = new CutBlockRemover(langConfig.getCutBegin(), langConfig.getCutEnd()).transform(code);
+                code = new AppendingTransformer(getSignature()).transform(code);
 
-            code = new CutBlockRemover(langConfig.getCutBegin(), langConfig.getCutEnd()).transform(code);
-            code = new AppendingTransformer(getSignature()).transform(code);
-
-            return code.toString();
-        } catch (IOException e) {
-            talkingWindow.showLine("Err... Cannot fetch your source code. Please check the logs, and make sure your source code is present");
-            Log.e("Error getting the source", e);
-            return "";
-        }
-    }
-
-    private void writeFileWithBackup(String path, String content, boolean exists) {
-        if (content != null) {
-            if (exists) {
-                talkingWindow.showLine("Overriding \"" + path + "\", old files will be renamed");
-                if (FileSystem.getSize(path) == content.length()) {
-                    talkingWindow.showLine("Seems the current file is the same as the code to write, skipped");
-                } else
-                    FileSystem.backup(path); // Backup the old files
+                result = code.toString();
+            } catch (IOException e) {
+                talkingWindow.showLine("Cannot fetch source code, message says \"" + e.getMessage() + "\"");
+                Log.e("Error getting the source", e);
             }
-
-            FileSystem.writeFile(path, content);
         }
+        talkingWindow.unindent();
+        return result;
     }
 }
