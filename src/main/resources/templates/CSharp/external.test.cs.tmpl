@@ -1,0 +1,103 @@
+
+	static bool DoTest(${Method.Params}, ${Method.ReturnType} __expected) {
+		DateTime startTime = DateTime.Now;
+		Exception exception = null;
+		${ClassName} instance = new ${ClassName}();
+		${Method.ReturnType} __result = ${Method.ReturnType;zeroval};
+		try {
+			__result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+		}
+		catch (Exception e) { exception = e; }
+		TimeSpan __elapsed = new TimeSpan(DateTime.Now.Ticks - startTime.Ticks);
+
+		if (exception != null) {
+			Console.Error.WriteLine("RUNTIME ERROR!");
+			Console.Error.WriteLine(exception);
+			return false;
+		}
+		else if (${if Method.ReturnType.Array}Equals(__result, __expected)${else}${if Method.ReturnType.RealNumber}DoubleEquals(__expected, __result)${else}__result == __expected${end}${end}) {
+			Console.Error.WriteLine("PASSED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
+			return true;
+		}
+		else {
+			Console.Error.WriteLine("FAILED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
+			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}__expected${end});
+			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}__result${end});
+			return false;
+		}
+	}
+
+${<if Method.ReturnType.RealNumber}
+	static bool DoubleEquals(double a, double b) {
+		return Math.Abs(a - b) < 1e-9 || Math.Abs(a) > Math.Abs(b) * (1.0 - 1e-9) && Math.Abs(a) < Math.Abs(b) * (1.0 + 1e-9);
+	}
+${<end}
+
+${<if ReturnsArray}
+	static bool Equals(${Method.ReturnType} a, ${Method.ReturnType} b) {
+		if (a.Length != b.Length) return false;
+		for (int i = 0; i < a.Length; ++i) if (${if Method.ReturnType.string}a[i] == null || b[i] == null || a[i] != b[i]${else}${if Method.ReturnType.RealNumber}!DoubleEquals(a[i], b[i])${else}a[i] != b[i]${end}${end}) return false;
+		return true;
+	}
+
+	static string ToString(${Method.ReturnType} arr) {
+		StringBuilder sb = new StringBuilder();
+		sb.Append("[ ");
+		for (int i = 0; i < arr.Length; ++i) {
+			if (i > 0) sb.Append(", ");
+			sb.Append(arr[i]);
+		}
+		return sb.ToString() + " ]";
+	}
+${<end}
+
+	public static void Main(string[] args){
+		HashSet<int> cases = new HashSet<int>();
+        for (int i = 0; i < args.Length; ++i) cases.Add(int.Parse(args[i]));
+
+		Console.Error.WriteLine("${Problem.Name} (${Problem.Score} Points)");
+		Console.Error.WriteLine();
+
+    	int nCases = 0, nPassed = 0;
+    	using (var reader = File.OpenText("${Problem.Name}.sample")) {
+            while (true) {
+                string line = reader.ReadLine();
+                if (line == null || !line.StartsWith("--"))
+                    break;
+
+${<foreach Method.Params param}
+${<if !param.Type.Array}
+                ${param.Type.Primitive} ${param.Name} = (${param.Type.Primitive}) Convert.ChangeType(reader.ReadLine(), typeof(${param.Type.Primitive}));
+${<else}
+                ${param.Type.Primitive}[] ${param.Name} = new ${param.Type.Primitive}[int.Parse(reader.ReadLine())];
+                for (int i = 0; i < ${param.Name}.Length; ++i)
+                    ${param.Name}[i] = (${param.Type.Primitive}) Convert.ChangeType(reader.ReadLine(), typeof(${param.Type.Primitive}));
+${<end}
+${<end}
+                reader.ReadLine();
+${<if !Method.ReturnType.Array}
+                ${Method.ReturnType.Primitive} __answer = (${Method.ReturnType.Primitive}) Convert.ChangeType(reader.ReadLine(), typeof(${Method.ReturnType.Primitive}));
+${<else}
+                ${Method.ReturnType.Primitive}[] __answer = new ${Method.ReturnType.Primitive}[int.Parse(reader.ReadLine())];
+                for (int i = 0; i < __answer.Length; ++i)
+                    __answer[i] = (${Method.ReturnType.Primitive}) Convert.ChangeType(reader.ReadLine(), typeof(${Method.ReturnType.Primitive}));
+${<end}
+
+                nCases++;
+                if (cases.Count > 0 && !cases.Contains(nCases - 1))
+                	continue;
+                Console.Error.Write(string.Format("  Testcase #{0} ... ", nCases - 1));
+                if (DoTest(${foreach Method.Params param , }${param.Name}${end}, __answer))
+                    nPassed++;
+            }
+    	}
+
+		Console.Error.WriteLine();
+		Console.Error.WriteLine(string.Format("Passed : {0}/{1} cases", nPassed, nCases));
+
+		DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		int T = (int)((DateTime.UtcNow - Jan1st1970).TotalSeconds - ${CreateTime});
+		double PT = T / 60.0, TT = 75.0;
+		Console.Error.WriteLine(string.Format("Time   : {0} minutes {1} secs", T / 60, T % 60));
+		Console.Error.WriteLine(string.Format("Score  : {0:0.00} points", ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))));
+	}

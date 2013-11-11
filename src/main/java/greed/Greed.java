@@ -156,7 +156,6 @@ public class Greed {
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
 
             talkingWindow.show(String.format("Generating template [" + templateName + "]"));
-            talkingWindow.indent();
             // Generate code from templates
             String code;
             try {
@@ -168,7 +167,9 @@ public class Greed {
                 codeLines = new ContinuousBlankLineRemover().transform(codeLines);
                 code = codeLines.toString();
             } catch (FileNotFoundException e) {
+                talkingWindow.indent();
                 talkingWindow.error("Template file \"" + template.getTemplateFile() + "\" not found");
+                talkingWindow.unindent();
                 continue;
             }
 
@@ -191,7 +192,6 @@ public class Greed {
                 talkingWindow.show(" -> " + filePath);
                 if (exists && !override) {
                     talkingWindow.showLine(" (skipped)");
-                    talkingWindow.unindent();
                     continue;
                 }
                 if (exists) {
@@ -217,15 +217,16 @@ public class Greed {
                     }
 
                     talkingWindow.showLine("");
+                    talkingWindow.indent();
                     talkingWindow.showLine("After generation action: ");
                     talkingWindow.indent();
                     talkingWindow.showLine(String.format("(%s)$ %s", fileFolder, StringUtil.join(commands, " ")));
                     talkingWindow.show("Exit status: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
                     talkingWindow.unindent();
+                    talkingWindow.unindent();
                 }
             }
-            talkingWindow.showLine(" ");
-            talkingWindow.unindent();
+            talkingWindow.showLine("");
         }
 
         talkingWindow.showLine("All set, good luck!");

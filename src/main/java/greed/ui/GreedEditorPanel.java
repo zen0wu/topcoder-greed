@@ -22,7 +22,7 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
 
     private static final String NORMAL_PREFIX = "";
     private static final String ERROR_PREFIX = "";
-    private static final String NEW_LINE = "\n\r";
+    private static final String NEW_LINE = "\n";
 
     private JTextPane interactiveWindow;
     private JButton reloadConfigButton;

@@ -4,12 +4,12 @@ ${<if ReturnsArray}
 // Vector print
 template <typename T> string to_str(vector<T> t) {
     stringstream s;
-    s << "[";
+    s << "[ ";
     for (int i = 0; i < t.size(); ++i) {
         if (i > 0) s << ", ";
         s << to_str(t[i]);
     }
-    s << "]";
+    s << " ]";
     return s.str();
 }
 ${<end}

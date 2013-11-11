@@ -1,22 +1,9 @@
-
-	static class Reader {
-        private static final String dataFileName = "${Problem.Name}.sample";
-	    private static BufferedReader reader;
-
-	    public static String nextLine() {
-	        try {
-                if (reader == null) {
-                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFileName)));
-                }
-                return reader.readLine();
-	        }
-	        catch (IOException e) {
-	            System.err.println("FATAL!! IOException");
-	            e.printStackTrace();
-	            System.exit(1);
-	        }
-	        return "";
-	    }
+	public static void main(String[] args){
+		System.err.println("${Problem.Name} (${Problem.Score} Points)");
+		System.err.println();
+		HashSet<Integer> cases = new HashSet<Integer>();
+        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
+        runTest(cases);
 	}
 
 	static void runTest(HashSet<Integer> caseSet) {
@@ -122,10 +109,22 @@ ${<if ReturnsArray}
 	}
 ${<end}
 
-	public static void main(String[] args){
-		System.err.println("${Problem.Name} (${Problem.Score} Points)");
-		System.err.println();
-		HashSet<Integer> cases = new HashSet<Integer>();
-        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
-        runTest(cases);
+	static class Reader {
+        private static final String dataFileName = "${Problem.Name}.sample";
+	    private static BufferedReader reader;
+
+	    public static String nextLine() {
+	        try {
+                if (reader == null) {
+                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFileName)));
+                }
+                return reader.readLine();
+	        }
+	        catch (IOException e) {
+	            System.err.println("FATAL!! IOException");
+	            e.printStackTrace();
+	            System.exit(1);
+	        }
+	        return "";
+	    }
 	}
