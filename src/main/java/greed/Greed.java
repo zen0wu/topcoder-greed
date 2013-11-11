@@ -190,7 +190,8 @@ public class Greed {
                 boolean override = forceOverride || template.isOverride();
                 talkingWindow.show(" -> " + filePath);
                 if (exists && !override) {
-                    talkingWindow.show(" (skipped)");
+                    talkingWindow.showLine(" (skipped)");
+                    talkingWindow.unindent();
                     continue;
                 }
                 if (exists) {

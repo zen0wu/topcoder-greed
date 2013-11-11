@@ -22,6 +22,7 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
 
     private static final String NORMAL_PREFIX = "";
     private static final String ERROR_PREFIX = "";
+    private static final String NEW_LINE = "\n\r";
 
     private JTextPane interactiveWindow;
     private JButton reloadConfigButton;
@@ -135,7 +136,7 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
             showIndentation();
             appendText(NORMAL_PREFIX, normalStyle);
         }
-        appendText(message + "\n", normalStyle);
+        appendText(message + NEW_LINE, normalStyle);
         atLineStart = true;
     }
 
@@ -177,11 +178,11 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
     @Override
     public void error(String message) {
         if (!atLineStart) {
-            appendText("\n", normalStyle);
+            appendText(NEW_LINE, normalStyle);
             atLineStart = true;
         }
         showIndentation();
-        appendText(ERROR_PREFIX + message + "\n", errorStyle);
+        appendText(ERROR_PREFIX + message + NEW_LINE, errorStyle);
     }
 
     public static void main(String[] args) throws InterruptedException {
