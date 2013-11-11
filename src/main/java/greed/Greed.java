@@ -77,8 +77,8 @@ public class Greed {
         try {
             Utils.initialize();
         } catch (greed.conf.ConfigException e) {
-            Log.e("Exception while loading config", e);
             talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
+            Log.e("Error loading config", e);
         }
     }
 
@@ -113,8 +113,7 @@ public class Greed {
         try {
             setProblem(currentContest, currentProb, currentLang, forceOverride);
         } catch (Throwable e) {
-            talkingWindow.error(e.getMessage());
-            talkingWindow.error("Please see the logs for details.");
+            talkingWindow.error("Set problem error, message says \"" + e.getMessage() + "\"");
             Log.e("Set problem failed", e);
         }
     }
@@ -258,7 +257,7 @@ public class Greed {
 
                 result = code.toString();
             } catch (IOException e) {
-                talkingWindow.showLine("Cannot fetch source code, message says \"" + e.getMessage() + "\"");
+                talkingWindow.error("Cannot fetch source code, message says \"" + e.getMessage() + "\"");
                 Log.e("Error getting the source", e);
             }
         }
