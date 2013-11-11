@@ -29,10 +29,10 @@ public class PythonTemplateTest {
 
     @Before
     public void setupTemplates() throws IOException {
-        this.codeTemplate = getClass().getResourceAsStream("/templates/Python/source.py.tmpl");
+        this.codeTemplate = getClass().getResourceAsStream("/templates/source/py.tmpl");
         assertThat(this.codeTemplate, notNullValue());
 
-        this.testTemplate = getClass().getResourceAsStream("/templates/Python/test.py.tmpl");
+        this.testTemplate = getClass().getResourceAsStream("/templates/test/py.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
         TemplateEngine.switchLanguage(Language.PYTHON);

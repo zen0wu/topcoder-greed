@@ -30,13 +30,13 @@ public class JavaTemplateTest {
 
     @Before
     public void setupTemplates() throws IOException {
-        this.codeTemplate = getClass().getResourceAsStream("/templates/Java/source.java.tmpl");
+        this.codeTemplate = getClass().getResourceAsStream("/templates/source/java.tmpl");
         assertThat(this.codeTemplate, notNullValue());
 
-        this.testTemplate = getClass().getResourceAsStream("/templates/Java/test.java.tmpl");
+        this.testTemplate = getClass().getResourceAsStream("/templates/test/java.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        this.testJunitTemplate = getClass().getResourceAsStream("/templates/Java/junit.unittest.java.tmpl");
+        this.testJunitTemplate = getClass().getResourceAsStream("/templates/unittest/junit.java.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
         TemplateEngine.switchLanguage(Language.JAVA);
