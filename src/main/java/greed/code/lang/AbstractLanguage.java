@@ -1,5 +1,7 @@
 package greed.code.lang;
 
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 import greed.code.LanguageRenderer;
 import greed.code.LanguageTrait;
 import greed.model.Param;
@@ -8,6 +10,8 @@ import greed.model.Primitive;
 import greed.model.Type;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * An base implementation of {@link LanguageRenderer} and {@link LanguageTrait}.
@@ -73,5 +77,34 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
             buf.append(renderParam(params[i]));
         }
         return buf.toString();
+    }
+
+    @Override
+    public List<NamedRenderer> getOtherRenderers() {
+        ArrayList<NamedRenderer> namedRenderers = new ArrayList<NamedRenderer>();
+        namedRenderers.add(new NamedRenderer() {
+            @Override
+            public String render(Object o, String s, Locale locale) {
+                if (o instanceof Type)
+                    return renderZeroValue((Type) o);
+                return "";
+            }
+
+            @Override
+            public String getName() {
+                return "zeroval";
+            }
+
+            @Override
+            public RenderFormatInfo getFormatInfo() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] getSupportedClasses() {
+                return new Class<?>[]{Type.class};
+            }
+        });
+        return namedRenderers;
     }
 }

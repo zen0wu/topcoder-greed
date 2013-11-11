@@ -17,7 +17,6 @@ import java.util.Map;
 
 import com.floreysoft.jmte.Engine;
 import com.floreysoft.jmte.NamedRenderer;
-import com.floreysoft.jmte.RenderFormatInfo;
 import com.floreysoft.jmte.Renderer;
 
 /**
@@ -56,6 +55,7 @@ public class LanguageManager {
     public void registerRenderer(Language language, Engine engine) {
         final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
+            // TODO: Unregister all the engine's old renderers, seems no simple API to do so
             engine.registerRenderer(Primitive.class, new Renderer<Primitive>() {
                 @Override
                 public String render(Primitive primitive, Locale locale) {
@@ -86,29 +86,8 @@ public class LanguageManager {
                     return renderer.renderParamList(params);
                 }
             });
-            engine.registerNamedRenderer(new NamedRenderer() {
-                @Override
-                public String render(Object o, String s, Locale locale) {
-                    if (o instanceof Type)
-                        return renderer.renderZeroValue((Type) o);
-                    return "";
-                }
-
-                @Override
-                public String getName() {
-                    return "ZeroValue";
-                }
-
-                @Override
-                public RenderFormatInfo getFormatInfo() {
-                    return null;
-                }
-
-                @Override
-                public Class<?>[] getSupportedClasses() {
-                    return new Class<?>[]{Type.class};
-                }
-            });
+            for (NamedRenderer namedRenderer: renderer.getOtherRenderers())
+                engine.registerNamedRenderer(namedRenderer);
         }
     }
 

@@ -114,7 +114,7 @@ public class Greed {
             setProblem(currentContest, currentProb, currentLang, forceOverride);
         } catch (Throwable e) {
             talkingWindow.error(e.getMessage());
-            talkingWindow.showLine("Please see the logs for details.");
+            talkingWindow.error("Please see the logs for details.");
             Log.e("Set problem failed", e);
         }
     }
