@@ -23,10 +23,10 @@ Greed is good
 Downloads
 ---------
 
-The versions have been put into the `dist` directory in the repository.
+Go to [Releases](https://github.com/shivawu/topcoder-greed/releases) page.
 
-* [2.0-beta](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-2.0-beta.jar)
-* Legacy [1.5](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.5.jar)  
+* [2.0-beta](https://github.com/shivawu/topcoder-greed/releases/download/2.0-beta/Greed-2.0-beta.jar)
+* Legacy [1.5](https://github.com/shivawu/topcoder-greed/releases/download/1.5/Greed-1.5.jar)  
   Note that the 2.0 is not compatiable with 1.x versions. Latest versions are recommended.
 
 Release Note
