@@ -29,46 +29,6 @@ Go to [Releases](https://github.com/shivawu/topcoder-greed/releases) page.
 * Legacy [1.5](https://github.com/shivawu/topcoder-greed/releases/download/1.5/Greed-1.5.jar)  
   Note that the 2.0 is not compatiable with 1.x versions. Latest versions are recommended.
 
-Release Note
-------------
-#### 2.0-beta
-
-Great news! **2.0** is finally feature complete and available for public beta test.
-Special thanks to @vexorian.
-
-The new features includes:
-
-- Flexible template definition. Rather than sticking to the old source, test, unittest pattern, you can define all kinds of templates yourself, testcase, makefile, scripts. Go wild with your imagination.
-- External scripts execution after template rendering
-- New configuration schema, described [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-2.0-beta.jar)
-- Shipped with problem statement and test data file generation, with well defined schema
-- New default templates, **filetest**. Reading data from sample files and run test. Release your code from the mess of data.
-- Various new string renderer, preparing to get templated
-- New colorful UI and message
-
-#### 1.5
-
-* Python support. Thanks to @wookayin, now Greed is one of the first plugins who support Python!
-
-#### 1.4
-
-* Major template bug fix , thanks to @ashashwat
-* Template bug when allocating large space, thanks to @wookayin
-
-#### 1.3
-
-* unit test code generation for C#(NUnit) and Java(JUnit), thanks to @tomtung
-* major rewriting
-
-#### 1.2
-
-* minor bug fix, mainly fix bugs on "long long" in C++, C#, and Java
-
-#### 1.1
-
-* update C# version, thanks to @jbransen
-* major bug fix
-
 Quick start
 -----------
 1. Go to [Downloads], and download the single Greed jar
