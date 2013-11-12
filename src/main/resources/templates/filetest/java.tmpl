@@ -39,6 +39,7 @@ ${<end}
             if (doTest(${foreach Method.Params param , }${param.Name}${end}, __answer))
                 passed++;
 	    }
+	    if (caseSet.size() > 0) cases = caseSet.size();
         System.err.println(String.format("%nPassed : %d/%d cases", passed, cases));
 
         int T = (int)(System.currentTimeMillis() / 1000) - ${CreateTime};
@@ -79,8 +80,8 @@ ${<end}
 		}
 		else {
 			System.err.println("FAILED! " + String.format("(%.2f seconds)", elapsed));
-			System.err.println("           Expected: " + ${if Method.ReturnType.Array}toString(__expected)${else}__expected${end});
-			System.err.println("           Received: " + ${if Method.ReturnType.Array}toString(__result)${else}__result${end});
+			System.err.println("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}${if Method.ReturnType.String}"\\"" + __expected + "\\""${else}__expected${end}${end});
+			System.err.println("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}${if Method.ReturnType.String}"\\"" + __result + "\\""${else}__result${end}${end});
 			return false;
 		}
 	}

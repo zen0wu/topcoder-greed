@@ -11,6 +11,10 @@ template <typename T> void from_stream(T &t) {
     ss >> t;
 }
 
+void from_stream(string &s) {
+    s = next_line();
+}
+
 ${<if HasArray}
 template <typename T> void from_stream(vector<T> &ts) {
     int len;
@@ -89,8 +93,8 @@ ${<end}
     }
 }
 
-void run_test(const set<int> &cases) {
-    int current = -1, passed = 0;
+void run_test(const set<int> &case_set) {
+    int cases = 0, passed = 0;
     while (true) {
         if (next_line().find("--") != 0)
             break;
@@ -110,15 +114,16 @@ ${<else}
 ${<end}
         from_stream(__answer);
 
-        current++;
-        if (cases.size() > 0 && cases.find(current) == cases.end())
+        cases++;
+        if (case_set.size() > 0 && case_set.find(cases) == case_set.end())
             continue;
 
-        cout << "  Testcase #" << current << " ... ";
+        cout << "  Testcase #" << cases - 1 << " ... ";
         if (do_test(${foreach Method.Params param , }${param.Name}${end}, __answer))
             passed++;
     }
-    cout << endl << "Passed : " << passed << "/" << (current + 1) << " cases" << endl;
+    if (case_set.size() > 0) cases = case_set.size();
+    cout << endl << "Passed : " << passed << "/" << cases << " cases" << endl;
 
     int T = time(NULL) - ${CreateTime};
     double PT = T / 60.0, TT = 75.0;

@@ -21,8 +21,8 @@
 		}
 		else {
 			Console.Error.WriteLine("FAILED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
-			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}__expected${end});
-			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}__result${end});
+			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}${if Method.ReturnType.String}"\\"" + __expected + "\\""${else}__expected${end}${end});
+			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}${if Method.ReturnType.String}"\\"" + __result + "\\""${else}__result${end}${end});
 			return false;
 		}
 	}
@@ -92,6 +92,7 @@ ${<end}
             }
     	}
 
+        if (cases.Count > 0) nCases = cases.Count;
 		Console.Error.WriteLine();
 		Console.Error.WriteLine(string.Format("Passed : {0}/{1} cases", nPassed, nCases));
 

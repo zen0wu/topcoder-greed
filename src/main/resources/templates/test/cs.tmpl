@@ -55,8 +55,8 @@ ${<end}
 		}
 		else {
 			Console.Error.WriteLine("FAILED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
-			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}__expected${end});
-			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}__result${end});
+			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}${if Method.ReturnType.String}"\\"" + __expected + "\\""${else}__expected${end}${end});
+			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}${if Method.ReturnType.String}"\\"" + __result + "\\""${else}__result${end}${end});
 		}
 	}
 
