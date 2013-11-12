@@ -3,6 +3,7 @@ package greed;
 import com.topcoder.client.contestant.ProblemComponentModel;
 import com.topcoder.shared.problem.Renderer;
 import greed.code.CodeByLine;
+import greed.code.ConfigurableCodeTransformer;
 import greed.code.LanguageManager;
 import greed.code.transform.AppendingTransformer;
 import greed.code.transform.CutBlockRemover;
@@ -78,7 +79,7 @@ public class Greed {
             Utils.initialize();
         } catch (greed.conf.ConfigException e) {
             talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
-            Log.e("Error loading config", e);
+            Log.e("Loading config error", e);
         }
     }
 
@@ -114,7 +115,7 @@ public class Greed {
             setProblem(currentContest, currentProb, currentLang, forceOverride);
         } catch (Throwable e) {
             talkingWindow.error("Set problem error, message says \"" + e.getMessage() + "\"");
-            Log.e("Set problem failed", e);
+            Log.e("Set problem error", e);
         }
     }
 
@@ -124,6 +125,15 @@ public class Greed {
         if (langConfig == null) {
             talkingWindow.error("Unsupported language " + language.toString());
             return;
+        }
+
+        // Initialize code transformers
+        HashMap<String, ConfigurableCodeTransformer> codeTransformers = new HashMap<String, ConfigurableCodeTransformer>();
+        for (ConfigurableCodeTransformer ccf: new ConfigurableCodeTransformer[] {
+                new ContinuousBlankLineRemover(),
+                new EmptyCutBlockCleaner(langConfig.getCutBegin(), langConfig.getCutEnd())
+        }) {
+            codeTransformers.put(ccf.getId(), ccf);
         }
 
         // Create model map
@@ -162,8 +172,20 @@ public class Greed {
                         FileSystem.getInputStream(template.getTemplateFile()),
                         currentTemplateModel
                 ));
-                codeLines = new EmptyCutBlockCleaner(langConfig.getCutBegin(), langConfig.getCutEnd()).transform(codeLines);
-                codeLines = new ContinuousBlankLineRemover().transform(codeLines);
+
+                if (template.getTransformers() != null) {
+                    for (String transformerId: template.getTransformers()) {
+                        if (codeTransformers.containsKey(transformerId)) {
+                            codeLines = codeTransformers.get(transformerId).transform(codeLines);
+                        }
+                        else {
+                            talkingWindow.indent();
+                            talkingWindow.error("Unknown transformer \"" + transformerId + "\"");
+                            talkingWindow.unindent();
+                        }
+                    }
+                }
+
                 code = codeLines.toString();
             } catch (FileNotFoundException e) {
                 talkingWindow.indent();
@@ -258,7 +280,7 @@ public class Greed {
                 result = code.toString();
             } catch (IOException e) {
                 talkingWindow.error("Cannot fetch source code, message says \"" + e.getMessage() + "\"");
-                Log.e("Error getting the source", e);
+                Log.e("Cannot fetch source code", e);
             }
         }
         talkingWindow.unindent();

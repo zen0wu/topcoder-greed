@@ -1,14 +1,14 @@
 package greed.code.transform;
 
 import greed.code.CodeByLine;
-import greed.code.CodeTransformer;
+import greed.code.ConfigurableCodeTransformer;
 
 import java.util.ArrayList;
 
 /**
  * Greed is good! Cheers!
  */
-public class EmptyCutBlockCleaner implements CodeTransformer {
+public class EmptyCutBlockCleaner implements ConfigurableCodeTransformer {
 
     private String startTag;
     private String endTag;
@@ -50,5 +50,10 @@ public class EmptyCutBlockCleaner implements CodeTransformer {
         }
 
         return res;
+    }
+
+    @Override
+    public String getId() {
+        return "empty-block";
     }
 }

@@ -29,6 +29,9 @@ public class TemplateConfig {
     @Optional
     private CommandConfig afterFileGen;
 
+    @Optional
+    private String[] transformers;
+
     public boolean isOverride() {
         return override;
     }
@@ -101,5 +104,13 @@ public class TemplateConfig {
 
     public void setTemplateFile(String templateFile) {
         this.templateFile = templateFile;
+    }
+
+    public String[] getTransformers() {
+        return transformers;
+    }
+
+    public void setTransformers(String[] transformers) {
+        this.transformers = transformers;
     }
 }

@@ -6,11 +6,11 @@ import greed.code.CodeTransformer;
 /**
  * Greed is good! Cheers!
  */
-public class TransformerList implements CodeTransformer {
+public class TransformerSequence implements CodeTransformer {
 
     private final CodeTransformer[] transformers;
 
-    public TransformerList(CodeTransformer... transformers) {
+    public TransformerSequence(CodeTransformer... transformers) {
         this.transformers = transformers;
     }
 
