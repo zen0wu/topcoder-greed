@@ -1,11 +1,16 @@
 package greed.code.lang;
 
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 import greed.code.LanguageRenderer;
 import greed.code.LanguageTrait;
 import greed.model.Param;
 import greed.model.ParamValue;
 import greed.model.Primitive;
 import greed.model.Type;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Support for the python language.
@@ -14,15 +19,7 @@ import greed.model.Type;
  * @author Jongwook Choi (wook)
  *
  */
-public class PythonLanguage extends CStyleLanguage implements LanguageRenderer, LanguageTrait {
-
-    /*
-     * TODO : This class extends {@link CStyleLanguage},
-     * which seems to be awkward since python is not a C-style language!
-     * But I've done this just because lots of code bases should be copied
-     * from previously existing CStyleLanguage (e.g. {@link #parseValue}).
-     * After an appropriate refactoring, it will be fixed.
-     */
+public class PythonLanguage extends AbstractLanguage implements LanguageRenderer, LanguageTrait {
 
     public static final PythonLanguage instance = new PythonLanguage();
 
@@ -60,16 +57,6 @@ public class PythonLanguage extends CStyleLanguage implements LanguageRenderer, 
     }
 
     @Override
-    public String renderParamList(Param[] params) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < params.length; ++i) {
-            if (i > 0) buf.append(", ");
-            buf.append(renderParam(params[i]));
-        }
-        return buf.toString();
-    }
-
-    @Override
     public String renderZeroValue(Type type) {
         if (type.isArray()) {
             return "()"; 	// empty tuple.
@@ -88,4 +75,44 @@ public class PythonLanguage extends CStyleLanguage implements LanguageRenderer, 
         return "";
     }
 
+    @Override
+    public List<NamedRenderer> getOtherRenderers() {
+        List<NamedRenderer> result = super.getOtherRenderers();
+        result.add(new NamedRenderer() {
+            @Override
+            public String render(Object typeObj, String param, Locale locale) {
+                if (typeObj instanceof Type) {
+                    Type type = (Type) typeObj;
+                    switch (type.getPrimitive()) {
+                        case STRING:
+                            return param;
+                        case BOOL:
+                            return param + " == True";
+                        case INT:
+                        case LONG:
+                            return "int(" + param + ")";
+                        case DOUBLE:
+                            return "float(" + param + ")";
+                    }
+                }
+                return "";
+            }
+
+            @Override
+            public String getName() {
+                return "parser";
+            }
+
+            @Override
+            public RenderFormatInfo getFormatInfo() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] getSupportedClasses() {
+                return new Class<?>[] { Type.class };
+            }
+        });
+        return result;
+    }
 }

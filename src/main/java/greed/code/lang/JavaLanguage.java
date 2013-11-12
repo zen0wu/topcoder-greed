@@ -1,14 +1,19 @@
 package greed.code.lang;
 
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 import greed.model.ParamValue;
 import greed.model.Primitive;
 import greed.model.Type;
 
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Greed is good! Cheers!
  */
-public class JavaLanguage extends CppLanguage {
-    public static JavaLanguage instance = new JavaLanguage();
+public class JavaLanguage extends CStyleLanguage {
+    public static final JavaLanguage instance = new JavaLanguage();
 
     protected JavaLanguage() {
         super();
@@ -23,9 +28,12 @@ public class JavaLanguage extends CppLanguage {
                 return "long";
             case BOOL:
                 return "boolean";
-            default:
-                return super.renderPrimitive(primitive);
+            case INT:
+                return "int";
+            case DOUBLE:
+                return "double";
         }
+        return "";
     }
 
     @Override
@@ -61,5 +69,47 @@ public class JavaLanguage extends CppLanguage {
                 return "0.0";
         }
         return "";
+    }
+
+    @Override
+    public List<NamedRenderer> getOtherRenderers() {
+        List<NamedRenderer> result = super.getOtherRenderers();
+        result.add(new NamedRenderer() {
+            @Override
+            public String render(Object typeObj, String param, Locale locale) {
+                if (typeObj instanceof Type) {
+                    Type type = (Type) typeObj;
+                    switch (type.getPrimitive()) {
+                        case STRING:
+                            return param;
+                        case BOOL:
+                            return "Boolean.parseBoolean(" + param + ")";
+                        case INT:
+                            return "Integer.parseInt(" + param + ")";
+                        case LONG:
+                            return "Long.parseLong(" + param + ")";
+                        case DOUBLE:
+                            return "Double.parseDouble(" + param + ")";
+                    }
+                }
+                return "";
+            }
+
+            @Override
+            public String getName() {
+                return "parser";
+            }
+
+            @Override
+            public RenderFormatInfo getFormatInfo() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] getSupportedClasses() {
+                return new Class<?>[] { Type.class };
+            }
+        });
+        return result;
     }
 }

@@ -1,0 +1,22 @@
+${<foreach Examples e}
+-- Example ${e.Num}
+${<foreach e.Input in}
+${<if in.Param.Type.Array}
+${in.ValueListLength}
+${<foreach in.ValueList v}
+${v;string("unquote")}
+${<end}
+${<else}
+${in.Value;string("unquote")}
+${<end}
+${<end}
+
+${<if e.Output.Param.Type.Array}
+${e.Output.ValueListLength}
+${<foreach e.Output.ValueList v}
+${v;string("unquote")}
+${<end}
+${<else}
+${e.Output.Value;string("unquote")}
+${<end}
+${<end}

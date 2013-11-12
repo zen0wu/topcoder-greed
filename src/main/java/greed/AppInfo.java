@@ -27,6 +27,9 @@ public class AppInfo {
     }
 
     private static String readVersionFromStream(InputStream is) {
+        if (is == null) {
+            return "[UNKNOWN]";
+        }
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(is));
@@ -37,7 +40,7 @@ public class AppInfo {
             if (reader != null)
                 try { reader.close(); } catch (IOException e) {}
         }
-        return "UNKNOWN";
+        return "[UNKNOWN]";
     }
 
     public static void main(String[] args) {

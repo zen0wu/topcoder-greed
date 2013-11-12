@@ -1,12 +1,12 @@
 package greed.code.transform;
 
 import greed.code.CodeByLine;
-import greed.code.CodeTransformer;
+import greed.code.ConfigurableCodeTransformer;
 
 /**
- * @author WuCY
+ * Greed is good! Cheers!
  */
-public class ContinuousBlankLineRemover implements CodeTransformer {
+public class ContinuousBlankLineRemover implements ConfigurableCodeTransformer {
     @Override
     public CodeByLine transform(CodeByLine input) {
         CodeByLine res = new CodeByLine();
@@ -19,5 +19,10 @@ public class ContinuousBlankLineRemover implements CodeTransformer {
             lastLen = line.trim().length();
         }
         return res;
+    }
+
+    @Override
+    public String getId() {
+        return "cont-blank-line";
     }
 }

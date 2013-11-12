@@ -1,32 +1,57 @@
 Greed
-=========
+=====
 
-Hi, this is _greed_, the missing topcoder arena plugin for algorithm contest.
+The missing topcoder arena plugin for algorithm contest.
 
 Greed is good
 -------------
 
-* No CodeProcessor+FileEdit+blah blah, no tons of jars, just _**Greed**_
-* No need to set up all the messes, just set your _**workspace**_, end of story
-* Seamless migration between OS and enviroments, since all stuff are kept in workspace, in your line of sight
-* Manage your code, in different _**folders**_, based on the contest and problem you're in
-* Generate code based on a fully-customizable _**template**_
-* Generate robust testing code, which BTW, is also _**customizable**_
-* Multi language support, including Java, C++, C#(thanks to @jbransen) adn Python(thanks to @wookayin). Support for Java includes package declaration removing, helping you organize your code without worrying about the submission.
+* No CodeProcessor+FileEdit+blah, no tons of jars, just **Greed**
+* Dead simple configuration, just set your **workspace**, end of story
+* Keeping stuff in workspace enabling seamless migration between OS and environments
+* Testing code. Unit-testing code. Reading-data testing code.
+* Fully **customizable**
+  - File structure
+  - Code generation
+  - Templates, templates, templates. You define, I generate!
+* Multi language support, including
+  - Java
+  - C++
+  - C#, thanks to @jbransen
+  - Python, thanks to @wookayin
 
 Downloads
 ---------
 
-The latest version has been put into the `dist` directory in the repository, get it [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.5.jar)!
+The versions have been put into the `dist` directory in the repository.
 
-For previous versions, go to Github's original [download page](https://github.com/shivawu/topcoder-greed/downloads).
+* [2.0-beta](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-2.0-beta.jar)
+* Legacy [1.5](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-1.5.jar)  
+  Note that the 2.0 is not compatiable with 1.x versions. Latest versions are recommended.
 
 Release Note
 ------------
+#### 2.0-beta
+
+Great news! **2.0** is finally feature complete and available for public beta test.
+Special thanks to @vexorian.
+
+The new features includes:
+
+- Flexible template definition. Rather than sticking to the old source, test, unittest pattern, you can define all kinds of templates yourself, testcase, makefile, scripts. Go wild with your imagination.
+- External scripts execution after template rendering
+- New configuration schema, described [here](https://github.com/shivawu/topcoder-greed/raw/master/dist/Greed-2.0-beta.jar)
+- Shipped with problem statement and test data file generation, with well defined schema
+- New default templates, **filetest**. Reading data from sample files and run test. Release your code from the mess of data.
+- Various new string renderer, preparing to get templated
+- New colorful UI and message
+
 #### 1.5
+
 * Python support. Thanks to @wookayin, now Greed is one of the first plugins who support Python!
 
 #### 1.4
+
 * Major template bug fix , thanks to @ashashwat
 * Template bug when allocating large space, thanks to @wookayin
 
@@ -46,133 +71,154 @@ Release Note
 
 Quick start
 -----------
-1. Go to [Downloads](https://github.com/shivawu/topcoder-greed/downloads), and download my latest version
+1. Go to [Downloads], and download the single Greed jar
 
 2. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Editor__ -> __Add__  
-![Add greed](https://github.com/shivawu/topcoder-greed/wiki/Add-Plugin.png)<br/>
-__OK__! Remember to check __Default__ and __At startup__.
+![Add greed](https://github.com/shivawu/topcoder-greed/wiki/images/Add-Plugin.png)<br/>
+Done! Remember to check __Default__ and __At startup__.
 
-3. Select me, click __Configure__.  
-![Configure greed](https://github.com/shivawu/topcoder-greed/wiki/Set-Workspace.png)<br/>
-Fill in your workspace full path.
+3. Click __Configure__.  
+![Configure greed](https://github.com/shivawu/topcoder-greed/wiki/images/Set-Workspace.png)  
+Fill in your workspace full path, make sure it's a existing directory.
 
-4. All set! Go get your rating! Let me worry about the rest crap.
+4. All set! Go get your rating!
+![Greed UI](https://github.com/shivawu/topcoder-greed/wiki/images/UI-Look.png)  
+
 
 Go rock with config
 -------------------
 
 _**Everything in greed is configuable.**_
 
-I'm bundled with some default config, which should be enough for most of you. But if you're not satisfied, go set me.
+Greed is bundled with some default config, which should be enough for most of you. But if you're not satisfied, go set.
 
 Start with creating a file called `greed.conf` under your workspace root.
 
 Things you can do with this config, 
 
-#### greed.codeRoot
+### greed.codeRoot
 
-Change where I store your code, via `greed.codeRoot = ???`, this path is relative to your workspace root.
+Change where your code is stored, via `greed.codeRoot = ???`, this path is relative to your workspace root.
 Default set to `.`, which means workspace root.
 
-#### greed.templates.pathPattern and fileNamePattern
+### greed.language.\<lang\>
 
-This tells me where I generate and fetch your code, for different contest and problem.  
+This is the configuration object for a specific language, including its
+template definitions, template to use when submitting, and other language specific
+settings.
 
-The default is `${Problem.Name}.cpp/java` in `${Contest.Name}`. Take `TableSeating` in `SRM 249 DIV 1`, you can find your code in `workspace/code root/SRM 249/TableSeating.cpp`.
+Available language keys are `cpp`, `java`, `csharp`, and `python`.
 
-This is especially useful for Java developers, since Java resolves packages by folder structure.
-You can declare your package in your code template(described below),
-and do the same in `pathPattern`, like `src/${Contest.Name;string(lower,removespace)}`.
-Write your code with your favorite IDE. That's beyond awesome!
-Package declaration will be auto removed while compiling and submitting in the arena.
+#### Templates sequence
 
-#### greed.templates.\<lang\>.tmplFile
+The key is `greed.language.<lang>.templates`.
+This is the template sequence generated by Greed, one after another. 
+They remain sequencial since later templates can rely on earlier ones and use their results.
 
-For specifying your own template file for your preferred language,
-Just set this to the relative path of your template file in your workspace, done! 
+The default templates for each language are `[filetest, source, testcase, problem-desc]`.
 
-The default template for java, FYI, is
+* The `filetest` template uses **filetest** templates, which reads data from the `testcase` output, and test your program with them. Bind to a piece of code in the `source` template.
+* The `source` template generates class and method signature from the problem definition
+* The `testcase` template outputs test data file to `${Problem.Name}.sample`.  
+  Pay attention to its format since it's important when adding your own testcase.
+  - Each testcase is identified by a labeling line which starts with `--`
+  - Each line represents a parameter or the output.
+  - If the data itself is an array, there should be multiple lines.
+    Leading with a line with its length, and following by several lines with each of its content.
+  - The input and output are separated by an empty line. (Actually, this line is ignored no matter what's in it, you can see its details in the **filetest** templates).
+* The `problem-desc` template generates the problem statement into a web page.
+
+#### Unit test
+
+Another official template is `unittest`, but disabled by default.
+This kind of template generates unit test code leveraging UT framework like `junit` for Java and `nunit` for C#.
+To use it, set as the following (only available for Java and C#):
 
 ```
-public class ${ClassName} {
-  public ${Method.ReturnType} ${Method.Name}(${Method.Params}) {
-    return ${Method.ReturnType;ZeroValue};
-  }
+greed.language.<lang>.templates = [source, unittest, problem-desc]
+```
 
-${CutBegin}
-${<TestCode}
-${CutEnd}
+This idea was orignally proposed by @tomtung.
+You can use the unittest code in your favorite IDE, like the following
+
+![Resharper NUnit Debugging](https://raw.github.com/wiki/shivawu/topcoder-greed/images/Resharper-NUnit-Debug.png)
+
+#### Legacy test
+
+Older versions of Greed write test code and test data into code, which makes the generated
+code a bit messy. However, it's left for backward compatibility and users who actually like it.
+
+```
+greed.language.<lang>.templates = [test, source, problem-desc]
+```
+
+### Template definition
+
+Magic here!
+
+You can define your own template type, using the `templateDef` key 
+under `greed.language.<lang>`. 
+
+Here's what you're going to do.
+
+- Specify the `override` behaviour
+- Set the `outputKey` or `outputFile`, using variables like `${Problem.Name}`, `${Contest.Name}`
+- **Write your awesome template**
+- Set the `templateFile` to your template (relative path to your workspace)
+- If you like, use some code transformers to cleanup your translated code
+
+You can also add `afterFileGen` actions to execute scripts or programs after 
+the template generation. Extreme flexibility is given.
+Here's an possible example of the `testcase` template def.
+
+```
+greed.language.cpp.templateDef {
+    testcase {
+        override = false
+        outputFile = "${Contest.Name}/${Problem.Name}.data"
+        templateFile = "builtin testcase/testcases.tmpl"
+        afterFileGen {
+            execute = /usr/bin/python
+            arguments = [ ./split.py, "${GeneratedFileName}", "${Contest.Name}/data" ]
+        }
+    }
 }
 ```
 
-Cannot be simpler, can it?
-
-#### greed.templates.\<lang\>.testTmplFile
-
-This is where the magic happens!
-
-You can do __meta programming__ with your testing code template.
-
-There're several built-in test templates.
-
-| Resource path        | Language | Tested on | Comment |
-| -------------------- | :------: | --------- | ------- |
-| `res:/GCCTest.cpp`   | C++      | GCC on Mac OS X, Linux & Cygwin GCC on Windows | Each testcase run in different instance. Runtime error is not detected and terminates the whole program. Pass testcases numbers to run by command-line arguments, none means all testcases. |
-| `res:/GCC11Test.cpp` | C++      | GCC on Linux with -std=c++0x compiler argument  | Mostly the same as GCCTest.cpp. Uses the initializer lists c++11 feature to setup vector arguments/return values which results in cleaner code |
-| `res:/Test.java`     | Java     | JDK7 on Mac OS X | Each testcase run in different instance. Runtime exception detected. Pass testcases numbers to run by command-line arguments, none means all testcases. |
-| `res:/Test.cs`       | C#       | Mono on Mac OS X | Same as Java vesrion |
-| `res:/Test.py`       | Python   | Python 2.7 on Windows7| |
-If you're not satisfied with the default template, consider DIY your own!
-See the [Templates](https://github.com/shivawu/topcoder-greed/wiki/Templates) page on my wiki.
-
-And please, please, __contribute good templates to me__, including templates for different environments, and with more functionalities. Everyone will benefit from your templates. How cool is this!
-
-#### greed.test.unitTest
-
-If you've got a powerful IDE with great unit testing and debugging support, why mingle test code with your solution? For C# and Java, set `greed.test.unitTest` to `true`, and the unit tests will be generated in a separate file according to `greed.templates.<lang>.unitTestTmplFile`(If not set or invalid, I will fallback to normal test code generation). Then you can link both files to an existing IDE project:
-
-![VS Add File Menu](https://raw.github.com/wiki/tomtung/topcoder-greed/VS-Add-Existing.png)
-
-![VS Link Existing File](https://raw.github.com/wiki/tomtung/topcoder-greed/VS-Add-Existing-As-Link.png)
-
-and you'll be able to utilize the IDE to easily test and debug each or all test cases:
-
-![Resharper NUnit Debugging](https://raw.github.com/wiki/tomtung/topcoder-greed/Resharper-NUnit-Debug.png)
+Remember to add your template key (`testcase` in this example) to the `templates` sequence 
+for this language.
 
 Want to learn more?
 -------------------
-Go to my [wiki](https://github.com/shivawu/topcoder-greed/wiki). 
+Go to [wiki](https://github.com/shivawu/topcoder-greed/wiki). 
 
 You'll learn how to config all the functionalities, like
 
-* all available binded info in config, like `${Problem.Score}`
-* setting the `begin cut` and `end cut` format
-* how to write your own templates, including test templates
+* How to write your own templates (Yeh!) and provided templates
+* All available binded info in config, like `${Problem.Score}`
+* Setting the `begin cut` and `end cut` format and other language specific configurations
 
 Bug Tracker
 -----------
-When you found a bug in me, or need a new feature, raise an issue [here](https://github.com/shivawu/topcoder-greed/issues).
+When you found a bug, or need a new feature, raise an issue [here](https://github.com/shivawu/topcoder-greed/issues).
 Please, with the problem you're solving and the room you're in, to better identify the problem.
 
-I'll try to repair myself ASAP.
-
-Or, consider helping me!
+Or, consider contribution!
 
 Contribute to me
 ----------------
 
-Currently, I'm still immature, and under development.
 Any help is helpful and greatly appreciated.
 
-You can contribute to me in 2 ways:
+You can contribute in 2 ways:
 
-1. Fork me, modify me, and send a pull request. Oh, you're not familiar with this style, well, you should. Read [this article](https://help.github.com/articles/fork-a-repo).
-2. Be a collaborators with my developers
+1. Fork, code, and send a pull request. Oh, you're not familiar with this style, well, you should. Read [this article](https://help.github.com/articles/fork-a-repo).
+2. Be a collaborator, contact @shivawu
 
 License
 -------
 
-Copyright 2012 Greed
+Copyright 2012-2013 Greed
 
 Licensed under _Apache License, Version 2.0_. You may obtain a copy of the license in the _LICENSE_ file, or at:
 

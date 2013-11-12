@@ -6,10 +6,13 @@ import java.io.*;
  * Greed is good! Cheers!
  */
 public class FileSystem {
+    private static final int NUM_BACKUPS = 3;
+    private static final String BUILTIN_PREFIX = "builtin ";
+
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
-        if (resourcePath.startsWith("res:")) {
-            resourcePath = Configuration.getString(Configuration.Keys.JAR_RESOURCE) + resourcePath.substring(4);
+        if (resourcePath.startsWith(BUILTIN_PREFIX)) {
+            resourcePath = Configuration.TEMPLATE_PATH + "/" + resourcePath.substring(BUILTIN_PREFIX.length());
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
@@ -47,6 +50,21 @@ public class FileSystem {
         return new File(Configuration.getWorkspace() + "/" + relativePath).exists();
     }
 
+    public static String getParentPath(String relativePath) {
+        File f = new File(relativePath);
+        return f.getParent();
+    }
+    public static File getRawFile(String relativePath) {
+        File f = new File(Configuration.getWorkspace() + "/" + relativePath);
+        try {
+            return f.getCanonicalFile();
+        } catch (IOException e) {
+            // leave f untouched, possibly the file path does not exist, so
+            // fixing the non-canonical path is not important
+            return f;
+        }
+    }
+
     public static long getSize(String resourcePath) {
         File f = new File(Configuration.getWorkspace() + "/" + resourcePath);
         if (f.exists() && f.isFile())
@@ -61,13 +79,13 @@ public class FileSystem {
 
         Log.i("Backing up file " + relativePath);
         int i;
-        for (i = 0; i < 10; ++i)
+        for (i = 0; i < NUM_BACKUPS; ++i)
             if (!new File(absolutePath + ".bak." + i).exists()) break;
-        if (i == 10) {
+        if (i == NUM_BACKUPS) {
             new File(absolutePath + ".bak.0").delete();
             for (int j = 1; j < i; ++j)
                 new File(absolutePath + ".bak." + j).renameTo(new File(absolutePath + ".bak." + (j - 1)));
-            i = 9;
+            i = NUM_BACKUPS - 1;
         }
         Log.i("Renamed to " + relativePath + ".bak." + i);
         file.renameTo(new File(absolutePath + ".bak." + i));

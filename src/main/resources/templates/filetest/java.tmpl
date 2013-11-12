@@ -1,0 +1,131 @@
+	public static void main(String[] args){
+		System.err.println("${Problem.Name} (${Problem.Score} Points)");
+		System.err.println();
+		HashSet<Integer> cases = new HashSet<Integer>();
+        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
+        runTest(cases);
+	}
+
+	static void runTest(HashSet<Integer> caseSet) {
+	    int cases = 0, passed = 0;
+	    while (true) {
+	    	String label = Reader.nextLine();
+	    	if (label == null || !label.startsWith("--"))
+	    		break;
+
+${<foreach Method.Params param}
+${<if !param.Type.Array}
+            ${param.Type.Primitive} ${param.Name} = ${param.Type;parser(Reader.nextLine())};
+${<else}
+            ${param.Type.Primitive}[] ${param.Name} = new ${param.Type.Primitive}[Integer.parseInt(Reader.nextLine())];
+            for (int i = 0; i < ${param.Name}.length; ++i)
+                ${param.Name}[i] = ${param.Type;parser(Reader.nextLine())};
+${<end}
+${<end}
+            Reader.nextLine();
+${<if !Method.ReturnType.Array}
+            ${Method.ReturnType.Primitive} __answer = ${Method.ReturnType;parser(Reader.nextLine())};
+${<else}
+            ${Method.ReturnType.Primitive}[] __answer = new ${Method.ReturnType.Primitive}[Integer.parseInt(Reader.nextLine())];
+            for (int i = 0; i < __answer.length; ++i)
+                __answer[i] = ${Method.ReturnType;parser(Reader.nextLine())};
+${<end}
+
+            cases++;
+            if (caseSet.size() > 0 && !caseSet.contains(cases - 1))
+                continue;
+    		System.err.print(String.format("  Testcase #%d ... ", cases - 1));
+
+            if (doTest(${foreach Method.Params param , }${param.Name}${end}, __answer))
+                passed++;
+	    }
+	    if (caseSet.size() > 0) cases = caseSet.size();
+        System.err.println(String.format("%nPassed : %d/%d cases", passed, cases));
+
+        int T = (int)(System.currentTimeMillis() / 1000) - ${CreateTime};
+        double PT = T / 60.0, TT = 75.0;
+        System.err.println(String.format("Time   : %d minutes %d secs%nScore  : %.2f points", T / 60, T % 60, ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))));
+	}
+
+	static boolean doTest(${Method.Params}, ${Method.ReturnType} __expected) {
+${<foreach Method.Params p}
+${<if p.Type.String}
+${<if p.Type.Array}
+		for (int i = 0; i < ${p.Name}.length; i++) {
+			${p.Name}[i] = new String(${p.Name}[i]);
+		}
+${<else}
+        ${p.Name} = new String(${p.Name});
+${<end}
+${<end}
+${<end}
+		long startTime = System.currentTimeMillis();
+		Throwable exception = null;
+		${ClassName} instance = new ${ClassName}();
+		${Method.ReturnType} __result = ${Method.ReturnType;zeroval};
+		try {
+			__result = instance.${Method.Name}(${foreach Method.Params par , }${par.Name}${end});
+		}
+		catch (Throwable e) { exception = e; }
+		double elapsed = (System.currentTimeMillis() - startTime) / 1000.0;
+
+		if (exception != null) {
+			System.err.println("RUNTIME ERROR!");
+			exception.printStackTrace();
+			return false;
+		}
+		else if (${if Method.ReturnType.Array}equals(__result, __expected)${else}${if Method.ReturnType.String}__expected.equals(__result)${else}${if Method.ReturnType.RealNumber}doubleEquals(__expected, __result)${else}__result == __expected${end}${end}${end}) {
+			System.err.println("PASSED! " + String.format("(%.2f seconds)", elapsed));
+			return true;
+		}
+		else {
+			System.err.println("FAILED! " + String.format("(%.2f seconds)", elapsed));
+			System.err.println("           Expected: " + ${if Method.ReturnType.Array}toString(__expected)${else}${if Method.ReturnType.String}"\\"" + __expected + "\\""${else}__expected${end}${end});
+			System.err.println("           Received: " + ${if Method.ReturnType.Array}toString(__result)${else}${if Method.ReturnType.String}"\\"" + __result + "\\""${else}__result${end}${end});
+			return false;
+		}
+	}
+
+${<if Method.ReturnType.RealNumber}
+	static boolean doubleEquals(double a, double b) {
+	    return !Double.isNaN(a) && !Double.isNaN(b) && Math.abs(b - a) <= 1e-9 * Math.max(1.0, Math.abs(a) );
+	}
+${<end}
+
+${<if ReturnsArray}
+	static boolean equals(${Method.ReturnType} a, ${Method.ReturnType} b) {
+		if (a.length != b.length) return false;
+		for (int i = 0; i < a.length; ++i) if (${if Method.ReturnType.String}a[i] == null || b[i] == null || !a[i].equals(b[i])${else}${if Method.ReturnType.RealNumber}!doubleEquals(a[i], b[i])${else}a[i] != b[i]${end}${end}) return false;
+		return true;
+	}
+
+	static String toString(${Method.ReturnType} arr) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("[ ");
+		for (int i = 0; i < arr.length; ++i) {
+			if (i > 0) sb.append(", ");
+			sb.append(arr[i]);
+		}
+		return sb.toString() + " ]";
+	}
+${<end}
+
+	static class Reader {
+        private static final String dataFileName = "${Problem.Name}.sample";
+	    private static BufferedReader reader;
+
+	    public static String nextLine() {
+	        try {
+                if (reader == null) {
+                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFileName)));
+                }
+                return reader.readLine();
+	        }
+	        catch (IOException e) {
+	            System.err.println("FATAL!! IOException");
+	            e.printStackTrace();
+	            System.exit(1);
+	        }
+	        return "";
+	    }
+	}

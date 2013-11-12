@@ -1,4 +1,10 @@
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'eu.appsatori:gradle-fatjar-plugin:0.2' }
+}
+
 apply plugin: 'java'
+apply plugin: 'fatjar'
 
 group = 'greed'
 version = file('version').text.trim()
@@ -7,29 +13,37 @@ repositories {
     mavenCentral() 
 }
 
-// Provided scope workaround
-configurations { provide }
-sourceSets { main { compileClasspath += configurations.provide } }
-
-def providedDependencies = [ files('lib/ContestApplet.jar') ]
-
 dependencies {
-    provide providedDependencies
-
     compile 'com.typesafe:config:0.5.0'
-//    compile 'com.floreysoft:jmte:3.0'
     compile files('lib/jmte-3.1-mod.jar')
+    compile files('lib/ContestApplet.jar'), {
+        ext { fatJarExclude = true }
+    }
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'junit:junit:4.9'
 }
 
-jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    from "version"
+// Fat jar tricks to include "version" files
+fatJar {
+    from 'version'
 }
 
-// Tasks
+// Dist task
+task dist(dependsOn: ['clean', 'test', 'fatJar']) {
+    description = 'Clean, build, and copy the package to the dist folder'
+    doLast {
+        copy {
+            from 'build/libs'
+            into 'dist'
+            include '*.jar'
+            rename { it.replace('topcoder-greed', 'Greed') }
+        }
+    }
+}
+
+// Gradle Wrapper
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.7'
+    description = 'Create gradle wrapper'
+    gradleVersion = '1.8'
     jarFile = 'gradle/wrapper.jar'
 }

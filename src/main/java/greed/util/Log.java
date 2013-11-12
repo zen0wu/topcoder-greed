@@ -1,5 +1,7 @@
 package greed.util;
 
+import greed.conf.schema.LoggingConfig;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -22,21 +24,20 @@ public class Log {
     private static int logCount = 0;
     private static boolean logToErr = false;
 
-    private static void lazyInit() {
-        String levelName = Configuration.getString(Configuration.Keys.LOG_LEVEL);
+    static void initialize(LoggingConfig config) {
         minimalLoggingLevel = LEVEL_NAMES.length + 1;
-        if ("all".equals(levelName.toLowerCase())) minimalLoggingLevel = 0;
+        if ("all".equals(config.getLogLevel().toLowerCase())) minimalLoggingLevel = 0;
         else
             for (int i = 0; i < 4; ++i)
-                if (LEVEL_NAMES[i].equals(levelName.toUpperCase())) {
+                if (LEVEL_NAMES[i].equals(config.getLogLevel().toUpperCase())) {
                     minimalLoggingLevel = i;
                     break;
                 }
         // If logging is enabled and workspace exists
         if (minimalLoggingLevel < LEVEL_NAMES.length && Configuration.workspaceSet()) {
-            logToErr = Configuration.getBoolean(Configuration.Keys.LOG_TO_STDERR);
+            logToErr = config.isLogToStderr();
             // Create logging folder
-            String logFolder = Configuration.getString(Configuration.Keys.LOG_FOLDER);
+            String logFolder = config.getLogFolder();
             FileSystem.createFolder(logFolder);
 
             int month = GregorianCalendar.getInstance().get(Calendar.MONTH) + 1;
@@ -66,13 +67,11 @@ public class Log {
     }
 
     private static void checkLoggingLevel(int level, String message) {
-        lazyInit();
         if (level >= minimalLoggingLevel)
             doLog(level, message);
     }
 
     private static void checkLoggingLevel(int level, String message, Throwable e) {
-        lazyInit();
         if (level >= minimalLoggingLevel) {
             doLog(level, String.format("%s, with an %s", message, e.toString()));
             for (int i = 0; i < Math.min(15, e.getStackTrace().length); ++i)

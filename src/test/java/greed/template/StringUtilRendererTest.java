@@ -18,4 +18,16 @@ public class StringUtilRendererTest {
         String result = TemplateEngine.render("${ContestName;string(lower,removespace)}", model);
         Assert.assertEquals(result, "srm245");
     }
+
+    @Test
+    public void test2() {
+        TemplateEngine.switchLanguage(Language.CPP);
+        HashMap<String, Object> model = new HashMap<String, Object>();
+        model.put("ContestName", "Single Round Match    245");
+        String result = TemplateEngine.render("${ContestName;string(abbr)}", model);
+        Assert.assertEquals(result, "SRM245");
+
+        model.put("ContestName", "TCHS 21 Div 1");
+        Assert.assertEquals("tchs21d1", TemplateEngine.render("${ContestName;string(abbr,lower)}", model));
+    }
 }

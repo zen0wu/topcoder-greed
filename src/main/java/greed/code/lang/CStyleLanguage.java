@@ -1,58 +1,41 @@
 package greed.code.lang;
 
-import greed.code.LanguageRenderer;
-import greed.code.LanguageTrait;
 import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Primitive;
 import greed.model.Type;
 
-import java.util.ArrayList;
 
 /**
+ * Base implementation for C-style languages,
+ * including CPP, Csharp, and Java.
+ *
  * Greed is good! Cheers!
  */
-public abstract class CStyleLanguage implements LanguageTrait, LanguageRenderer {
+public abstract class CStyleLanguage extends AbstractLanguage {
+
     @Override
     public String getCommentPrefix() {
         return "//";
     }
 
     @Override
-    public ParamValue parseValue(String value, Param param) {
-        if (!param.getType().isArray())
-            return new ParamValue(param, value);
+    public String renderParam(Param param) {
+        return renderType(param.getType()) + " " + param.getName();
+    }
 
-        value = value.trim();
-        value = value.substring(1, value.length() - 1);
-        value = value.replaceAll("\n", "");
-        if (param.getType().getPrimitive() == Primitive.STRING) {
-            boolean inString = false;
-            ArrayList<String> valueList = new ArrayList<String>();
-            StringBuilder buf = new StringBuilder();
-            // TODO: escape \" in string
-            for (int i = 0; i < value.length(); ++i) {
-                char c = value.charAt(i);
-                if (c == '"') {
-                    if (inString) {
-                        valueList.add('"' + buf.toString() + '"');
-                    } else {
-                        buf.setLength(0);
-                    }
-                    inString = !inString;
-                } else if (inString) {
-                    buf.append(c);
-                }
-            }
-
-            return new ParamValue(param, valueList.toArray(new String[0]));
-        } else {
-            String[] valueList = value.split(",");
-            Param paramWithPrim = new Param(param.getName(), new Type(param.getType().getPrimitive(), 0), param.getIndex() );
-            for (int i = 0; i < valueList.length; i++) {
-                valueList[i] = renderParamValue(new ParamValue(paramWithPrim, valueList[i].trim())); 
-            }
-            return new ParamValue(param, valueList);
+    @Override
+    public String renderZeroValue(Type type) {
+        if (type.isArray()) return renderType(type) + "()";
+        switch (type.getPrimitive()) {
+            case BOOL:
+                return "false";
+            case STRING:
+                return "\"\"";
+            case INT:
+            case LONG:
+                return "0";
+            case DOUBLE:
+                return "0.0";
         }
+        return "";
     }
 }
