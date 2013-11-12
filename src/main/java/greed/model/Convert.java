@@ -34,8 +34,8 @@ public class Convert {
         if ("C++".equals(langName)) return Language.CPP;
         if ("Python".equals(langName)) return Language.PYTHON;
         if ("Java".equals(langName)) return Language.JAVA;
-        if ("VB".equals(langName)) return Language.VB;
         if ("C#".equals(langName)) return Language.CSHARP;
+        if ("VB".equals(langName)) return Language.VB; // Unsupported
         return null;
     }
     

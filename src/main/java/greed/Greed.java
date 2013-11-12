@@ -94,6 +94,10 @@ public class Greed {
     public void setProblemComponent(ProblemComponentModel componentModel, com.topcoder.shared.language.Language language, Renderer renderer) {
         currentContest = Convert.convertContest(componentModel);
         currentLang = Convert.convertLanguage(language);
+        if (currentLang == Language.VB) {
+            talkingWindow.error("Unsupported language " + currentLang.toString());
+            return;
+        }
         currentProb = Convert.convertProblem(componentModel, currentLang);
 
         talkingWindow.showLine(String.format("Problem :  %s", currentProb.getName()));
@@ -122,10 +126,6 @@ public class Greed {
     private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(language));
-        if (langConfig == null) {
-            talkingWindow.error("Unsupported language " + language.toString());
-            return;
-        }
 
         // Initialize code transformers
         HashMap<String, ConfigurableCodeTransformer> codeTransformers = new HashMap<String, ConfigurableCodeTransformer>();
