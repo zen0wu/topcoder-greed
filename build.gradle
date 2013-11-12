@@ -29,7 +29,7 @@ fatJar {
 }
 
 // Dist task
-task dist(dependsOn: ['clean', 'fatJar']) {
+task dist(dependsOn: ['clean', 'test', 'fatJar']) {
     description = 'Clean, build, and copy the package to the dist folder'
     doLast {
         copy {
