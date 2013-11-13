@@ -160,8 +160,19 @@ You'll learn how to config all the functionalities, like
 
 Bug Tracker
 -----------
-When you found a bug, or need a new feature, raise an issue [here](https://github.com/shivawu/topcoder-greed/issues).
-Please, with the problem you're solving and the room you're in, to better identify the problem.
+When you encounter a bug and want to see detailed log, add the following to your `greed.conf`.
+
+```
+greed.logging.logLevel = DEBUG
+```
+
+You can also see the logs by opening the javaws console when launching the arena.
+Usually this can be enabled in the system-wide java control panel.
+
+![Java Web Start Console Setting](https://raw.github.com/wiki/shivawu/topcoder-greed/images/JavaWS-Console.png)
+
+For bugs and new features, raise issues [here](https://github.com/shivawu/topcoder-greed/issues).
+Please, with the detailed logs, and the problem you're solving and the room you're in, to better identify the problem.
 
 Or, consider contribution!
 
