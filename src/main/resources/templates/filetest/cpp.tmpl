@@ -115,7 +115,7 @@ ${<end}
         from_stream(__answer);
 
         cases++;
-        if (case_set.size() > 0 && case_set.find(cases) == case_set.end())
+        if (case_set.size() > 0 && case_set.find(cases - 1) == case_set.end())
             continue;
 
         cout << "  Testcase #" << cases - 1 << " ... ";
