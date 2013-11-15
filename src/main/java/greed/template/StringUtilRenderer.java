@@ -32,7 +32,7 @@ public class StringUtilRenderer implements NamedRenderer {
                     String[] tokens = result.split("\\s+");
                     StringBuilder abbr = new StringBuilder();
                     for (String tok: tokens) {
-                        if (allDigits(tok) || allUppercase(tok))
+                        if (allDigits(tok) || allUppercaseOrDigits(tok))
                             abbr.append(tok);
                         else
                             abbr.append(tok.substring(0, 1).toUpperCase());
@@ -57,9 +57,9 @@ public class StringUtilRenderer implements NamedRenderer {
         return true;
     }
 
-    private boolean allUppercase(String s) {
+    private boolean allUppercaseOrDigits(String s) {
         for (int i = 0; i < s.length(); ++i)
-            if (!Character.isUpperCase(s.charAt(i)))
+            if (!Character.isUpperCase(s.charAt(i)) && !Character.isDigit(s.charAt(i)))
                 return false;
         return true;
     }
