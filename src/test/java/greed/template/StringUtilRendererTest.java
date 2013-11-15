@@ -29,5 +29,8 @@ public class StringUtilRendererTest {
 
         model.put("ContestName", "TCHS 21 Div 1");
         Assert.assertEquals("tchs21d1", TemplateEngine.render("${ContestName;string(abbr,lower)}", model));
+
+        model.put("ContestName", "TCO11");
+        Assert.assertEquals("tco11", TemplateEngine.render("${ContestName;string(abbr,lower)}", model));
     }
 }
