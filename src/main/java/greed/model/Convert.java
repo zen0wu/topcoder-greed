@@ -63,6 +63,13 @@ public class Convert {
         }
         return xml;
     }
+    
+    private static String fixDoubleStrip(String tcXML)
+    {
+        // TopCoder's toXML() has the bad habit of doubly stripping entites.
+        // For example, &gt; becomes &amp;gt;
+        return tcXML.replaceAll("&amp;(lt|gt|amp|quot|apos);", "&$1;");
+    }
 
     public static Problem convertProblem(com.topcoder.client.contestant.ProblemComponentModel problem, Language language) {
         Param[] params = new Param[problem.getParamNames().length];
@@ -82,6 +89,7 @@ public class Convert {
 
             if (tc.getAnnotation() != null) {
                 String ann = getRidOfTopElement(tc.getAnnotation().toXML());
+                ann = fixDoubleStrip(ann);
                 if ( ann.length() != 0 ) {
                     cases[i].setAnnotation(ann);
                 }
@@ -90,10 +98,10 @@ public class Convert {
 
         String[] notes = new String[problem.getNotes().length];
         for (int i = 0; i < notes.length; ++i)
-            notes[i] = problem.getNotes()[i].toXML();
+            notes[i] = fixDoubleStrip(problem.getNotes()[i].toXML());
         String[] constraints = new String[problem.getConstraints().length];
         for (int i = 0; i < constraints.length; ++i)
-            constraints[i] = problem.getConstraints()[i].toXML();
+            constraints[i] = fixDoubleStrip(problem.getConstraints()[i].toXML());
 
         return new Problem(
                 problem.getProblem().getName(),
@@ -102,7 +110,7 @@ public class Convert {
                 method,
                 cases,
                 new ProblemDescription(
-                        problem.getIntro().toXML(),
+                        fixDoubleStrip(problem.getIntro().toXML()),
                         notes,
                         constraints
                 )
