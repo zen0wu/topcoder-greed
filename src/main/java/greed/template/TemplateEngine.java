@@ -20,6 +20,7 @@ public class TemplateEngine {
         if (engine == null)
             engine = new Engine();
         engine.registerNamedRenderer(new StringUtilRenderer());
+        engine.registerNamedRenderer(new HTMLRenderer());
     }
 
     public static void switchLanguage(Language language) {

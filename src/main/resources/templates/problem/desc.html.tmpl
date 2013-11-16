@@ -154,13 +154,13 @@
                     ${if first_e}${end}
                     ${<foreach e.Input in}
                         <span class="tag">input</span>
-                        <span class="data"><b>${in.Param.Name}</b>: ${in.Value}</span>
+                        <span class="data"><b>${in.Param.Name}</b>: ${in;html}</span>
                         <br/>
                     ${<end}
                     </div>
                     <div>
                         <span class="tag">output</span>
-                        <span class="data">${e.Output.Value}</span>
+                        <span class="data">${e.Output;html}</span>
                     </div>
                     ${<if e.Annotation}
                     <div style="display: flex;">
