@@ -119,11 +119,19 @@ public class ConfigSerializer {
     }
 
     private Method findSetter(Class<?> clazz, Field field) {
-        String methodName = "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+        String methodName = "set" + normalizeFieldName(field.getName());
         for (Method method: clazz.getMethods()) {
             if (method.getName().equals(methodName))
                 return method;
         }
         return null;
+    }
+
+    private String normalizeFieldName(String name) {
+        StringBuilder concatenated = new StringBuilder();
+        for (String tok: name.split("-")) {
+            concatenated.append(tok.substring(0, 1).toUpperCase()).append(tok.substring(1));
+        }
+        return concatenated.toString();
     }
 }
