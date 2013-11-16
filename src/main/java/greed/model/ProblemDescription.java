@@ -10,9 +10,9 @@ public class ProblemDescription {
     private String intro;
     private String[] notes;
     private String[] constraints;
-    private String mod;
+    private String modulo;
     
-    private String extractMod(String intro)
+    private String extractModulo(String intro)
     {
         /* d, modulo 1,000,000,007.</ */
         String pattern = "mod(ulo)? (\\d[\\d,\\.]*\\d)";
@@ -36,7 +36,7 @@ public class ProblemDescription {
         this.intro = intro;
         this.notes = notes;
         this.constraints = constraints;
-        mod = extractMod(intro);
+        this.modulo = extractModulo(intro);
     }
     
     public String getIntro() {
@@ -51,8 +51,8 @@ public class ProblemDescription {
         return constraints;
     }
     
-    public String getMod() {
-        return mod;
+    public String getModulo() {
+        return modulo;
     }
     
 }
