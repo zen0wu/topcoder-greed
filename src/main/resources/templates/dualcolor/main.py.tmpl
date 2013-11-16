@@ -1,0 +1,33 @@
+${--
+#    Vexorian's c++ tester template for greed. Version 0.5
+#    - Test cases in ( [ () ], x / None ) format for ease of modification.
+#    - Very small code for the problem file.
+#    - Requires tester.cpp, placed in a folder .. to this one (change the 
+#      #include "../tester.cpp" line.
+#    
+#    (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
+#
+}  
+#-------------------------------------------------------------------------------
+CASE_TIME_OUT = 2.00
+
+TEST_CASES = [
+${<foreach Examples e}
+    ( [${foreach e.Input in ,} ${if !in.Param.Type.Array}${in}${else}(${foreach in.ValueList v}${v},${end})${end}${end} ]${--
+--}, ${if e.Output.Param.Type.Array}(${foreach e.Output.ValueList v}${v},${end})${else}${e.Output}${end} ),
+${<end}
+    #Your custom test goes here:
+    #( [${foreach Method.Params p ,} ${end}], None ),
+]
+
+def isTestDisabled(i):
+    return False
+
+#-------------------------------------------------------------------------------
+if __name__ == '__main__':
+    import sys, tester
+    tester.run_tests(
+        ${Problem.Name}, '${Method.Name}', TEST_CASES, isTestDisabled, 
+        ${CreateTime}, ${Problem.Score}, CASE_TIME_OUT, True
+    )
+

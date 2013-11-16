@@ -1,0 +1,44 @@
+${-- /*
+    Vexorian's c++ tester template for greed. Version 0.5
+    - Test cases in bracket format for ease of modification.
+    - Very small code for the problem file.
+    - Requires tester.cpp, placed in a folder .. to this one (change the 
+      #include "../tester.cpp" line.
+    - Requires Greed 1.6 which doesn's exist (get the latest source from github
+      and compile) You can use 1.5 if you modify $(p.Num) with _$(p.Name)
+    
+    (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
+*/ }
+//------------------------------------------------------------------------------
+const double CASE_TIME_OUT = 2.0;
+
+bool disabledTest(int x)
+{
+    return x < 0;
+}
+template<class I, class O> vector<pair<I,O>> getTestCases() { return {
+${<foreach Examples e}
+    { { ${foreach e.Input in , }${if in.Param.Type.Array}{${foreach in.ValueList v ,}${v}${end}}${else}${in.Value}${end}${end} }, {${if Method.ReturnType.Array} {${foreach e.Output.ValueList v ,}${v}${end}} ${else}${ e.Output }${end}} },
+${<end}
+    // Your custom test goes here:
+    //{ { ${foreach Method.Params p , }${if p.Type.Array}{}${end}${end}}, {} },
+};}
+
+//------------------------------------------------------------------------------
+// Tester code:
+    #include "tester.cpp"
+    struct input {
+        ${foreach Method.Params p}${p.Type} p${p.Index};${end}
+
+        ${Method.ReturnType} run(${ClassName}* x) {
+            return x->${Method.Name}(${foreach Method.Params p ,}p${p.Index}${end});
+        }
+        void print() { Tester::printArgs(${foreach Method.Params p ,}p${p.Index}${end}); }
+    };
+    
+    int main() {
+        return Tester::runTests<${ClassName}>(
+            getTestCases<input, Tester::output<${Method.ReturnType}>>(), disabledTest, 
+            ${Problem.Score}, ${CreateTime}, CASE_TIME_OUT, true
+        );
+    }
