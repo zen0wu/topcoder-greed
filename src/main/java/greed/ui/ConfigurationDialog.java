@@ -31,6 +31,8 @@ public class ConfigurationDialog extends JDialog implements ActionListener {
         contentPane.add(label);
 
         workspaceFolder = new JTextField("", 35);
+        workspaceFolder.setBackground(Color.BLACK);
+        workspaceFolder.setForeground(Color.WHITE);
         workspaceFolder.setMinimumSize(new Dimension(100, 30));
         workspaceFolder.setText(Configuration.getWorkspace());
         contentPane.add(workspaceFolder);
