@@ -21,6 +21,10 @@ public class ProblemDescription {
     public String[] getNotes() {
         return notes;
     }
+    public boolean getHasNotes() {
+        return (notes.length > 0);
+    }
+    
 
     public String[] getConstraints() {
         return constraints;
