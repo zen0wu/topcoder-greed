@@ -13,3 +13,9 @@ tmp
 .project
 target/
 bin/
+
+# Temp files of various file editors:
+*~
+
+# jEdit temp fiels:
+\#*\#
