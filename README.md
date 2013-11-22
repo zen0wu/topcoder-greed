@@ -158,6 +158,19 @@ You'll learn how to config all the functionalities, like
 * All available binded info in config, like `${Problem.Score}`
 * Setting the `begin cut` and `end cut` format and other language specific configurations
 
+Build Instructions
+------------------
+The Greed plugin uses gradle as a build system.
+If you want to build the plugin from the source, invoke the command
+
+```
+./gradlew build     # in *NIX
+gradlew.bat build   # or, in windows
+```
+
+to compile, test, and build a JAR archive (including dependencies) that can run in the arena.
+The produced JAR is located at the directory 'build/libs'.
+
 Bug Tracker
 -----------
 When you encounter a bug and want to see detailed log, add the following to your `greed.conf`.
