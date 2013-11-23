@@ -10,7 +10,7 @@ group = 'greed'
 version = file('version').text.trim()
 
 repositories {
-    mavenCentral() 
+    mavenCentral()
 }
 
 dependencies {
@@ -27,6 +27,10 @@ dependencies {
 fatJar {
     from 'version'
 }
+
+// Make 'assemble' (and hence 'build') task produce a fat JAR.
+assemble.dependsOn fatJar
+fatJar.mustRunAfter jar
 
 // Gradle Wrapper
 task wrapper(type: Wrapper) {
