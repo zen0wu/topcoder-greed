@@ -1,12 +1,13 @@
 package greed.util;
 
 import greed.conf.schema.LoggingConfig;
+
+import java.io.File;
+
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * Greed is good! Cheers!
@@ -37,6 +38,7 @@ public class ExternalSystemTest {
     public void testCat() {
         // cat with no arguments will hang
         Assume.assumeTrue(!TestUtil.isWindows());
+        // the exit code 143 corresponds to SIGTERM in POSIX, which is sent when we kill the process
         Assert.assertEquals(ExternalSystem.runExternalCommand("cat"), 143);
     }
 

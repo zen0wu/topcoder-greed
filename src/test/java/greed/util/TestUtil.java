@@ -5,6 +5,8 @@ package greed.util;
  */
 public class TestUtil {
     public static boolean isWindows() {
-        return System.getProperty("os.name").contains("win");
+        String osName = System.getProperty("os.name");
+        if (osName == null) return false;	// won't happen, but avoid NPE ...
+        return osName.contains("win") || osName.contains("Windows");
     }
 }
