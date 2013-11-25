@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <style type="text/css">
+        body {
+            color: #CCCCCC;
+            background: #333333;
+        }
+        .heading { font-weight: bold; font-size: 28px; text-align: center; }
+        .section { padding-top: 10px; }
+        .section .section-title { 
+           font-weight: bold;
+           font-size: 24px;
+           color: #DDDDDD;
+        }
+        
+        ul.constraints li, ul.notes li, td.annotation-col, .problem-intro
+        {
+            font-size: 18px;
+        }
+        
+        
+        .problem-intro {
+            padding-left: 30px;
+        }
+        
+        .problem-intro br {
+            position: absolute;
+            visibility: hidden;
+        }
+        
+        note, user-constraint { padding-left: 20px; }
+        type {
+            font-weight: bold;
+            font-family: monospace;
+        }
+        img {
+            float: none;
+            display: block;
+            margin: 10px;
+            border: 0px solid #ccc;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        ul.constraints li:before {
+            content: "-";
+            font-size: 16px;
+            font-family: monospace;
+            position:relative;
+            margin-left: 0px; /* optional, for multiline li element */
+            left: 10px;
+        }
+        ul.notes li:before {
+            content: "~";
+            font-size: 16px;
+            font-family: monospace;
+            font-weight: normal;
+            position:relative;
+            margin-left: 0px; /* optional, for multiline li element */
+            left: 10px;
+        }
+        
+        li.testcase {
+            display: flex;
+            line-height: 16px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        
+        div.testcase-no {
+            min-width: 16px;
+            max-width: 16px;
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+            line-height: 16px;
+            padding: 1px;
+            margin-right: 10px;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: top;
+            color: #333333;
+            background: #BBB;
+        }
+        
+        table.testcases tr td {
+            vertical-align: top;
+        }
+        
+        .sign-col {
+            text-align: center;
+        }
+        
+        .param-col {
+            text-align: right;
+        }
+        
+        .data-col {
+            width: 100%;
+        }
+        
+        li.testcase span {
+            vertical-align: middle; 
+            text-align: center;
+            height: 1empx;
+            line-height: 16px;
+            min-width: 45px;
+            border-radius: 5px;
+            padding: 0px;
+            padding-left: 5px;
+            padding-right: 5px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+        li.testcase > .testcase-content > div { padding-bottom: 8px; }
+        li.testcase .tag {
+            background: #545454;
+            color: white;
+            text-align: center;
+        }
+        li.testcase .testcase-input .tag { visibility: hidden; }
+        li.testcase .testcase-input .tag:first-child { visibility: visible; }
+        .data {
+            font-family: monospace;
+        }
+        li.testcase .testcase-comment {
+            margin: 0;
+            padding-left: 5px;
+        }
+        .testcase-comment p:first-child { margin-top: 0; }
+        .testcase-comment p:last-child { margin-bottom: 0; }
+    </style>
+    <title>Topcoder - ${Problem.Name} (${Problem.Score} points)</title>
+</head>
+
+<body>
+	<div class="heading">
+        ${Contest.Name}<br />
+        ${if Contest.Div}d${Contest.Div} ${end}${Problem.Score}: ${Problem.Name}
+    </div>
+
+	<hr/>
+
+    <!-- Problem Statement -->
+    <div class="section">
+        <div class="section-title">Problem Statement</div>
+        <div class="problem-intro">
+            ${Problem.Description.Intro}
+        </div>
+    </div>
+
+    ${<if Problem.Description.HasNotes}
+    <!-- Notes -->
+    <div class="section">
+        <div class="section-title">Notes</div>
+        <ul class="notes">
+        ${<foreach Problem.Description.Notes note}
+            <li>${note}</li>
+        ${<end}
+        </ul>
+    </div>
+    ${<end}
+
+    <!-- Constraints -->
+    <div class="section">
+        <div class="section-title">Constraints</div>
+        <ul class="constraints">
+        ${<foreach Problem.Description.Constraints cons}
+            <li>${cons}</li>
+        ${<end}
+        </ul>
+    </div>
+
+    <!-- Test cases -->
+    <div class="section">
+        <div class="section-title">Test cases</div>
+        <table class="testcases">
+            ${<foreach Examples e}
+                <tr><td colspan=4><hr /></td></tr>
+                ${<foreach e.Input in}
+                    <tr>
+                        <td class='case-col'>${if in.Param.Index=0}<div class="testcase-no">${e.Num}</div>${end}</td>
+                        <td class='param-col'><span class="data"><b>${in.Param.Name}</b></span></td>
+                        <td class='sign-col'>=</td>
+                        <td class='data-col'><span class="data">${in;html("grid")}</span></td>
+                    </tr>
+                ${<end}
+                <tr><td colspan='4'><br /></td></tr>
+                <tr>
+                    <td class='case-col'></td>
+                    <td class='param-col'></td>
+                    <td class='sign-col'>→</td>
+                    <td class='data-col'><span class="data">${e.Output;html("grid")}</span></td>
+                </tr>
+                ${<if e.Annotation}
+                <tr><td colspan='4'><br /></td></tr>
+                <tr>
+                    <td class='case-col'></td>
+                    <td colspan='3' class='annotation-col'>
+                        ${e.Annotation}
+                    </td>
+                </tr>
+                ${<end}
+            ${<end}
+        </table>
+
+    </div>
+
+    <hr />
+
+    This problem statement is the exclusive and proprietary property of TopCoder, Inc. Any unauthorized use or reproduction of this information without the prior written consent of TopCoder, Inc. is strictly prohibited. (c)2003, TopCoder, Inc. All rights reserved.
+</body>
+</html>
