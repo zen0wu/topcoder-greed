@@ -31,7 +31,8 @@ Go to [Releases](https://github.com/shivawu/topcoder-greed/releases) page.
 
 Quick start
 -----------
-1. Go to [Downloads], and download the single Greed jar
+1. Go to [Downloads], and download the single Greed jar.
+   The binary is compatible with Java 1.6+.
 
 2. Open __Topcoder arena__ -> __Login__ -> __Options__ -> __Editor__ -> __Add__  
 ![Add greed](https://github.com/shivawu/topcoder-greed/wiki/images/Add-Plugin.png)<br/>
