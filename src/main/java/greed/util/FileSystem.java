@@ -1,6 +1,12 @@
 package greed.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 
 /**
  * Greed is good! Cheers!
@@ -16,8 +22,12 @@ public class FileSystem {
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
-            } else
-                return FileSystem.class.getResourceAsStream(resourcePath);
+            } else {
+                InputStream is = FileSystem.class.getResourceAsStream(resourcePath);
+                if(is == null)
+                    throw new FileNotFoundException(resourcePath);
+                return is;
+            }
         } else {
             return new FileInputStream(Configuration.getWorkspace() + "/" + resourcePath);
         }
