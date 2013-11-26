@@ -5,6 +5,9 @@ import com.floreysoft.jmte.RenderFormatInfo;
 
 import java.util.Locale;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Greed is good! Cheers!
  */
@@ -38,6 +41,36 @@ public class StringUtilRenderer implements NamedRenderer {
                             abbr.append(tok.substring(0, 1).toUpperCase());
                     }
                     result = abbr.toString();
+                } else if (func.trim().startsWith("contestcategory")) {
+                    int separate = 25;
+                    try {
+                        String s = func.trim().substring("contestcategory".length());
+                        separate = Integer.parseInt(s); 
+                    } catch (NumberFormatException nfe) {
+                    }
+                    if (result.contains("TCHS")) {
+                        result = "TCHS";
+                    } else if (result.matches("(?i).*(TCO|(top\\s*coder\\s*open)).*")) {
+                        result = "TCO";
+                    } else if (result.contains("TCCC")) {
+                        result = "TCCC";
+                    } else {
+                        String pattern = "(?i).*(SRM|(single\\s*round\\s*match))\\s*(\\d+).*";
+                        Pattern r = Pattern.compile(pattern);
+                        Matcher m = r.matcher(result);
+                        if (m.find( )) {
+                            int n = 0;
+                            try {
+                                n = Integer.parseInt( m.group(3) );
+                            } catch (NumberFormatException nfe) {
+                            }
+                            int a = n - n % separate;
+                            int b = a + separate - 1;
+                            result = "SRM "+a+"-"+b;
+                        } else {
+                            result = "Other";
+                        }
+                    }
                 }
             }
             return result;
