@@ -1,8 +1,5 @@
 package greed.conf;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
 import greed.conf.meta.ConfigObjectClass;
 import greed.conf.meta.Conflict;
 import greed.conf.meta.MapParam;
@@ -16,6 +13,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigObject;
+import com.typesafe.config.ConfigValue;
 
 /**
  * Greed is good! Cheers!
@@ -50,6 +51,12 @@ public class ConfigSerializer {
         try {
             T configObject = configClass.newInstance();
             for (Field field: configClass.getDeclaredFields()) {
+
+                if (field.isSynthetic()) {
+                    // ignore synthetic fields (e.g. eclEmma)
+                    continue;
+                }
+
                 if (!rawConf.hasPath(field.getName())) {
                     if (field.isAnnotationPresent(Required.class))
                         throw new ConfigException(String.format("Missing required config key at %s.%s", path, field.getName()));
