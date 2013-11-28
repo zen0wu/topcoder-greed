@@ -122,6 +122,11 @@ public class Greed {
             Log.e("Set problem error", e);
         }
     }
+    
+    private String renderedCodeRoot(GreedConfig config)
+    {
+        return TemplateEngine.render(config.getCodeRoot(), currentTemplateModel);
+    }
 
     private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
         GreedConfig config = Utils.getGreedConfig();
@@ -201,7 +206,7 @@ public class Greed {
 
             // Output to file
             if (template.getOutputFile() != null) {
-                String filePath = config.getCodeRoot() + "/" +
+                String filePath = renderedCodeRoot(config) + "/" +
                         TemplateEngine.render(template.getOutputFile(), currentTemplateModel);
                 String fileFolder = FileSystem.getParentPath(filePath);
                 if (!FileSystem.exists(fileFolder)) {
@@ -257,8 +262,7 @@ public class Greed {
     public String getSource() {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(currentLang));
-
-        String filePath = config.getCodeRoot() + "/" +
+        String filePath = renderedCodeRoot(config) + "/" +
                 TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
 
         talkingWindow.showLine("Getting source code from " + filePath);
