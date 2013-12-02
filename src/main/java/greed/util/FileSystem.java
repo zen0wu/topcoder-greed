@@ -7,12 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-
+import java.util.HashMap;
 /**
  * Greed is good! Cheers!
  */
 public class FileSystem {
-    private static final int NUM_BACKUPS = 3;
     private static final String BUILTIN_PREFIX = "builtin ";
 
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
@@ -82,22 +81,41 @@ public class FileSystem {
         return -1;
     }
 
+    private static File getBackupFile(File file, int num)
+    {
+        String name = file.getName();
+        HashMap<String, Object> model = new HashMap<String, Object>();
+        model.put("GeneratedFileName", name);
+        model.put("BackupNumber", num);
+        greed.conf.schema.BackupConfig bc= Utils.getGreedConfig().getBackup();
+        String newname = greed.template.TemplateEngine.render( bc.getFileName(), model );
+        File newfile = new File( file.getParentFile(), newname);
+        if ( ! newfile.getParentFile().exists() ) {
+            newfile.getParentFile().mkdirs();
+        }
+        return newfile;
+    }
+    
     public static void backup(String relativePath) {
         String absolutePath = Configuration.getWorkspace() + "/" + relativePath;
         File file = new File(absolutePath);
         if (!file.exists()) return;
 
         Log.i("Backing up file " + relativePath);
+        int limit = Utils.getGreedConfig().getBackup().getFileCountLimit();
         int i;
-        for (i = 0; i < NUM_BACKUPS; ++i)
-            if (!new File(absolutePath + ".bak." + i).exists()) break;
-        if (i == NUM_BACKUPS) {
-            new File(absolutePath + ".bak.0").delete();
-            for (int j = 1; j < i; ++j)
-                new File(absolutePath + ".bak." + j).renameTo(new File(absolutePath + ".bak." + (j - 1)));
-            i = NUM_BACKUPS - 1;
+        for (i = 0; i < limit; ++i)
+            if (! getBackupFile(file, i).exists()) break;
+        if (i == limit) {
+            Log.i("Deleting " + getBackupFile(file, 0) );
+            getBackupFile(file, 0).delete();
+            for (int j = 1; j < i; ++j) {
+                Log.i( getBackupFile(file, j) +" -> "+getBackupFile(file, j-1));
+                getBackupFile(file, j).renameTo(getBackupFile(file, j-1));
+            }
+            i = limit - 1;
         }
-        Log.i("Renamed to " + relativePath + ".bak." + i);
-        file.renameTo(new File(absolutePath + ".bak." + i));
+        Log.i(absolutePath+" -> " + getBackupFile(file, i) );
+        file.renameTo(  getBackupFile(file, i) );
     }
 }
