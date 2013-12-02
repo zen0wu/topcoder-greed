@@ -3,7 +3,6 @@ package greed.template;
 import greed.model.Method;
 import greed.model.Param;
 import greed.model.ParamValue;
-import greed.model.Primitive;
 import greed.model.Problem;
 import greed.model.Testcase;
 import greed.model.Type;
@@ -23,20 +22,11 @@ class TestModelFixtures {
     private TestModelFixtures() { }
 
     static Map<String, Object> buildStubbingModel() {
-        Type int0 = new Type(Primitive.INT, 0);
-        Type int1 = new Type(Primitive.INT, 1);
-        Type long0 = new Type(Primitive.LONG, 0);
-        Type long1 = new Type(Primitive.LONG, 1);
-        Type str0 = new Type(Primitive.STRING, 0);
-        Type str1 = new Type(Primitive.STRING, 1);
-        Type double0 = new Type(Primitive.DOUBLE, 0);
-        Type double1 = new Type(Primitive.DOUBLE, 1);
+        Param param1 = new Param("arg1", Type.INT_TYPE, 0);
+        Param param2 = new Param("arg2", Type.LONG_ARRAY_TYPE, 1);
+        Param param3 = new Param("arg3", Type.STRING_ARRAY_TYPE, 2);
 
-        Param param1 = new Param("arg1", int0, 0);
-        Param param2 = new Param("arg2", long1, 1);
-        Param param3 = new Param("arg3", str1, 2);
-
-        Type retType = str1;
+        Type retType = Type.STRING_ARRAY_TYPE;
 
         Method method = new Method("TestMethod", retType, new Param[]{param1, param2, param3});
 

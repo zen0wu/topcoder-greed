@@ -1,67 +1,76 @@
 package greed.template;
 
+import greed.model.ParamValue;
+import greed.model.Type;
+import greed.util.StringUtil;
+
+import java.util.Locale;
+
 import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
 
-import java.util.Locale;
-import java.lang.StringBuilder;
-
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Param;
-import greed.model.Type;
-
 /**
  * Greed is good! Cheers!
+ *
+ * @author vexorian
+ * @author Jongwook Choi
  */
 public class HTMLRenderer implements NamedRenderer {
-    
+
+    // TODO strip in case of non-grid or malformed input.
     private String stripQuotes(String v) {
         if (v.length() >= 2 && v.charAt(0) == '"' && v.charAt(v.length()-1) == '"') {
             v = "&quot;" + v.substring(1, v.length() - 1) + "&quot;";
         }
         return v;
     }
-    
+
     private String renderParamValue(ParamValue pv, String param) {
         Type t = pv.getParam().getType();
+
         if (t.isString()) {
             if (t.isArray()) {
                 String[] x = pv.getValueList();
-                boolean grid = ( (x. length > 1) && (param != null) && param.equals("grid") );
-                if (grid) {
-                    int s = x[0].length();
-                    boolean good = true;
-                    for (String y: x) {
-                        grid = (grid && (s == y.length()) );
-                    }
-                }
-                StringBuilder sb = new StringBuilder();
-                sb.append("{");
-                for (int i = 0; i < x.length; i++) {
-                    if (i != 0) {
-                        if (grid) {
-                            sb.append(",<br />&nbsp;");
-                        } else {
-                            sb.append(", ");
-                        }
-                    } else if (! grid) {
-                        sb.append(" ");
-                    }
-                    sb.append(stripQuotes(x[i]));
-                }
-                if (! grid) {
-                    sb.append(" ");
-                }
-                sb.append("}");
-                return sb.toString();
+                boolean useGrid = isGridMode(param, x);
+                return doRenderStringArray(x, useGrid);
             } else {
                 return stripQuotes(pv.getValue());
             }
         }
         return pv.getValue();
     }
-    
+
+    private boolean isGridMode(String param, String[] x) {
+        boolean grid = ((x.length > 1) && "grid".equals(param));
+        if (grid) {
+            int s = x[0].length();
+            for (String y : x) {
+                grid = ( grid && (s == y.length()) );
+            }
+        }
+        return grid;
+    }
+
+    private String doRenderStringArray(String[] x, boolean grid) {
+        StringBuilder sb = new StringBuilder();
+        String[] xQuoted = new String[x.length];
+
+        for(int i = 0; i < x.length; ++ i) {
+            xQuoted[i] = stripQuotes(x[i]);
+        }
+
+        sb.append("{");
+        if(grid) {
+            sb.append(StringUtil.join(xQuoted, ",<br />&nbsp;"));
+        } else {
+            sb.append(" ");
+            sb.append(StringUtil.join(xQuoted, ", "));
+            sb.append(" ");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
     @Override
     public String render(Object o, String param, Locale locale) {
         if (o instanceof ParamValue) {
@@ -84,6 +93,6 @@ public class HTMLRenderer implements NamedRenderer {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-        return new Class<?>[]{ParamValue.class, String.class};
+        return new Class<?>[]{ ParamValue.class, String.class };
     }
 }

@@ -1,7 +1,5 @@
 package greed.code.lang;
 
-import com.floreysoft.jmte.NamedRenderer;
-import com.floreysoft.jmte.RenderFormatInfo;
 import greed.code.LanguageRenderer;
 import greed.code.LanguageTrait;
 import greed.model.Param;
@@ -12,6 +10,9 @@ import greed.model.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 
 /**
  * An base implementation of {@link LanguageRenderer} and {@link LanguageTrait}.
@@ -58,10 +59,10 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
             return new ParamValue(param, valueList.toArray(new String[0]));
         } else if (value.length() == 0) {
             //Empty array
-            return new ParamValue( param, new String[]{} ); 
+            return new ParamValue( param, new String[]{} );
         } else {
             String[] valueList = value.split(",");
-            Param paramWithPrim = new Param(param.getName(), new Type(param.getType().getPrimitive(), 0), param.getIndex());
+            Param paramWithPrim = new Param(param.getName(), Type.primitiveType(param.getType().getPrimitive()), param.getIndex());
             for (int i = 0; i < valueList.length; i++) {
             	valueList[i] = renderParamValue(new ParamValue(paramWithPrim, valueList[i].trim()));
             }
