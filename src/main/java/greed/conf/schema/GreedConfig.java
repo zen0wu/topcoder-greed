@@ -16,6 +16,9 @@ public class GreedConfig {
 
     @Required
     private LoggingConfig logging;
+    
+    @Required
+    private BackupConfig backup;
 
     @Required
     @MapParam(value = LanguageConfig.class)
@@ -37,6 +40,14 @@ public class GreedConfig {
         this.logging = logging;
     }
 
+    public BackupConfig getBackup() {
+        return backup;
+    }
+
+    public void setBackup(BackupConfig backup) {
+        this.backup = backup;
+    }
+    
     public HashMap<String, LanguageConfig> getLanguage() {
         return language;
     }
