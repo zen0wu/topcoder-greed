@@ -54,9 +54,6 @@ public class StringUtilRenderer implements NamedRenderer {
             else if("abbr".equals(func)) {
                 result = applyAbbr(result);
             }
-            else if(func.startsWith("contestcategory")) {
-                result = applyContestCategory(result, func);
-            }
         }
         return result;
     }
@@ -93,41 +90,6 @@ public class StringUtilRenderer implements NamedRenderer {
                 abbr.append(tok.substring(0, 1).toUpperCase());
         }
         return abbr.toString();
-    }
-
-    private String applyContestCategory(String s, String func) {
-        int separate = 25;
-        try {
-            String len = func.substring("contestcategory".length());
-            if(! len.isEmpty())
-                separate = Integer.parseInt(len);
-        } catch (NumberFormatException nfe) {
-        }
-
-        if (s.contains("TCHS")) {
-            return "TCHS";
-        } else if (s.matches("(?i).*(TCO|(top\\s*coder\\s*open)).*")) {
-            return "TCO";
-        } else if (s.contains("TCCC")) {
-            return "TCCC";
-        } else {
-            String pattern = "(?i).*(SRM|(single\\s*round\\s*match))\\s*(\\d+).*";
-            Pattern r = Pattern.compile(pattern);
-            Matcher m = r.matcher(s);
-            if (m.find( )) {
-                int n = 0;
-                try {
-                    n = Integer.parseInt( m.group(3) );
-                } catch (NumberFormatException nfe) {
-                }
-                int a = n - n % separate;
-                int b = a + separate - 1;
-                s = "SRM " + a + "-" + b;
-            } else {
-                s = "Other";
-            }
-            return s;
-        }
     }
 
     @Override

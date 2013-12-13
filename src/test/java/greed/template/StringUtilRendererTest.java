@@ -81,48 +81,12 @@ public class StringUtilRendererTest {
     }
 
     @Test
-    public void testContestCategory() {
-        String TEMPLATE_SRC = "${ContestName;string(contestcategory)}";
-
-        Map<String, String> cases = new HashMap<String, String>();
-        cases.put("Test SRM Beta 2", "Other");
-        cases.put("Single Round Match 245", "SRM 225-249");
-        cases.put("single round match 250", "SRM 250-274");
-        cases.put("SRM 333.5", "SRM 325-349");
-        cases.put("SRM 1", "SRM 0-24");
-        cases.put("SRM 100 Div 1", "SRM 100-124");
-        cases.put("TCO 06 Round 1", "TCO");
-        cases.put("TopCoder Open 06 Round 1", "TCO");
-        cases.put("TCO 06 Semifinal", "TCO");
-        cases.put("TCO 13 Qual 2", "TCO");
-        cases.put("TCHS 123", "TCHS");
-        cases.put("TCCC 2004 Round 1", "TCCC");
-
-        for(Map.Entry<String, String> entry : cases.entrySet()) {
-            Map<String, Object> model = createModel("ContestName", entry.getKey());
-            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
-        }
-    }
-
-    @Test
-    public void testContestCategoryAdvanced() {
-        assertEquals("SRM 0-99", TemplateEngine.render(
-            "${ContestName;string(contestcategory100)}",
-            createModel("ContestName", "SRM 77"))
-        );
-        assertEquals("SRM 75-99", TemplateEngine.render(
-            "${ContestName;string(contestcategoryasdf)}",
-            createModel("ContestName", "SRM 77"))
-        );
-    }
-
-    @Test
     public void testFilterChains() {
         Map<String, Object> model ;
 
-        model = createModel("Var", "Topcoder Single Round Match 200");
-        Assert.assertEquals("Srm 200-224",
-                TemplateEngine.render("${Var;string(contestcategory, lower, upFirst, unquote)}", model));
+        //model = createModel("Var", "Topcoder Single Round Match 200");
+        //Assert.assertEquals("Srm 200-224",
+        //        TemplateEngine.render("${Var;string(contestcategory, lower, upFirst, unquote)}", model));
 
         model = createModel("Var", "Topcoder Single Round Match 200");
         Assert.assertEquals("Topcoder Single Round Match 200",

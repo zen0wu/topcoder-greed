@@ -21,6 +21,7 @@ public class TemplateEngine {
             engine = new Engine();
         engine.registerNamedRenderer(new StringUtilRenderer());
         engine.registerNamedRenderer(new HTMLRenderer());
+        engine.registerNamedRenderer(new ContestCategoryRenderer());
     }
 
     public static void switchLanguage(Language language) {
