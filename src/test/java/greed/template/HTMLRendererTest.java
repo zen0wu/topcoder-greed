@@ -9,6 +9,7 @@ import greed.model.Type;
 
 import java.util.HashMap;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -19,7 +20,7 @@ import org.junit.Test;
  */
 public class HTMLRendererTest {
 
-    @Test
+    @Before
     public void setup() {
         TemplateEngine.switchLanguage(Language.CPP);
     }

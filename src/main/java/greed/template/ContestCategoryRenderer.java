@@ -1,47 +1,42 @@
 package greed.template;
 
-import com.floreysoft.jmte.NamedRenderer;
-import com.floreysoft.jmte.RenderFormatInfo;
+import greed.model.Contest;
 
 import java.util.Locale;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import greed.model.Contest;
-/**
- * Greed is good! Cheers!
- */
- 
-/*
-   Planned parameter behavior:
-   
-   No parameters : Uses "TCO", "SRM", "TCCC", "TCHS" and "Other"
-   "srm=X": Instead of "SRM" it uses "SRM A-B" intervals A-B have length X.
-             If X = 1, then it does "SRM N".
-             
-   TODO "tco=X": Separates TCO problems by year. When X = 1, "TCO 2012", 
-                  "TCO 2013", etc. When X = 4, "TCO 2010-2014", etc.          
-   TODO "tccc=X", same as TCO.
-   TODO "tchs-srm=X", detects TCHS srms and does what SRM does.
-   TODO "tchs-tournament=X", Behaves like TCO but with TCHS tournament.
-   
-   Combining parameters: "srm=25 tco=1"
-                  
+import com.floreysoft.jmte.NamedRenderer;
+import com.floreysoft.jmte.RenderFormatInfo;
 
-*/ 
+/**
+ * Planned parameter behavior:
+ * <p>
+ * No parameters : Uses "TCO", "SRM", "TCCC", "TCHS" and "Other"
+ * "srm=X": Instead of "SRM" it uses "SRM A-B" intervals A-B have length X.
+ *           If X = 1, then it does "SRM N".
+ * <p>
+ * <ul>
+ * <li> TODO "tco=X": Separates TCO problems by year. When X = 1, "TCO 2012",
+ *                "TCO 2013", etc. When X = 4, "TCO 2010-2014", etc.
+ * <li> TODO "tccc=X", same as TCO.
+ * <li> TODO "tchs-srm=X", detects TCHS srms and does what SRM does.
+ * <li> TODO "tchs-tournament=X", Behaves like TCO but with TCHS tournament.
+ * <li> TODO Combining parameters: "srm=25 tco=1"
+ * </ul>
+ *
+ */
 public class ContestCategoryRenderer implements NamedRenderer {
 
-    private String renderContest( Contest c, String param)
-    {
+    private String renderContest(Contest c, String param) {
         int srmSeparate = -1;
         if (param != null) {
-            for (String par: param.split(" ")) {
-                if ( par.startsWith("srm=") ) {
+            for (String par : param.split(" ")) {
+                if (par.startsWith("srm=")) {
                     srmSeparate = 25;
                     try {
                         String s = par.trim().substring("srm=".length());
-                        srmSeparate = Integer.parseInt(s); 
+                        srmSeparate = Integer.parseInt(s);
                     } catch (NumberFormatException nfe) {
                     }
                 }
@@ -58,20 +53,20 @@ public class ContestCategoryRenderer implements NamedRenderer {
             String pattern = "(?i).*(SRM|(single\\s*round\\s*match))\\s*(\\d+).*";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(result);
-            if (m.find( )) {
+            if (m.find()) {
                 int n = 0;
                 try {
-                    n = Integer.parseInt( m.group(3) );
+                    n = Integer.parseInt(m.group(3));
                 } catch (NumberFormatException nfe) {
                 }
                 if (srmSeparate <= 0) {
                     result = "SRM";
                 } else if (srmSeparate == 1) {
-                    result = "SRM "+n;
-                } else {                    
+                    result = "SRM " + n;
+                } else {
                     int a = n - n % srmSeparate;
                     int b = a + srmSeparate - 1;
-                    result = "SRM "+a+"-"+b;
+                    result = "SRM " + a + "-" + b;
                 }
             } else {
                 result = "Other";
@@ -79,20 +74,20 @@ public class ContestCategoryRenderer implements NamedRenderer {
         }
         return result;
     }
-    
+
     @Override
     public String render(Object o, String param, Locale locale) {
         if (o instanceof Contest) {
-            return renderContest( (Contest) o, param );
+            return renderContest((Contest) o, param);
         }
         return "";
     }
-    
+
     @Override
     public String getName() {
         return "category";
     }
-    
+
     @Override
     public RenderFormatInfo getFormatInfo() {
         return null;
@@ -100,8 +95,7 @@ public class ContestCategoryRenderer implements NamedRenderer {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-        return new Class<?>[]{Contest.class};
+        return new Class<?>[] { Contest.class };
     }
 
-    
 }
