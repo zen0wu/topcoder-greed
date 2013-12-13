@@ -1,5 +1,6 @@
 package greed.conf.schema;
 
+import java.util.HashMap;
 import greed.conf.meta.*;
 
 /**
@@ -32,6 +33,10 @@ public class TemplateConfig {
     @Optional
     private String[] transformers;
 
+    @Optional
+    @MapParam(value = String.class)
+    private HashMap<String, String> options;
+    
     public boolean isOverride() {
         return override;
     }
@@ -112,5 +117,13 @@ public class TemplateConfig {
 
     public void setTransformers(String[] transformers) {
         this.transformers = transformers;
+    }
+    
+    public HashMap<String, String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(HashMap<String, String> options) {
+        this.options = options;
     }
 }
