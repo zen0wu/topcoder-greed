@@ -93,7 +93,7 @@ ${<end}
     }
 }
 
-int run_test(const set<int> &case_set, string command) {
+int run_test(bool mainProcess, const set<int> &case_set, const string command) {
     int cases = 0, passed = 0;
     while (true) {
         if (next_line().find("--") != 0)
@@ -116,12 +116,12 @@ ${<end}
 
         cases++;
 ${<if Options.RunMultipleProcesses } 
-        if (case_set.size() == 0) {
-            ostringstream st; st << command << " " << (cases-1);
-			int exitCode = system(st.str().c_str());
-			if (exitCode == 0) {
-			    passed++;
-			}
+        if (mainProcess) {
+            ostringstream st; st << command << " - " << (cases-1);
+            int exitCode = system(st.str().c_str());
+            if (exitCode == 0) {
+                passed++;
+            }
             continue;
         }
 ${<end}
@@ -133,7 +133,7 @@ ${<end}
             ${if Options.RunMultipleProcesses }return 1${else}passed++${end};
         }
     }
-    if (case_set.size() == 0) {
+    if (mainProcess) {
         cout << endl << "Passed : " << passed << "/" << cases << " cases" << endl;
         int T = time(NULL) - ${CreateTime};
         double PT = T / 60.0, TT = 75.0;
@@ -146,10 +146,17 @@ ${<end}
 int main(int argc, char *argv[]) {
     cout.setf(ios::fixed, ios::floatfield);
     cout.precision(2);
-    if (argc == 1) {
+    set<int> cases;
+    bool mainProcess = true;
+    for (int i = 1; i < argc; ++i) {
+        if ( string(argv[i]) == "-") {
+            mainProcess = false;
+        } else {
+            cases.insert(atoi(argv[i]));
+        }
+    }
+    if (mainProcess) {
         cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
     }
-    set<int> cases;
-    for (int i = 1; i < argc; ++i) cases.insert(atoi(argv[i]));
-    return run_test(cases, argv[0]);
+    return run_test(mainProcess, cases, argv[0]);
 }
