@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Greed is good! Cheers!
@@ -168,6 +169,16 @@ public class Greed {
         // Generate templates
         for (String templateName : langConfig.getTemplates()) {
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
+            
+            currentTemplateModel.put("Options", template.getOptions() );
+            /*if (template.getOptions() != null) {
+                Log.i("TEMPLATE OPTIONS");
+                for (Map.Entry<String, String> entry : template.getOptions().entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    Log.i(": "+key+" -> "+value);
+                }
+            }*/
 
             talkingWindow.show(String.format("Generating template [" + templateName + "]"));
             // Generate code from templates

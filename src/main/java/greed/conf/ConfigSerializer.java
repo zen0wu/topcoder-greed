@@ -17,7 +17,7 @@ import java.util.Map;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
-
+import com.typesafe.config.ConfigRenderOptions;
 /**
  * Greed is good! Cheers!
  */
@@ -28,7 +28,15 @@ public class ConfigSerializer {
     @SuppressWarnings("unchecked")
     public <T> T serializeAndCheck(String path, Object obj, Class<T> configClass) throws ConfigException {
         if (String.class.equals(configClass)) {
-            return (T) obj.toString();
+            if (obj instanceof ConfigValue) {
+                String  s = ((ConfigValue)obj).render() ;
+                if (s != null && s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length()-1)=='"') {
+                    s = s.substring(1, s.length() - 1);
+                }
+                return (T)s;
+            } else {
+                return (T) obj.toString();
+            }
         }
         else if (Integer.TYPE.equals(configClass) || Integer.class.equals(configClass)) {
             try {
