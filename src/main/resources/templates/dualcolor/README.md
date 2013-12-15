@@ -6,6 +6,7 @@ These are special c++ and python templates that have a different feature set tha
 * Most of the testing code is put in a separate file. In fact, the separate file is always the same. With some tweaks you can make it so you always use the same file. But out of the box, we use a template to generate the file in the wanted location.
 * c++11 required for c++ template.
 * Time out check. If a single test case needs more time than CASE_TIMEOUT, the test case will show "T" and solution will not be considered as passing.
+* Multiple threads for the c++ tester allows it to detect runtime errors. Python can detect errors using exception handling.
 
 Output
 ======
@@ -24,12 +25,41 @@ Setup
 =====
 To use the templates included, just change your greed configuration to use the following templates: dualcolor-test (Instead of test/filetest) and dualcolor-tester. For example:
 <pre>
-cpp.templates = [ dualcolor-test, source, dualcolor-tester, problem-desc ]
+cpp.templates = [ dualcolor-tester, dualcolor-test, source, problem-desc ]
 </pre>
 
 You can alter the filename and other configuration of the templates. Take a look to default.conf for more info.
 
 I recommend to eventually do some customizations to the dualcolor-test template so that it uses the same external file for the tester instead of the dualcolor-tester template. Then you'd be able to customize the tester template (change colors, format, time limit, etc).
+
+Template Options
+================
+There are 3 option fields that affect this template, for example:
+<pre>
+greed.shared.templateDef.dualcolor-test.options {
+    compactMode = COMPACT_REPORT
+    caseTimeOut = "2.00"
+    singleFile  = false
+    #(c++ only)
+    runMultipleProcesses = true
+}
+</pre>
+
+* `runMultipleProcesses` set to `false` if you prefer the single-process version.
+* `compactMode` Has three options: 
+ + `COMPACT_REPORT` : (default). Verbose output for each test case, a brief one-line report at the end.
+ + `FULL_REPORT`    : The final report has more detail (one line per test case).
+ + `ONLY_REPORT`    : That final report is the only thing displayed. (Very compact).
+* `caseTimeOut` : Initial value of the CASE_TIMEOUT constant.
+* `singleFile` : Included just in case there are problems making the two files to work. This one puts all the contents of the tester.cpp/tester.py inside the source file. Also need you to do the following tweaks to `templateDef.dualcolor-tester`:
+<pre>
+    templateDef.dualcolor-tester.templateFile = None
+    templateDef.dualcolor-tester.templateFileName = None
+    templateDef.dualcolor-tester.templateFileExtension = None
+</pre>
+Also make sure that the `templates = [ dualcolor-tester, dualcolor-test, source, problem-desc ]` calls `dualcolor-tester` before `dualcolor-test`.
+
+You can also customize the options for c++ or python specifically by modifying `greed.language.cpp.templateDef.dualcolor-test.options` or `greed.language.java.templateDef.dualcolor-test.options`
 
 More info
 =========

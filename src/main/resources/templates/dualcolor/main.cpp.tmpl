@@ -1,16 +1,46 @@
 ${-- /*
-    Vexorian's c++ tester template for greed. Version 0.5
+    Vexorian's c++ tester template for greed. Version 0.6
+    Part of test template which has many features:
     - Test cases in bracket format for ease of modification.
     - Very small code for the problem file.
-    - Requires tester.cpp, placed in a folder .. to this one (change the 
-      #include "../tester.cpp" line.
-    - Requires Greed 1.6 which doesn's exist (get the latest source from github
-      and compile) You can use 1.5 if you modify $(p.Num) with _$(p.Name)
-    
+    - Test results use colors to make them easier to read and notice bad results.
+    - When in *n*x operating systems, it runs each test case in a separate,
+      forked process. A runtime error in a test case won't halt execution of
+      later test cases. Globals don't need to  be initialized manually.
+    - Can temporarily disable test cases. 
+    - Three verbosity modes:
+       * FULL_REPORT : First runs all test cases with verbose output. Then shows
+                       a brief report with most relevant info.
+       * NO_REPORT   : If you don't need the report, it is replaced by a single
+                       line of colored result characters and score.
+       * ONLY_REPORT : Shows only the mentioned report.
+       
+    - Requires tester.cpp, placed in a folder ".." relative to the output file
+      (You can change the #include "../tester.cpp" line).
+      
+    - Requires Greed 2.0 which is in beta.
+      You can use 1.5 if you replace $(p.Num) with _$(p.Name)
+    - To disable multi process behavior, #define DISABLE_THREADS before 
+      including tester.cpp.
+
+    - Template options:
+        * runMultipleProcesses: default is true.
+              Runs each test case in a single process. This allows tester
+           to detect runtime errors and there is no need to reset globals.
+                          
+        * caseTimeOut : The duration for each test case. 2.00 by default.
+                        Computers with much different run speed than TC might
+                        need to tweak.
+        * compactMode : Three options: COMPACT_REPORT, FULL_REPORT, ONLY_REPORT
+                        as described above.
+        * singleFile : It will render the dualcolor-tester in the same file
+                       instead of using it separately. Use in case the 
+                       requirement for separate file is too complicated to
+                       fulfill.
     (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 */ }
 //------------------------------------------------------------------------------
-const double CASE_TIME_OUT = 2.0;
+const double CASE_TIME_OUT = ${Options.caseTimeOut};
 
 bool disabledTest(int x)
 {
@@ -26,7 +56,12 @@ ${<end}
 
 //------------------------------------------------------------------------------
 // Tester code:
+    ${if Options.runMultipleProcesses}//${end}#define DISABLE_THREADS
+${<if Options.singleFile}
+    ${<DualColorTesterCode}
+${<else}
     #include "tester.cpp"
+${<end}
     struct input {
         ${foreach Method.Params p}${p.Type} p${p.Index};${end}
 
@@ -39,6 +74,6 @@ ${<end}
     int main() {
         return Tester::runTests<${ClassName}>(
             getTestCases<input, Tester::output<${Method.ReturnType}>>(), disabledTest, 
-            ${Problem.Score}, ${CreateTime}, CASE_TIME_OUT, true
+            ${Problem.Score}, ${CreateTime}, CASE_TIME_OUT, Tester::${Options.compactMode}
         );
     }

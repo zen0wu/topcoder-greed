@@ -1,4 +1,4 @@
-# vexorian's Generic Tester example! version 0.5
+# vexorian's Generic Tester example! version 0.6
 #  - Ansi color codes to make output easy to read.
 #  - run_tests needs a lot of arguments... 
 # (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
@@ -7,6 +7,10 @@ import sys
 import time
 import traceback
 import os
+
+FULL_REPORT    = 0;
+COMPACT_REPORT = 1;
+ONLY_REPORT    = 2;
 
 # Name the color codes:
 COLOR_RESET  = "\\033[0m";    
@@ -34,7 +38,7 @@ RESULT_COLOR = {
     '+' : BRIGHT_GREEN,
     'X' : BRIGHT_RED,
     'T' : BRIGHT_RED,
-    'E' : BRIGHT_RED,
+    'E' : RED_BACKGROUND,
     '?' : COLOR_RESET,
     'd' : NORMAL_CROSSED,
 }
@@ -73,9 +77,10 @@ def tc_equal(expected, received):
     except:
         return False
 
-def run_testcase( problemClass, methodName, testInExpected, caseNo, totalCase, testTimeOut, finalLines ):
+def run_testcase( problemClass, methodName, testInExpected, caseNo, totalCase, testTimeOut, finalLines, compactMode ):
     (testIn, expected) = testInExpected # so that it compiles in python3
-    sys.stdout.write(TEST_COLOR + "Test " + str(caseNo) + COLOR_RESET + ": " + prettyStr(testIn)+"\\n")
+    if compactMode != ONLY_REPORT: 
+        sys.stdout.write(TEST_COLOR + "Test " + str(caseNo) + COLOR_RESET + ": " + prettyStr(testIn)+"\\n")
     startTime = time.time()
     instance = problemClass()
     exception = None
@@ -93,19 +98,22 @@ def run_testcase( problemClass, methodName, testInExpected, caseNo, totalCase, t
         exception = traceback.format_exc()
         
     elapsed = time.time() - startTime   # in sec
-    sys.stdout.write("Time: %.02f seconds." % elapsed)
+    if compactMode != ONLY_REPORT:
+        sys.stdout.write("Time: %.02f seconds.\\n" % elapsed)
 
     if exception is not None:
-        sys.stdout.write("RUNTIME ERROR: \\n")
-        sys.stdout.write(exception)
+        if compactMode != ONLY_REPORT:
+            sys.stdout.write("RUNTIME ERROR: \\n")
+            sys.stdout.write(exception)
         correct = False
     else:
         correct = expected is None or tc_equal(expected, result)
-        if not correct:
-            sys.stdout.write("Desired answer:\\n")
-            sys.stdout.write("\\t%s\\n" % prettyStr(expected) )
-        sys.stdout.write("Your answer:\\n")
-        sys.stdout.write("\\t%s\\n" % prettyStr(result) )
+        if compactMode != ONLY_REPORT:
+            if not correct:
+                sys.stdout.write("Desired answer:\\n")
+                sys.stdout.write("\\t%s\\n" % prettyStr(expected) )
+            sys.stdout.write("Your answer:\\n")
+            sys.stdout.write("\\t%s\\n" % prettyStr(result) )
     
     res = '?'
     if exception is not None:
@@ -125,9 +133,10 @@ def run_testcase( problemClass, methodName, testInExpected, caseNo, totalCase, t
     elif res == 'E':
         s += (" " + exceptionShort)
     finalLines.append(s)
-        
-    sys.stdout.write(" %s\\n" % colorTestResult(res) )
-    sys.stdout.write( BAR_COLOR + ('='*BAR_LENGTH) + COLOR_RESET + "\\n")
+
+    if compactMode != ONLY_REPORT:
+        sys.stdout.write(" %s\\n" % colorTestResult(res) )
+        sys.stdout.write( BAR_COLOR + ('='*BAR_LENGTH) + COLOR_RESET + "\\n")
     return res
 
 
@@ -146,18 +155,24 @@ def run_testcase( problemClass, methodName, testInExpected, caseNo, totalCase, t
 def run_tests( problemClass, methodName, testCases, isTestDisabled, createTime, problemScore, testTimeOut, compactMode):
     result = ''
     finalLines = []
+    header = "%s:\\n\\n" % problemClass.__name__
+    if compactMode == ONLY_REPORT:
+        sys.stdout.write( header )
     for i in xrange(0, len(testCases)):
         ch = 'd'
         if isTestDisabled(i):
             finalLines.append( '%st%s%s: %s' %( TEST_COLOR, prettyCase(i,len(testCases)) , COLOR_RESET, colorTestResult('d') ) )
         else:
-            ch = run_testcase( problemClass, methodName, testCases[i] , i, len(testCases), testTimeOut, finalLines)
+            ch = run_testcase( problemClass, methodName, testCases[i] , i, len(testCases), testTimeOut, finalLines, compactMode)
+        finalLines[-1] = ' ' + finalLines[-1]    
+        if compactMode == ONLY_REPORT:
+            sys.stdout.write( '%s\\n' % finalLines[-1] )
         result += ch
         
-    if not compactMode:
-        sys.stdout.write( "%s:\\n" % problemClass.__name__ )
+    if compactMode == FULL_REPORT:
+        sys.stdout.write( header )
         for ln in finalLines:
-            sys.stdout.write(' ' + str(ln)  )
+            sys.stdout.write('%s\\n' % str(ln)  )
 
     line = "%s: %s" % ( problemClass.__name__, ' '.join( (colorTestResult(ch) for ch in result) ) )
     T = time.time() - createTime
@@ -168,12 +183,8 @@ def run_tests( problemClass, methodName, testCases, isTestDisabled, createTime, 
     if any( ch not in ('+','?') for ch in result ):
         q = -2
     points = colorCode(q) %  points
-    if not compactMode:
+    if compactMode != COMPACT_REPORT:
         sys.stdout.write("\\n%s\\n" % points)
     else:
         line = "%s (%s)" % (line, points)
         sys.stdout.write("%s\\n" % line)
-
-
-if __name__ == '__main__':
-    sys.stdout.write("Not supposed to run this")

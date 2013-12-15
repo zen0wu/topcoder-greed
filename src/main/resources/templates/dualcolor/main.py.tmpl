@@ -1,15 +1,27 @@
 ${--
-#    Vexorian's c++ tester template for greed. Version 0.5
+#    Vexorian's c++ tester template for greed. Version 0.6
 #    - Test cases in ( [ () ], x / None ) format for ease of modification.
 #    - Very small code for the problem file.
-#    - Requires tester.cpp, placed in a folder .. to this one (change the 
-#      #include "../tester.cpp" line.
+#    - Requires tester.py. Use dualcolor-tester template.
+#    - Template options:
+#        * caseTimeOut : The duration for each test case. 2.00 by default.
+#                        Computers with much different run speed than TC might
+#                        need to tweak.
+#        * compactMode : Three options:
+#              COMPACT_REPORT : Default, verbose output when running test cases
+#                               brief one-line report at the end.
+#              FULL_REPORT    : Report needs one line per test case (more detailed)
+#              ONLY_REPORT    : Prints only the full report. Very compact.
+#        * singleFile : It will render the dualcolor-tester in the same file
+#                       instead of using it separately. Use in case the 
+#                       requirement for separate file is too complicated to
+#                       fulfill.
 #    
 #    (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 #
 }  
 #-------------------------------------------------------------------------------
-CASE_TIME_OUT = 2.00
+CASE_TIME_OUT = ${Options.caseTimeOut}
 
 TEST_CASES = [
 ${<foreach Examples e}
@@ -24,10 +36,13 @@ def isTestDisabled(i):
     return False
 
 #-------------------------------------------------------------------------------
+${<if Options.singleFile}
+${<DualColorTesterCode}
+${<end}
 if __name__ == '__main__':
-    import sys, tester
-    tester.run_tests(
+    import sys${if !Options.singleFile}, tester${end}
+    ${if !Options.singleFile}tester.${end}run_tests(
         ${Problem.Name}, '${Method.Name}', TEST_CASES, isTestDisabled, 
-        ${CreateTime}, ${Problem.Score}, CASE_TIME_OUT, True
+        ${CreateTime}, ${Problem.Score}, CASE_TIME_OUT, ${if !Options.singleFile}tester.${end}${Options.compactMode}
     )
 
