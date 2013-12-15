@@ -54,7 +54,7 @@ public class StringUtilRendererTest {
     @Test
     public void testUpFirst() {
         Map<String, Object> model = createModel("Var", "topcoder");
-        Assert.assertEquals("Topcoder", TemplateEngine.render("${Var;string(upfirst)}", model));
+        assertEquals("Topcoder", TemplateEngine.render("${Var;string(upfirst)}", model));
     }
 
     @Test
@@ -64,9 +64,9 @@ public class StringUtilRendererTest {
         model.put("V2", "   Topcoder");
         model.put("V3", "   Single Round Match     ");
 
-        Assert.assertEquals("ABC", TemplateEngine.render("${V1;string(removespace)}", model));
-        Assert.assertEquals("Topcoder", TemplateEngine.render("${V2;string(removespace)}", model));
-        Assert.assertEquals("SingleRoundMatch", TemplateEngine.render("${V3;string(removespace)}", model));
+        assertEquals("ABC", TemplateEngine.render("${V1;string(removespace)}", model));
+        assertEquals("Topcoder", TemplateEngine.render("${V2;string(removespace)}", model));
+        assertEquals("SingleRoundMatch", TemplateEngine.render("${V3;string(removespace)}", model));
     }
 
     @Test
@@ -74,10 +74,10 @@ public class StringUtilRendererTest {
         Map<String, Object> model;
 
         model = createModel("Var", "\"\"");
-        Assert.assertEquals("", TemplateEngine.render("${Var;string(unquote)}", model));
+        assertEquals("", TemplateEngine.render("${Var;string(unquote)}", model));
 
         model = createModel("Var", "\"####\"");
-        Assert.assertEquals("####", TemplateEngine.render("${Var;string(unquote)}", model));
+        assertEquals("####", TemplateEngine.render("${Var;string(unquote)}", model));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class StringUtilRendererTest {
         //        TemplateEngine.render("${Var;string(contestcategory, lower, upFirst, unquote)}", model));
 
         model = createModel("Var", "Topcoder Single Round Match 200");
-        Assert.assertEquals("Topcoder Single Round Match 200",
+        assertEquals("Topcoder Single Round Match 200",
                 TemplateEngine.render("${Var;string()}", model));
     }
 

@@ -1,14 +1,13 @@
 package greed.template;
 
 import static org.junit.Assert.*;
-import greed.model.Language;
 import greed.model.Contest;
+import greed.model.Language;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ import org.junit.Test;
 public class ContestCategoryRendererTest {
 
     private Map<String, Object> createModel(String key, String name, int div) {
-        return Collections.singletonMap(key, (Object) new Contest(name, div ) );
+        return Collections.singletonMap(key, (Object) new Contest(name, div) );
     }
 
     @Before
@@ -72,7 +71,7 @@ public class ContestCategoryRendererTest {
         }
     }
 
-    
+
     @Test
     public void testContestCategoryAdvanced() {
         assertEquals("SRM 0-99", TemplateEngine.render(

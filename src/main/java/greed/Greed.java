@@ -1,34 +1,45 @@
 package greed;
 
-import com.topcoder.client.contestant.ProblemComponentModel;
-import com.topcoder.shared.problem.Renderer;
 import greed.code.CodeByLine;
 import greed.code.ConfigurableCodeTransformer;
 import greed.code.LanguageManager;
 import greed.code.transform.AppendingTransformer;
+import greed.code.transform.ContinuousBlankLineRemover;
 import greed.code.transform.CutBlockRemover;
 import greed.code.transform.EmptyCutBlockCleaner;
-import greed.code.transform.ContinuousBlankLineRemover;
 import greed.conf.schema.CommandConfig;
 import greed.conf.schema.GreedConfig;
 import greed.conf.schema.LanguageConfig;
 import greed.conf.schema.TemplateConfig;
-import greed.model.*;
+import greed.model.Contest;
+import greed.model.Convert;
+import greed.model.Language;
+import greed.model.Param;
+import greed.model.Problem;
 import greed.template.TemplateEngine;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
-import greed.util.*;
+import greed.util.Configuration;
+import greed.util.Debug;
+import greed.util.ExternalSystem;
+import greed.util.FileSystem;
+import greed.util.Log;
+import greed.util.StringUtil;
+import greed.util.Utils;
 
-import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JPanel;
+
+import com.topcoder.client.contestant.ProblemComponentModel;
+import com.topcoder.shared.problem.Renderer;
+
 /**
  * Greed is good! Cheers!
  */
-@SuppressWarnings("unused")
 public class Greed {
     private Language currentLang;
     private Problem currentProb;
@@ -123,7 +134,7 @@ public class Greed {
             Log.e("Set problem error", e);
         }
     }
-    
+
     private String renderedCodeRoot(GreedConfig config)
     {
         return TemplateEngine.render(config.getCodeRoot(), currentTemplateModel);
@@ -158,7 +169,7 @@ public class Greed {
 
         boolean useString = problem.getMethod().getReturnType().isString();
         currentTemplateModel.put("ReturnsString", useString);
-        for (Param param : problem.getMethod().getParams()) useString |= param.getType().isString();        
+        for (Param param : problem.getMethod().getParams()) useString |= param.getType().isString();
         currentTemplateModel.put("HasString", useString);
         currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
         currentTemplateModel.put("CutBegin", langConfig.getCutBegin());
@@ -179,6 +190,11 @@ public class Greed {
                     Log.i(": "+key+" -> "+value);
                 }
             }*/
+
+            if (template == null) {
+                talkingWindow.error("Unknown template [" + templateName + "] (ignored)");
+                continue;
+            }
 
             talkingWindow.show(String.format("Generating template [" + templateName + "]"));
             // Generate code from templates
