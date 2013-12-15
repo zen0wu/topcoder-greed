@@ -9,6 +9,7 @@ import greed.util.Utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,7 +19,6 @@ public class CppTemplateTest {
 
     private InputStream codeTemplate;
     private InputStream testTemplate;
-    private InputStream testCXX11Template;
 
     Map<String, Object> model = TestModelFixtures.buildStubbingModel();
 
@@ -36,9 +36,6 @@ public class CppTemplateTest {
         this.testTemplate = getClass().getResourceAsStream("/templates/test/cpp.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        this.testCXX11Template = getClass().getResourceAsStream("/templates/test/c++11.cpp.tmpl");
-        assertThat(this.testCXX11Template, notNullValue());
-
         TemplateEngine.switchLanguage(Language.CPP);
     }
 
@@ -54,7 +51,10 @@ public class CppTemplateTest {
 
     @Test
     public void renderCppCode_cxx11() {
-        String test = TemplateEngine.render(testCXX11Template, model);
+        Map<String,String> mp = new HashMap<String,String>();
+        mp.put("Cpp11", "true");
+        model.put("Options", mp);
+        String test = TemplateEngine.render(testTemplate, model);
         model.put("TestCode", test);
         String code = TemplateEngine.render(codeTemplate, model);
         System.out.println(code);
