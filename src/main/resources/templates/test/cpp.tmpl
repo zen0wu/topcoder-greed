@@ -1,7 +1,9 @@
+${<if !Options.Cpp11}
 ${<if HasArray}
 // Array to vector converter
 template <typename T> vector<T> vector_wrapper(T arr[], int n) { return vector<T>(arr, arr + n); }
 #define to_vector(arr) vector_wrapper(arr, sizeof(arr) / sizeof(arr[0]))
+${<end}
 ${<end}
 
 template <typename T> string to_str(T t) { stringstream s; typeid(T) == typeid(string) ? s << "\\"" << t << "\\"" : s << t; return s.str(); }
@@ -71,21 +73,38 @@ ${<foreach e.Input in}
 ${<if !in.Param.Type.Array}
             ${in.Param.Type.Primitive} ${in.Param.Name} = ${in};
 ${<else}
+${<if !Options.Cpp11}
             ${in.Param.Type.Primitive} ${in.Param.Name}[] = {${foreach in.ValueList v ,}
                 ${v}${end}
             };
+${<else}
+            vector<${in.Param.Type.Primitive}> ${in.Param.Name} = {${foreach in.ValueList v ,}
+                ${v}${end}
+            };
+${<end}
 ${<end}
 ${<end}
 ${<if !e.Output.Param.Type.Array}
             ${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
+${<if !Options.Cpp11}
             ${e.Output.Param.Type.Primitive} __expected[] = {${foreach e.Output.ValueList v ,}
                 ${v}${end}
             };
+${<else}
+            vector<${e.Output.Param.Type.Primitive}> __expected = {${foreach e.Output.ValueList v ,}
+                ${v}${end}
+            };
 ${<end}
+${<end}
+${<if !Options.Cpp11}
             return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(__expected)${else}__expected${end}, __no);
+${<else}
+            return do_test(${foreach e.Input in , }${in.Param.Name}${end}, __expected, __no);
+${<end}
         }
 ${<end}
+
 
         // Your custom testcase goes here
         case ${NumOfExamples}:
@@ -98,18 +117,51 @@ ${<end}
 int main(int argc, char *argv[]) {
     cout.setf(ios::fixed,ios::floatfield);
     cout.precision(2);
-    cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
+    
+    bool mainProcess = true;
+    set<int> testCases;
+    for (int i = 1; i < argc; i++) {
+        if ( string(argv[i]) == "-" ) {
+            mainProcess = false;
+        } else {
+            testCases.insert( atoi(argv[i]) );
+        }
+    }
+    if (testCases.size() == 0) {
+        for (int i = 0; i < ${NumOfExamples}; i++) {
+            testCases.insert(i);
+        }
+    }
+    if (mainProcess) {
+        cout << "${Problem.Name} (${Problem.Score} Points)" << endl << endl;
+    }
 
-    int nPassed = 0, nAll = 0;
-    if (argc == 1)
-        for (int i = 0; i < ${NumOfExamples}; ++i) nAll++, nPassed += run_testcase(i);
-    else
-        for (int i = 1; i < argc; ++i) nAll++, nPassed += run_testcase(atoi(argv[i]));
-    cout << endl << "Passed : " << nPassed << "/" << nAll << " cases" << endl;
-
-    int T = time(NULL) - ${CreateTime};
-    double PT = T / 60.0, TT = 75.0;
-    cout << "Time   : " << T / 60 << " minutes " << T % 60 << " secs" << endl;
-    cout << "Score  : " << ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT)) << " points" << endl;
+    int nPassed = 0;
+    
+    for (int i = 0; i < ${NumOfExamples}; ++i) {
+        if ( testCases.empty()  || testCases.count(i) ) {
+            //run
+${<if Options.RunMultipleProcesses }
+            if (mainProcess) {
+                ostringstream st; st << argv[0] << " - " << i;
+                int exitCode = system(st.str().c_str());
+                if (exitCode == 0) {
+                    nPassed++;
+                }
+            } else {
+                return run_testcase(i) ? 0 : 1;
+            }
+${<else}
+            nPassed += run_testcase(i);
+${<end}
+        }
+    }
+    if (mainProcess) {
+        cout << endl << "Passed : " << nPassed << "/" << testCases.size() << " cases" << endl;
+        int T = time(NULL) - ${CreateTime};
+        double PT = T / 60.0, TT = 75.0;
+        cout << "Time   : " << T / 60 << " minutes " << T % 60 << " secs" << endl;
+        cout << "Score  : " << ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT)) << " points" << endl;
+    }
     return 0;
 }
