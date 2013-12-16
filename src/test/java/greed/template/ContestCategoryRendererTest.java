@@ -71,7 +71,38 @@ public class ContestCategoryRendererTest {
         }
     }
 
+    @Test
+    public void testContestCategoryText() {
+        String TEMPLATE_SRC = "${Contest;category(other-text=Otros)}";
 
+        Map<String, String> cases = new HashMap<String, String>();
+        cases.put("Test SRM Beta 2", "Otros");
+        cases.put("Single Round Match 245", "SRM");
+        cases.put("TCO 06 Round 1", "TCO");
+        cases.put("TCHS 123", "TCHS");
+        cases.put("TCCC 2004 Round 1", "TCCC");
+
+        for(Map.Entry<String, String> entry : cases.entrySet()) {
+            Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
+            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+        }
+        
+        TEMPLATE_SRC = "${Contest;category(tco-text=TopCoder Open,tchs-text=Highschool)}";
+
+        cases = new HashMap<String, String>();
+        cases.put("Test SRM Beta 2", "Other");
+        cases.put("Single Round Match 245", "SRM");
+        cases.put("TCO 06 Round 1", "TopCoder Open");
+        cases.put("TCHS 123", "Highschool");
+        cases.put("TCCC 2004 Round 1", "TCCC");
+
+        for(Map.Entry<String, String> entry : cases.entrySet()) {
+            Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
+            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+        }
+
+    }
+    
     @Test
     public void testContestCategoryAdvanced() {
         assertEquals("SRM 0-99", TemplateEngine.render(
@@ -82,11 +113,18 @@ public class ContestCategoryRendererTest {
             "${Contest;category(srm=)}",
             createModel("Contest", "SRM 77", 1))
         );
-        assertEquals("SRM 77", TemplateEngine.render(
-            "${Contest;category(srm=1)}",
+        assertEquals("Single Round Match 77", TemplateEngine.render(
+            "${Contest;category(srm=1,srm-text=Single Round Match)}",
             createModel("Contest", "SRM 77", 1))
         );
-
+        assertEquals(" 0-99", TemplateEngine.render(
+            "${Contest;category(srm=100,srm-text=)}",
+            createModel("Contest", "SRM 77", 1))
+        );
+        assertEquals("499", TemplateEngine.render(
+            "${Contest;category(srm=1,no-space,srm-text=)}",
+            createModel("Contest", "SRM 499", 1))
+        );
     }
 
 }
