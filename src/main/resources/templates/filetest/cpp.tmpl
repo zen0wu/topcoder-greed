@@ -115,7 +115,7 @@ ${<end}
         from_stream(__answer);
 
         cases++;
-${<if Options.RunMultipleProcesses } 
+${<if Options.runMultipleProcesses } 
         if (mainProcess) {
             ostringstream st; st << command << " - " << (cases-1);
             int exitCode = system(st.str().c_str());
@@ -129,8 +129,8 @@ ${<end}
             continue;
 
         cout << "  Testcase #" << cases - 1 << " ... ";
-        if ( ${if Options.RunMultipleProcesses }!${end}do_test(${foreach Method.Params param , }${param.Name}${end}, __answer)) {
-            ${if Options.RunMultipleProcesses }return 1${else}passed++${end};
+        if ( ${if Options.runMultipleProcesses }!${end}do_test(${foreach Method.Params param , }${param.Name}${end}, __answer)) {
+            ${if Options.runMultipleProcesses }return 1${else}passed++${end};
         }
     }
     if (mainProcess) {

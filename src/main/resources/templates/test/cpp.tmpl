@@ -1,4 +1,4 @@
-${<if !Options.Cpp11}
+${<if !Options.cpp11}
 ${<if HasArray}
 // Array to vector converter
 template <typename T> vector<T> vector_wrapper(T arr[], int n) { return vector<T>(arr, arr + n); }
@@ -73,7 +73,7 @@ ${<foreach e.Input in}
 ${<if !in.Param.Type.Array}
             ${in.Param.Type.Primitive} ${in.Param.Name} = ${in};
 ${<else}
-${<if !Options.Cpp11}
+${<if !Options.cpp11}
             ${in.Param.Type.Primitive} ${in.Param.Name}[] = {${foreach in.ValueList v ,}
                 ${v}${end}
             };
@@ -87,7 +87,7 @@ ${<end}
 ${<if !e.Output.Param.Type.Array}
             ${e.Output.Param.Type.Primitive} __expected = ${e.Output};
 ${<else}
-${<if !Options.Cpp11}
+${<if !Options.cpp11}
             ${e.Output.Param.Type.Primitive} __expected[] = {${foreach e.Output.ValueList v ,}
                 ${v}${end}
             };
@@ -97,14 +97,13 @@ ${<else}
             };
 ${<end}
 ${<end}
-${<if !Options.Cpp11}
+${<if !Options.cpp11}
             return do_test(${foreach e.Input in , }${if in.Param.Type.Array}to_vector(${in.Param.Name})${else}${in.Param.Name}${end}${end}, ${if e.Output.Param.Type.Array}to_vector(__expected)${else}__expected${end}, __no);
 ${<else}
             return do_test(${foreach e.Input in , }${in.Param.Name}${end}, __expected, __no);
 ${<end}
         }
 ${<end}
-
 
         // Your custom testcase goes here
         case ${NumOfExamples}:
@@ -141,7 +140,7 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < ${NumOfExamples}; ++i) {
         if ( testCases.empty()  || testCases.count(i) ) {
             //run
-${<if Options.RunMultipleProcesses }
+${<if Options.runMultipleProcesses }
             if (mainProcess) {
                 ostringstream st; st << argv[0] << " - " << i;
                 int exitCode = system(st.str().c_str());
