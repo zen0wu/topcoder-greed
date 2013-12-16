@@ -32,7 +32,7 @@ ${<else}
 		};
 ${<end}
 		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
-		Assert.AreEqual(__result, __expected);
+		Assert.AreEqual(__expected, __result);
 	}
 
 ${<end}
