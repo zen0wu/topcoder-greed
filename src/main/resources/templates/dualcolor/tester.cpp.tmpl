@@ -1,20 +1,52 @@
-
-#include <string>
-#include <vector>
-#include <iostream>
 /*
-*   Version 0.5
-*  - Ansi color codes to make output easy to read.
-*  - runTests needs a lot of arguments... 
-*  - Feature complete.
-* (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
+    Vexorian's c++ generic tester. Version 0.6
+    Part of test template which has many features:
+    - Test cases in bracket format for ease of modification.
+    - Very small code for the problem file.
+    - Test results use colors to make them easier to read and notice bad results.
+    - When in *n*x operating systems, it runs each test case in a separate,
+      forked process. A runtime error in a test case won't halt execution of
+      later test cases. Globals don't need to  be initialized manually.
+      
+         This feature uses a /tmp/topcoder_vx_tester_communicate file to share
+         info between processes. You can change the path if needed by modifying
+         the constant below.
+         
+    - Can temporarily disable test cases. 
+    - Three verbosity modes:
+       * FULL_REPORT : First runs all test cases with verbose output. Then shows
+                       a brief report with most relevant info.
+       * NO_REPORT   : If you don't need the report, it is replaced by a single
+                       line of colored result characters and score.
+       * ONLY_REPORT : Shows only the mentioned report.
+    
+    Everything is about the huge runTests function, read its documentation.  
+    
+    (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 *
 */
 
 using namespace std;
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #define DISABLE_THREADS
+#endif
+#ifndef DISABLE_THREADS
+    #define DO_THREADS
+#endif
+#ifdef DO_THREADS
+   #include <unistd.h>
+   #include <sys/wait.h>
+   #include <sys/types.h>
+#endif
+
+
 namespace Tester {
 
+const int    FULL_REPORT    = 0;
+const int    COMPACT_REPORT = 1;
+const int    ONLY_REPORT    = 2;
+    
 // Name the color codes:
 const string COLOR_RESET  = "\\033[0m";    
 
@@ -26,9 +58,11 @@ const string NORMAL_FAINT   = "\\033[0;2m";
 const string BRIGHT_CYAN    = "\\033[1;36m";
 
 // Configuration:
-const int    BAR_LENGTH = 73; //length of the bar === that separates test cases
-const string BAR_COLOR    = NORMAL_FAINT;  //The bar ====
-const string TEST_COLOR   = BRIGHT_CYAN; //Color for the word "Test"
+const string COMMUNICATION_FILE = "/tmp/topcoder_vx_tester_communicate";
+const int    MAX_REPORT_LENGTH = 73;
+const int    BAR_LENGTH        = 73; //length of the bar === that separates test cases
+const string BAR_COLOR    = NORMAL_FAINT;  //The bar ==== color
+const string TEST_COLOR   = BRIGHT_CYAN; //Color for the word "Test" or "T"
 
 const string GRADE_COLOR[] = {
     RED_BACKGROUND, // bad (overall), 
@@ -40,6 +74,7 @@ const string GRADE_COLOR[] = {
 const map<char, string> RESULT_COLOR = {
     {'+' , BRIGHT_GREEN},
     {'X' , BRIGHT_RED},
+    {'E' , RED_BACKGROUND },
     {'T' , BRIGHT_RED},
     {'?' , COLOR_RESET},
     {'d' , NORMAL_CROSSED},
@@ -181,6 +216,76 @@ template<typename T> string getTypeName()
     return s.substr(i);
 }
 
+/*==============================================================================*/
+int noColorLength(const string &x)
+{
+    int len = 0;
+    bool colorCode = false;
+    for (char ch : x) {
+        if (ch == '\\033') {
+            colorCode = true;
+        } else if (colorCode && ch == 'm') {
+            colorCode = false;
+        } else {
+            len += ! colorCode; 
+        }
+        
+    }
+    return len;
+}
+
+/*=============================================================================*/
+#ifdef DO_THREADS
+    bool decodeStatus(int status, string & message, string & report)
+    {
+        if (WIFSIGNALED(status)) {
+            switch ( WTERMSIG(status) ) {
+            case SIGSEGV:
+                message = "Segmentation fault.";
+                report = "(segfault)";
+                return true;
+            case SIGABRT:
+                message = "Program aborted.";
+                report = "(aborted)";
+                return true;
+            case SIGFPE:
+                message = "Arithmetic error (e.g. division by zero)";
+                report = "(arithmetic)";
+                return true;
+            case SIGINT:
+                message = report = "SIGINT";
+                return true;
+            case SIGTERM:
+                message = "Killed by another process";
+                report = "(killed)";
+                return true;
+            }
+        }
+        return false;
+    }
+
+    string readCommunication()
+    {
+        string comm = "E";
+        ifstream f(COMMUNICATION_FILE);
+        if (f) {
+            getline(f, comm);
+            if ( comm.size() == 0 ) {
+                comm = "E";
+            }
+            f.close();
+        }
+        return comm;
+    }
+    
+    void writeCommunication(string comm)
+    {        
+        ofstream f(COMMUNICATION_FILE);
+        f << comm;
+        f.close();
+    }
+#endif
+
 /** =============================================================================
     runTestCase tests a single case.
     
@@ -209,48 +314,97 @@ template<typename T> string getTypeName()
 
 */
 template<typename input, typename output, typename problemClass>
-char runTestCase(int caseNo, input in, output exp, int n, double timeOut, vector<string> & finalLines) {
-    cout << TEST_COLOR << "Test " << caseNo << COLOR_RESET <<": ";
-    in.print();
-    cout << endl;
-
-    time_t s = clock();
-    problemClass* instance = new problemClass();
-    output res = output( in.run(instance) );
-    double elapsed = (double)(clock() - s) / CLOCKS_PER_SEC;
-    delete instance;
+char runTestCase(int caseNo, input in, output exp, int n, double timeOut, string & reportLine, bool silentMode) {
+    #ifdef DO_THREADS
+        pid_t thid = fork();
+        bool testThread = ( thid == 0 );
+    #else
+        bool testThread = true;
+    #endif
+    char ret = '?';
+    string report;
+    if (testThread) {
+        if (! silentMode) {
+            cout << TEST_COLOR << "Test " << caseNo << COLOR_RESET <<": ";
+            in.print();
+            cout << endl;
+        }
+        time_t s = clock();    
+        problemClass* instance = new problemClass();
+        output res = output( in.run(instance) );
+        double elapsed = (double)(clock() - s) / CLOCKS_PER_SEC;
+        delete instance;
+        
+        if (! silentMode) {
+            cout << "Time: "<< f02(elapsed)<<" seconds." << endl;
+        }
     
-    cout << "Time: "<< f02(elapsed)<<" seconds." << endl;
-
-    bool correct = exp.u || tc_eq(exp.value, res.value);
-
-    if (! correct) {
-        cout << "Desired answer:" << endl;
-        cout << "\\t" << pretty(exp.value) << endl;
-    }
-    cout << "Your answer:" << endl;
-    cout << "\\t" << pretty(res.value) << endl;
-
-    string ln = TEST_COLOR + "t" + caseNum(caseNo,n) +":";
-
-    char ret = '-';
-    if (! correct) {
-        ret = 'X';
-    } else if (elapsed > timeOut ) {
-        ret = 'T';
-    } else if (exp.u) {
-        ret = '?';
+        bool correct = exp.u || tc_eq(exp.value, res.value);
+    
+        if (! silentMode) {
+            if (! correct) {
+                cout << "Desired answer:" << endl;
+                cout << "\\t" << pretty(exp.value) << endl;
+            }
+            cout << "Your answer:" << endl;
+            cout << "\\t" << pretty(res.value) << endl;
+        }
+    
+        ret = '-';
+        if (! correct) {
+            ret = 'X';
+        } else if (elapsed > timeOut ) {
+            ret = 'T';
+        } else if (exp.u) {
+            ret = '?';
+        } else {
+            ret = '+';
+        }
+        report = " (" + f02(elapsed) + "s)";
+        if (ret == 'X' || ret == '?') {
+            report += " [" + pretty(res.value)+"]";
+        }
+        #ifdef DO_THREADS
+            writeCommunication(ret + report);
+            exit(0);
+        #endif
     } else {
-        ret = '+';
+        #ifdef DO_THREADS
+            int child_status;
+            while ( wait(&child_status) != thid ) {
+            }
+            if ( child_status != 0){
+                ret = 'E';
+                string message;
+                if (! decodeStatus(child_status, message, report)) {
+                    report = "Exit code: " + to_string(child_status);
+                    message = report;
+                }
+                report = " " + report;
+                if (! silentMode) {
+                    cout << message << endl;
+                }
+                ret = 'E';
+            } else {
+                ret = readCommunication()[0];
+                if (ret != 'E') {
+                    report = readCommunication().substr(1);
+                }
+            }
+        #endif
     }
     string tm = " " + colorTestResult(ret);
-    cout << tm;
-    ln += tm + " (" + f02(elapsed) + "s)"; 
-    cout << endl << BAR_COLOR << string(BAR_LENGTH,'=') << COLOR_RESET << endl;
-    if (ret == 'X' || ret == '?') {
-        ln += " [" + pretty(res.value)+"]";
+    if (! silentMode) {
+        cout << tm;
+        cout << endl << BAR_COLOR << string(BAR_LENGTH,'=') << COLOR_RESET << endl;
     }
-    finalLines.push_back(ln);
+    string ln = " " + TEST_COLOR + "t" + caseNum(caseNo,n) +":" + tm + report;
+    int s = noColorLength(ln);
+    if (s > MAX_REPORT_LENGTH) {
+        int dif = ln.length() - s;
+        ln = ln.substr(0, dif + MAX_REPORT_LENGTH - 3) + "...";
+    }
+    reportLine = ln;
     return ret;
 }
 
@@ -276,41 +430,59 @@ char runTestCase(int caseNo, input in, output exp, int n, double timeOut, vector
 
 */
 template<typename problemClass, typename input, typename output> 
-int runTests(vector<pair<input,output>> testCases, function<bool(int)> disabled, int score, int openTime, double caseTimeOut, bool compact)
+int runTests(vector<pair<input,output>> testCases, function<bool(int)> disabled, int score, int openTime, double caseTimeOut, int compactLevel)
 {
+    string header = getTypeName<problemClass>() + ( (compactLevel != 1)  ? "\\n\\n" : ": ");
+    if (compactLevel == 2) {
+        cout << header; cout.flush();
+    }
+    
     string result;
     vector<string> finalLines;
     int n = testCases.size();
     for (int i = 0; i < n; i++) {
         char ch = 'd';
+        string reportLine;
         if (disabled(i)) {
-            finalLines.push_back( TEST_COLOR + "t" + caseNum(i, n)+ COLOR_RESET + ": "+colorTestResult('d'));
+            reportLine = " " + TEST_COLOR + "t" + caseNum(i, n)+ COLOR_RESET + ": "+colorTestResult('d') ;
         } else {
             ch = runTestCase<input,output,problemClass>(
                 i, testCases[i].first, testCases[i].second,
-                n, caseTimeOut, finalLines
+                n, caseTimeOut, reportLine, (compactLevel == 2)
             );
         }
-        result += ch; 
+        result += ch;
+        if (compactLevel == 2) {
+            cout << reportLine << endl;
+        } else {
+            finalLines.push_back(reportLine);
+        }
     }
-    cout << getTypeName<problemClass>() << ( compact ? ": " : "\\n\\n" );
+    if ( compactLevel != 2) {
+        cout << header ;
+    }
     bool good = true;
     for (char ch: result) {
         good &= ( ch == '?' || ch == '+' );
-        if (compact) {
+        if (compactLevel == 1) {
             cout << colorTestResult(ch) << " ";
         }
     }
-    if ( ! compact) {
+    if (compactLevel == 0) {
         for (string ln : finalLines) {
-            cout << " " << ln << endl;
+            cout << ln << endl;
         }
     }
 
     int T = time(NULL) - openTime;
     double PT = T / 60.0, TT = 75.0, SS = score * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT));
     string SSS = Tester::f02(SS);
-    cout << ( !compact? "\\n" : "(") << colorString(SSS, good? 1 : -2) << ( compact?").":"") << endl;
+    SSS = colorString(SSS, good? 1: -2 );
+    if ( compactLevel != 1 ) {
+        cout << "\\n" << SSS << endl;
+    } else {
+        cout << "(" << SSS << ")." << endl;
+    }
     return 0;
 }
 
