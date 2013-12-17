@@ -52,7 +52,7 @@ public class CppTemplateTest {
     @Test
     public void renderCppCode_cxx11() {
         Map<String,String> mp = new HashMap<String,String>();
-        mp.put("Cpp11", "true");
+        mp.put("cpp11", "true");
         model.put("Options", mp);
         String test = TemplateEngine.render(testTemplate, model);
         model.put("TestCode", test);
