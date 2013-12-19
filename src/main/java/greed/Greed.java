@@ -182,15 +182,6 @@ public class Greed {
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
             
             currentTemplateModel.put("Options", template.getOptions() );
-            /*if (template.getOptions() != null) {
-                Log.i("TEMPLATE OPTIONS");
-                for (Map.Entry<String, String> entry : template.getOptions().entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    Log.i(": "+key+" -> "+value);
-                }
-            }*/
-
             if (template == null) {
                 talkingWindow.error("Unknown template [" + templateName + "] (ignored)");
                 continue;
@@ -248,16 +239,17 @@ public class Greed {
                     continue;
                 }
                 if (exists) {
-                    if (FileSystem.getSize(filePath) == code.length()) {
-                        talkingWindow.show(" (skipped, same size)");
+                    if (FileSystem.fileEqualToString( filePath, code)) {
+                        talkingWindow.show(" (skipped, files identical)");
                     } else {
                         talkingWindow.show(" (overwrite)");
                         FileSystem.backup(filePath); // Backup the old files
                         FileSystem.writeFile(filePath, code);
                     }
                 }
-                else
+                else {
                     FileSystem.writeFile(filePath, code);
+                }
 
                 if (template.getAfterFileGen() != null) {
                     CommandConfig afterGen = template.getAfterFileGen();
