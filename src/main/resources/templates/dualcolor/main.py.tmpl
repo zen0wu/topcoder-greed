@@ -1,5 +1,5 @@
 ${--
-#    Vexorian's c++ tester template for greed. Version 0.6
+#    Vexorian's c++ tester template for greed. Version 0.7
 #    - Test cases in ( [ () ], x / None ) format for ease of modification.
 #    - Very small code for the problem file.
 #    - Requires tester.py. Use dualcolor-tester template.
@@ -16,7 +16,11 @@ ${--
 #                       instead of using it separately. Use in case the 
 #                       requirement for separate file is too complicated to
 #                       fulfill.
-#    
+#        * disableColors: false by default. If true it will not use ANSI color codes.
+#        * customTesterLocation :
+#             false by default. If it instead had a string location, it will
+#             import this customTesterLocation instead of "tester.py
+#
 #    (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 #
 }  
@@ -40,7 +44,14 @@ ${<if Options.singleFile}
 ${<DualColorTesterCode}
 ${<end}
 if __name__ == '__main__':
+${<if Options.customTesterLocation}
+    import imp
+    tester = imp.load_source('tester', '${Options.customTesterLocation}' )
+${<end}
     import sys${if !Options.singleFile}, tester${end}
+${<if Options.disableColors}
+    tester.disableColors()
+${<end}
     ${if !Options.singleFile}tester.${end}run_tests(
         ${Problem.Name}, '${Method.Name}', TEST_CASES, isTestDisabled, 
         ${CreateTime}, ${Problem.Score}, CASE_TIME_OUT, ${if !Options.singleFile}tester.${end}${Options.compactMode}
