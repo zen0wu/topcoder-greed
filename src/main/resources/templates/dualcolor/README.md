@@ -51,6 +51,16 @@ greed.shared.templateDef.dualcolor-test.options {
  + `FULL_REPORT`    : The final report has more detail (one line per test case).
  + `ONLY_REPORT`    : That final report is the only thing displayed. (Very compact).
 * `caseTimeOut` : Initial value of the CASE_TIMEOUT constant.
+* `disableColors`: Default is false. Enable this if your terminal cannot display ANSI-C color codes and you'd still like to use the other features.
+* `customTesterLocation`: Eventually, you'd like to use a single tester.cpp / tester.py file for all the problems. Use this if you'd like to change the location of the loaded tester source.
+Example:
+<pre>
+cpp.options.customTesterLocation = "../tester.cpp"
+python.options.customTesterLocation = "../tester.py"
+# no longer need the dualcolor-tester template.
+shared.templates = [dualcolor-test, source, problem-desc ]
+</pre>
+You can find the tester.cpp / tester.py files after generating them for the first time using greed.
 * `singleFile` : Included just in case there are problems making the two files to work. This one puts all the contents of the tester.cpp/tester.py inside the source file. Also need you to do the following tweaks to `templateDef.dualcolor-tester`:
 <pre>
     templateDef.dualcolor-tester.templateFile = None

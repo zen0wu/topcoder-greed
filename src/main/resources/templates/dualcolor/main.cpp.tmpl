@@ -1,5 +1,5 @@
 ${-- /*
-    Vexorian's c++ tester template for greed. Version 0.6
+    Vexorian's c++ tester template for greed. Version 0.7
     Part of test template which has many features:
     - Test cases in bracket format for ease of modification.
     - Very small code for the problem file.
@@ -37,6 +37,11 @@ ${-- /*
                        instead of using it separately. Use in case the 
                        requirement for separate file is too complicated to
                        fulfill.
+        * disableColors: false by default. If true it will not use ANSI color codes.
+        * customTesterLocation :
+             false by default. If it instead had a string location, it will
+             include this customTesterLocation instead of "tester.cpp"
+
     (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 */ }
 //------------------------------------------------------------------------------
@@ -56,11 +61,18 @@ ${<end}
 
 //------------------------------------------------------------------------------
 // Tester code:
+${<if Options.disableColors}
+    #define DISABLE_COLORS
+${<end}
     ${if Options.runMultipleProcesses}//${end}#define DISABLE_THREADS
 ${<if Options.singleFile}
-    ${<DualColorTesterCode}
+${<DualColorTesterCode}
+${<else}
+${<if Options.customTesterLocation}
+    #include "${Options.customTesterLocation}"
 ${<else}
     #include "tester.cpp"
+${<end}
 ${<end}
     struct input {
         ${foreach Method.Params p}${p.Type} p${p.Index};${end}

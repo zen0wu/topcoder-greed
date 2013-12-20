@@ -1,5 +1,5 @@
 /*
-    Vexorian's c++ generic tester. Version 0.6
+    Vexorian's c++ generic tester. Version 0.7
     Part of test template which has many features:
     - Test cases in bracket format for ease of modification.
     - Very small code for the problem file.
@@ -48,14 +48,25 @@ const int    COMPACT_REPORT = 1;
 const int    ONLY_REPORT    = 2;
     
 // Name the color codes:
-const string COLOR_RESET  = "\\033[0m";    
-
-const string BRIGHT_GREEN   = "\\033[1;32m";
-const string BRIGHT_RED     = "\\033[1;31m";
-const string NORMAL_CROSSED = "\\033[0;9;37m";
-const string RED_BACKGROUND = "\\033[1;41m";
-const string NORMAL_FAINT   = "\\033[0;2m";
-const string BRIGHT_CYAN    = "\\033[1;36m";
+#ifdef DISABLE_COLORS
+    const string COLOR_RESET  = "";    
+    
+    const string BRIGHT_GREEN   = "";
+    const string BRIGHT_RED     = "";
+    const string NORMAL_CROSSED = "";
+    const string RED_BACKGROUND = "";
+    const string NORMAL_FAINT   = "";
+    const string BRIGHT_CYAN    = "";
+#else
+    const string COLOR_RESET  = "\\033[0m";    
+    
+    const string BRIGHT_GREEN   = "\\033[1;32m";
+    const string BRIGHT_RED     = "\\033[1;31m";
+    const string NORMAL_CROSSED = "\\033[0;9;37m";
+    const string RED_BACKGROUND = "\\033[1;41m";
+    const string NORMAL_FAINT   = "\\033[0;2m";
+    const string BRIGHT_CYAN    = "\\033[1;36m";
+#endif
 
 // Configuration:
 const string COMMUNICATION_FILE = "/tmp/topcoder_vx_tester_communicate";

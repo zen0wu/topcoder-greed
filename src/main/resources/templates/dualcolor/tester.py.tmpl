@@ -1,4 +1,4 @@
-# vexorian's Generic Tester example! version 0.6
+# vexorian's Generic Tester example! version 0.7
 #  - Ansi color codes to make output easy to read.
 #  - run_tests needs a lot of arguments... 
 # (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
@@ -42,6 +42,21 @@ RESULT_COLOR = {
     '?' : COLOR_RESET,
     'd' : NORMAL_CROSSED,
 }
+
+
+def disableColors():
+    COLOR_RESET  = ''        
+    BRIGHT_GREEN   = ''
+    BRIGHT_RED     = ''
+    NORMAL_CROSSED = ''
+    RED_BACKGROUND = ''
+    NORMAL_FAINT   = ''
+    BRIGHT_CYAN    = ''
+    global GRADE_COLOR
+    GRADE_COLOR = [''] * len(GRADE_COLOR)
+    copy = [x for x in RESULT_COLOR]
+    for x in copy :
+        RESULT_COLOR[x] = ''
 
 
 def colorCode(q):
@@ -188,3 +203,7 @@ def run_tests( problemClass, methodName, testCases, isTestDisabled, createTime, 
     else:
         line = "%s (%s)" % (line, points)
         sys.stdout.write("%s\\n" % line)
+
+
+if __name__ == '__main__':
+    sys.stdout.write("Not supposed to run this")
