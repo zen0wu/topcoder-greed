@@ -1,6 +1,8 @@
 package greed.util;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -117,5 +119,37 @@ public class FileSystem {
         }
         Log.i(absolutePath+" -> " + getBackupFile(file, i) );
         file.renameTo(  getBackupFile(file, i) );
+    }
+    
+    public static boolean fileEqualToString(String filePath, String s) {
+        if (getSize(filePath) == s.length()) {
+            File f = new File(Configuration.getWorkspace() + "/" + filePath);
+            int i = 0;
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(f));
+                try {
+                    char[] buf = new char[100];
+                    int numRead = 0;
+                    while ((numRead=reader.read(buf)) != -1) {
+                        for (int j = 0; j < numRead; j++) {
+                            if ( (i >= s.length()) || (s.charAt(i) != buf[j]) ) {
+                                return false;
+                            }
+                            i++;
+                        }
+                    }
+                    if (i < s.length()) {
+                        return false;
+                    }
+                } finally {
+                    reader.close();
+                }
+                return true;
+            } catch (IOException e) {
+                Log.i("IOException");
+                return false;
+            }
+        }
+        return false;
     }
 }
