@@ -38,6 +38,22 @@ public class Log {
             logToErr = config.isLogToStderr();
             // Create logging folder
             String logFolder = config.getLogFolder();
+            if (logFolder == null) {
+                // REMOVE THESE BEFORE RELEASE: DEBUG USE
+                System.err.println("=== FINAL ERROR DEBUG LOG ===");
+                try {
+                    throw new Exception("DEBUG");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.err.println(config.getLogLevel());
+                System.err.println(config.getLogFolder());
+                System.err.println(config.isLogToStderr());
+                System.err.println("=== FINAL ERROR DEBUG LOG ===");
+                // DEBUG USE
+                logFolder = "Logs";
+            }
             FileSystem.createFolder(logFolder);
 
             int month = GregorianCalendar.getInstance().get(Calendar.MONTH) + 1;
