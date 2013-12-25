@@ -92,6 +92,9 @@ public class Greed {
         } catch (greed.conf.ConfigException e) {
             talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
             Log.e("Loading config error", e);
+        } catch (Throwable e) {
+            talkingWindow.error("Final error, saying \"" + e.getMessage() + "\", try fix it.");
+            Log.e("Initialization error", e);
         }
     }
 

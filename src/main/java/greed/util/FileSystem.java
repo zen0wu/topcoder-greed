@@ -14,12 +14,13 @@ import java.util.HashMap;
  * Greed is good! Cheers!
  */
 public class FileSystem {
-    private static final String BUILTIN_PREFIX = "builtin ";
+    private static final String BUILTIN_PREFIX = "builtin(";
 
     public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
         if (resourcePath.startsWith(BUILTIN_PREFIX)) {
-            resourcePath = Configuration.TEMPLATE_PATH + "/" + resourcePath.substring(BUILTIN_PREFIX.length());
+            resourcePath = resourcePath.substring(BUILTIN_PREFIX.length(), resourcePath.length() - 1);
+            resourcePath = Configuration.TEMPLATE_PATH + "/" + resourcePath;
             if (Debug.developmentMode) {
                 resourcePath = Debug.getResourceDirectory() + resourcePath;
                 return new FileInputStream(resourcePath);
