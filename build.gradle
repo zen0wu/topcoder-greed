@@ -38,6 +38,6 @@ fatJar.mustRunAfter jar
 // Gradle Wrapper
 task wrapper(type: Wrapper) {
     description = 'Create gradle wrapper'
-    gradleVersion = '1.8'
+    gradleVersion = '1.10'
     jarFile = 'gradle/wrapper.jar'
 }
