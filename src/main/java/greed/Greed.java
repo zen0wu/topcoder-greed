@@ -260,13 +260,14 @@ public class Greed {
                     for (int i = 1; i < commands.length; ++i) {
                         commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
                     }
+                    long timeout = (long)(1000 * afterGen.getTimeout());
 
                     talkingWindow.showLine("");
                     talkingWindow.indent();
                     talkingWindow.showLine("After generation action: ");
                     talkingWindow.indent();
                     talkingWindow.showLine(String.format("(%s)$ %s", fileFolder, StringUtil.join(commands, " ")));
-                    talkingWindow.show("Exit status: " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), commands));
+                    talkingWindow.show("Exit status (-1 means exception): " + ExternalSystem.runExternalCommand(FileSystem.getRawFile(fileFolder), timeout, commands));
                     talkingWindow.unindent();
                     talkingWindow.unindent();
                 }

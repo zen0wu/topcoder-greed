@@ -25,13 +25,13 @@ public class ExternalSystemTest {
     @Test
     public void testJava() {
         // Returns 1
-        Assert.assertEquals(ExternalSystem.runExternalCommand("java"), 1);
+        Assert.assertEquals(ExternalSystem.runExternalCommand(new File("."), 1000, "java"), 1);
     }
 
     @Test
     public void testLs() {
         Assume.assumeTrue(!TestUtil.isWindows());
-        Assert.assertEquals(ExternalSystem.runExternalCommand("ls"), 0);
+        Assert.assertEquals(ExternalSystem.runExternalCommand(new File("."), 1000, "ls"), 0);
     }
 
     @Test
@@ -39,15 +39,15 @@ public class ExternalSystemTest {
         // cat with no arguments will hang
         Assume.assumeTrue(!TestUtil.isWindows());
         // the exit code 143 corresponds to SIGTERM in POSIX, which is sent when we kill the process
-        Assert.assertEquals(ExternalSystem.runExternalCommand("cat"), 143);
+        Assert.assertEquals(ExternalSystem.runExternalCommand(new File("."), 5000, "cat"), 143);
     }
 
     @Test
     public void testCp() {
         Assume.assumeTrue(!TestUtil.isWindows());
-        Assert.assertEquals(ExternalSystem.runExternalCommand("touch", "a"), 0);
+        Assert.assertEquals(ExternalSystem.runExternalCommand(new File("."), 5000, "touch", "a"), 0);
         Assert.assertTrue(new File("a").exists());
-        Assert.assertEquals(ExternalSystem.runExternalCommand("cp", "a", "b"), 0);
+        Assert.assertEquals(ExternalSystem.runExternalCommand(new File("."), 5000, "cp", "a", "b"), 0);
         Assert.assertTrue(new File("b").exists());
         Assert.assertTrue(new File("a").delete());
         Assert.assertTrue(new File("b").delete());

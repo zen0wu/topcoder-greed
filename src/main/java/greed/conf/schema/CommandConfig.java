@@ -1,6 +1,7 @@
 package greed.conf.schema;
 
 import greed.conf.meta.ConfigObjectClass;
+import greed.conf.meta.Optional;
 import greed.conf.meta.Required;
 
 /**
@@ -13,6 +14,17 @@ public class CommandConfig {
 
     @Required
     private String[] arguments;
+
+    @Optional
+    private double timeout = -1;
+
+    public double getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(double timeout) {
+        this.timeout = timeout;
+    }
 
     public String getExecute() {
         return execute;

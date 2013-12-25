@@ -8,7 +8,7 @@ import java.io.IOException;
  */
 public class ExternalSystem {
 
-    private static final long TIMEOUT = 5000L;
+    private static final long DEFAULT_TIMEOUT = 5000L;
 
     private static class ProcessWrapper implements Runnable {
 
@@ -63,28 +63,34 @@ public class ExternalSystem {
         }
     }
 
-    public static int runExternalCommand(String... command) {
-        return runExternalCommand(null, command);
-    }
-
-    public static int runExternalCommand(File workingDirectory, String... command) {
-        ProcessWrapper wrapper = new ProcessWrapper(new ProcessBuilder(command).directory(workingDirectory));
-        Thread wrapperThread = new Thread(wrapper);
-        wrapperThread.start();
-        try {
-            wrapperThread.join(TIMEOUT);
-        } catch (InterruptedException e) {
-            Log.e("Main thread should not be interrupted", e);
-            return -1;
+    public static int runExternalCommand(File workingDirectory, long timeout, String... command) {
+        ProcessBuilder processBuilder = new ProcessBuilder(command).directory(workingDirectory);
+        if (timeout > 0) {
+            ProcessWrapper wrapper = new ProcessWrapper(processBuilder);
+            Thread wrapperThread = new Thread(wrapper);
+            wrapperThread.start();
+            try {
+                wrapperThread.join(DEFAULT_TIMEOUT);
+            } catch (InterruptedException e) {
+                Log.e("Main thread should not be interrupted", e);
+                return -1;
+            }
+            wrapperThread.interrupt();
+            try {
+                wrapperThread.join();
+            } catch (InterruptedException e) {
+                Log.e("Main thread should not be interrupted", e);
+                return -1;
+            }
+            return wrapper.getExitValue();
         }
-        wrapperThread.interrupt();
-        try {
-            wrapperThread.join();
-        } catch (InterruptedException e) {
-            Log.e("Main thread should not be interrupted", e);
-            return -1;
+        else {
+            try {
+                processBuilder.start();
+                return 0;
+            } catch (IOException e) {
+                return -1;
+            }
         }
-
-        return wrapper.getExitValue();
     }
 }
