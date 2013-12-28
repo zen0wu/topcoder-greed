@@ -19,18 +19,11 @@ import greed.model.Problem;
 import greed.template.TemplateEngine;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
-import greed.util.Configuration;
-import greed.util.Debug;
-import greed.util.ExternalSystem;
-import greed.util.FileSystem;
-import greed.util.Log;
-import greed.util.StringUtil;
-import greed.util.Utils;
+import greed.util.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -40,6 +33,7 @@ import com.topcoder.shared.problem.Renderer;
 /**
  * Greed is good! Cheers!
  */
+@SuppressWarnings("unused")
 public class Greed {
     private Language currentLang;
     private Problem currentProb;
@@ -195,7 +189,7 @@ public class Greed {
             String code;
             try {
                 CodeByLine codeLines = CodeByLine.fromString(TemplateEngine.render(
-                        FileSystem.getInputStream(template.getTemplateFile()),
+                        FileSystem.getResource(template.getTemplateFile()),
                         currentTemplateModel
                 ));
 
@@ -296,7 +290,7 @@ public class Greed {
         }
         else {
             try {
-                CodeByLine code = CodeByLine.fromInputStream(FileSystem.getInputStream(filePath));
+                CodeByLine code = CodeByLine.fromInputStream(FileSystem.getResource(new ResourcePath(filePath, false)));
 
                 if (LanguageManager.getInstance().getPostTransformer(currentLang) != null)
                     code = LanguageManager.getInstance().getPostTransformer(currentLang).transform(code);

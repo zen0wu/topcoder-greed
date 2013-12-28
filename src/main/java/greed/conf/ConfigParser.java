@@ -1,13 +1,9 @@
 package greed.conf;
 
-import greed.conf.meta.ConfigObjectClass;
-import greed.conf.meta.Conflict;
-import greed.conf.meta.MapParam;
-import greed.conf.meta.Required;
+import greed.conf.meta.*;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,37 +13,26 @@ import java.util.Map;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigRenderOptions;
+import greed.conf.parser.IParser;
+import greed.util.ReflectionUtil;
+
 /**
  * Greed is good! Cheers!
  */
-public class ConfigSerializer {
+public class ConfigParser {
 
-    public ConfigSerializer() {}
+    public ConfigParser() {}
 
     @SuppressWarnings("unchecked")
-    public <T> T serializeAndCheck(String path, Object obj, Class<T> configClass) throws ConfigException {
+    public <T> T parseAndCheck(String path, Object obj, Class<T> configClass) throws ConfigException {
         if (String.class.equals(configClass)) {
-            if (obj instanceof ConfigValue) {
-                String  s = ((ConfigValue)obj).render() ;
-                if (s != null && s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length()-1)=='"') {
-                    s = s.substring(1, s.length() - 1);
-                }
-                return (T)s;
-            } else {
-                return (T) obj.toString();
-            }
+            return (T) parseString(obj);
         }
         else if (Integer.TYPE.equals(configClass) || Integer.class.equals(configClass)) {
-            try {
-                return (T) Integer.valueOf(Integer.parseInt(obj.toString()));
-            }
-            catch (NumberFormatException e) {
-                throw new ConfigException(String.format("Cannot parse integer for %s from %s", path, obj.toString()), e);
-            }
+            return (T) parseInt(path, obj);
         }
         else if (Boolean.TYPE.equals(configClass) || Boolean.class.equals(configClass)) {
-            return (T) Boolean.valueOf(Boolean.parseBoolean(obj.toString()));
+            return (T) parseBoolean(obj);
         }
 
         if (!(obj instanceof Config) && !(obj instanceof ConfigObject)) {
@@ -71,15 +56,22 @@ public class ConfigSerializer {
                     continue;
                 }
 
-                Method setter = findSetter(configClass, field);
+                Method setter = ReflectionUtil.findSetter(configClass, field);
                 if (setter == null) {
                     throw new ConfigException(String.format("FATAL: Unable to find setter for %s in class %s", field.getName(), configClass.getName()));
+                }
+
+                IParser parser = null;
+                if (field.isAnnotationPresent(Parser.class)) {
+                    Class<? extends IParser> parserClass = field.getAnnotation(Parser.class).value();
+                    parser = parserClass.newInstance();
                 }
 
                 Class<?> fieldType = field.getType();
                 hasSet.add(field.getName());
                 if (fieldType.isPrimitive() || String.class.equals(fieldType)) {
-                    setter.invoke(configObject, serializeAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
+                    setter.invoke(configObject,
+                            parser != null ? parser.apply(obj) : parseAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
                 }
                 else if (fieldType.isArray()) {
                     Class<?> elementType = fieldType.getComponentType();
@@ -87,7 +79,8 @@ public class ConfigSerializer {
                     Object values = Array.newInstance(elementType, rawValues.size());
                     int idx = 0;
                     for (Object rv: rawValues) {
-                        Array.set(values, idx, serializeAndCheck(String.format("%s.[%d]", path, idx), rv, elementType));
+                        Array.set(values, idx,
+                                parser != null ? parser.apply(rv) : parseAndCheck(String.format("%s.[%d]", path, idx), rv, elementType));
                         idx++;
                     }
                     setter.invoke(configObject, values);
@@ -97,12 +90,15 @@ public class ConfigSerializer {
                     Class<?> valueClass = field.getAnnotation(MapParam.class).value();
                     for (Map.Entry<String, ConfigValue> entry : rawConf.getObject(field.getName()).entrySet()) {
                         map.put(entry.getKey(),
-                                serializeAndCheck(path + "." + field.getName() + "." + entry.getKey(), entry.getValue(), valueClass));
+                                parser != null ? parser.apply(entry.getValue()) : parseAndCheck(path + "." + field.getName() + "." + entry.getKey(), entry.getValue(), valueClass));
                     }
                     setter.invoke(configObject, map);
                 }
                 else if (fieldType.isAnnotationPresent(ConfigObjectClass.class)) {
-                    setter.invoke(configObject, serializeAndCheck(path + "." + field.getName(), rawConf.getConfig(field.getName()), fieldType));
+                    setter.invoke(configObject, parseAndCheck(path + "." + field.getName(), rawConf.getConfig(field.getName()), fieldType));
+                }
+                else if (parser != null) {
+                    setter.invoke(configObject, parser.apply(rawConf.getAnyRef(field.getName())));
                 }
                 else {
                     throw new ConfigException(String.format("Field %s with unknown type %s at path %s", field.getName(), fieldType.getSimpleName(), path));
@@ -126,27 +122,33 @@ public class ConfigSerializer {
             return configObject;
         } catch (InstantiationException e) {
             throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
-        } catch (IllegalAccessException e) {
-            throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
-        } catch (InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
         }
     }
 
-    private Method findSetter(Class<?> clazz, Field field) {
-        String methodName = "set" + normalizeFieldName(field.getName());
-        for (Method method: clazz.getMethods()) {
-            if (method.getName().equals(methodName))
-                return method;
-        }
-        return null;
+    private Boolean parseBoolean(Object obj) {
+        return Boolean.parseBoolean(obj.toString());
     }
 
-    private String normalizeFieldName(String name) {
-        StringBuilder concatenated = new StringBuilder();
-        for (String tok: name.split("-")) {
-            concatenated.append(tok.substring(0, 1).toUpperCase()).append(tok.substring(1));
+    private Integer parseInt(String path, Object obj) throws ConfigException {
+        try {
+            return Integer.parseInt(obj.toString());
         }
-        return concatenated.toString();
+        catch (NumberFormatException e) {
+            throw new ConfigException(String.format("Cannot parse integer for %s from %s", path, obj.toString()), e);
+        }
+    }
+
+    private String parseString(Object obj) {
+        if (obj instanceof ConfigValue) {
+            String  s = ((ConfigValue)obj).render() ;
+            if (s != null && s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length()-1)=='"') {
+                s = s.substring(1, s.length() - 1);
+            }
+            return s;
+        } else {
+            return obj.toString();
+        }
     }
 }

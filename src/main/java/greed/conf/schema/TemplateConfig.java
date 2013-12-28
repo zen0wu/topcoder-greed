@@ -2,6 +2,9 @@ package greed.conf.schema;
 
 import java.util.HashMap;
 import greed.conf.meta.*;
+import greed.conf.parser.TemplateDependencyParser;
+import greed.util.ResourcePath;
+import greed.conf.parser.TemplateFileParser;
 
 /**
  * Greed is good! Cheers!
@@ -12,7 +15,8 @@ public class TemplateConfig {
     private boolean override;
 
     @Required
-    private String templateFile;
+    @Parser(TemplateFileParser.class)
+    private ResourcePath templateFile;
 
     @Optional
     private String outputKey;
@@ -32,6 +36,10 @@ public class TemplateConfig {
 
     @Optional
     private String[] transformers;
+
+    @Optional
+    @Parser(TemplateDependencyParser.class)
+    private TemplateDependencyConfig.Dependency[] dependencies;
 
     @Optional
     @MapParam(value = String.class)
@@ -103,13 +111,9 @@ public class TemplateConfig {
         this.afterFileGen = afterFileGen;
     }
 
-    public String getTemplateFile() {
-        return templateFile;
-    }
+    public ResourcePath getTemplateFile() { return templateFile; }
 
-    public void setTemplateFile(String templateFile) {
-        this.templateFile = templateFile;
-    }
+    public void setTemplateFile(ResourcePath templateFile) { this.templateFile = templateFile; }
 
     public String[] getTransformers() {
         return transformers;
@@ -126,4 +130,8 @@ public class TemplateConfig {
     public void setOptions(HashMap<String, String> options) {
         this.options = options;
     }
+
+    public TemplateDependencyConfig.Dependency[] getDependencies() { return dependencies; }
+
+    public void setDependencies(TemplateDependencyConfig.Dependency[] dependencies) { this.dependencies = dependencies; }
 }

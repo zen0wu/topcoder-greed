@@ -4,7 +4,7 @@ import com.topcoder.client.contestApplet.common.LocalPreferences;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import greed.conf.ConfigException;
-import greed.conf.ConfigSerializer;
+import greed.conf.ConfigParser;
 import greed.conf.schema.GreedConfig;
 
 import java.io.File;
@@ -57,6 +57,6 @@ public class Configuration {
         }
 
         conf = conf.resolve();
-        return new ConfigSerializer().serializeAndCheck("greed", conf.getConfig("greed"), GreedConfig.class);
+        return new ConfigParser().parseAndCheck("greed", conf.getConfig("greed"), GreedConfig.class);
     }
 }

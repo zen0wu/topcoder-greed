@@ -14,24 +14,20 @@ import java.util.HashMap;
  * Greed is good! Cheers!
  */
 public class FileSystem {
-    private static final String BUILTIN_PREFIX = "builtin(";
-
-    public static InputStream getInputStream(String resourcePath) throws FileNotFoundException {
+    public static InputStream getResource(ResourcePath resourcePath) throws FileNotFoundException {
         Log.i("Getting resource: " + resourcePath);
-        if (resourcePath.startsWith(BUILTIN_PREFIX)) {
-            resourcePath = resourcePath.substring(BUILTIN_PREFIX.length(), resourcePath.length() - 1);
-            resourcePath = Configuration.TEMPLATE_PATH + "/" + resourcePath;
+        if (resourcePath.isInternal()) {
+            String relativePath = resourcePath.getRelativePath();
             if (Debug.developmentMode) {
-                resourcePath = Debug.getResourceDirectory() + resourcePath;
-                return new FileInputStream(resourcePath);
+                return new FileInputStream(Debug.getResourceDirectory() + relativePath);
             } else {
-                InputStream is = FileSystem.class.getResourceAsStream(resourcePath);
+                InputStream is = FileSystem.class.getResourceAsStream(relativePath);
                 if(is == null)
-                    throw new FileNotFoundException(resourcePath);
+                    throw new FileNotFoundException(relativePath);
                 return is;
             }
         } else {
-            return new FileInputStream(Configuration.getWorkspace() + "/" + resourcePath);
+            return new FileInputStream(Configuration.getWorkspace() + "/" + resourcePath.getRelativePath());
         }
     }
 
@@ -130,8 +126,8 @@ public class FileSystem {
                 BufferedReader reader = new BufferedReader(new FileReader(f));
                 try {
                     char[] buf = new char[100];
-                    int numRead = 0;
-                    while ((numRead=reader.read(buf)) != -1) {
+                    int numRead;
+                    while ((numRead = reader.read(buf)) != -1) {
                         for (int j = 0; j < numRead; j++) {
                             if ( (i >= s.length()) || (s.charAt(i) != buf[j]) ) {
                                 return false;
@@ -147,7 +143,7 @@ public class FileSystem {
                 }
                 return true;
             } catch (IOException e) {
-                Log.i("IOException");
+                Log.e("IOException when reading [" + filePath + "]" , e);
                 return false;
             }
         }
