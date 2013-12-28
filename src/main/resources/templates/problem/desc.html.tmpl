@@ -2,8 +2,14 @@
 
 <html>
 <head>
+    ${if Options.favIcon}
+        <link type="image/x-icon" rel="shortcut icon" href="${Options.favIcon}"/>
+    ${end}
     <meta charset="utf-8" />
 
+    ${if Options.customStyleSheet}
+    <link href="${Options.customStyleSheet}" rel="stylesheet" type="text/css" />
+    ${else}
 	<style type="text/css">
 	    /* color scheme */
 	    ${if Options.colorThemeBlack }
@@ -23,7 +29,7 @@
             .section .section-title { color: white; }
             li.testcase div.testcase-no { border-color: #888; color: #CCCCCC; }
             li.testcase .tag { background: #161616; color: #EEEEEE }
-            li.testcase .data { background: #303030; hj }
+            li.testcase .data { background: #303030; }
 	    ${else}
             body { color: black; background-color: white; }
             .section .section-title { color: grey; }
@@ -203,7 +209,18 @@
 		        content: ")";
 		    }
 		${end}
+        ${if !Options.showTags}.tag,${end} ${if !Options.showVariableNames}.variable .name,${end} .hideit {
+            visibility: hidden;
+            position: absolute;
+        }
+        ${if Options.showOutputArrow}
+        .testcase-output .value:before {
+            content: "→";
+        }
+        ${end}
+
 	</style>
+	${end}
 
     <title>Topcoder - ${Contest.Name} - Problem ${Problem.Score}</title>
 </head>
@@ -255,15 +272,11 @@
                 <div class="testcase-no">${e.Num}</div>
                 <div class="testcase-content">
                     <div class="testcase-input">
-                        ${if Options.showTags}
-                            <div class="tag">input</div>
-                        ${end}
+                        <div class="tag">input</div>
                         <div class="variables">
                         ${<foreach e.Input in}
                             <div class="variable data">
-                                ${if Options.showVariableNames}
-                                    <div class="name data">${in.Param.Name}</div>
-                                ${end}
+                                <div class="name data">${in.Param.Name}</div>
                                 <div class="value data">
                                 ${if Options.gridArrays}
                                     ${in;html(grid)}
@@ -276,9 +289,7 @@
                         </div>
                     </div>
                     <div class="testcase-output">
-                        ${if Options.showTags}
-                            <div class="tag">output</div>
-                        ${end}
+                        <div class="tag">output</div>
                         <div class="value data">
                         ${if Options.gridArrays}
                             ${e.Output;html(grid)}
@@ -289,9 +300,7 @@
                     </div>
                     ${<if e.Annotation}
                     <div class="testcase-annotation">
-                        ${if Options.showTags}
-                            <div class="tag">comment</div>
-                        ${end}
+                        <div class="tag">comment</div>
                         <div class="testcase-comment">${e.Annotation}</div>
                     </div>
                     ${<end}
