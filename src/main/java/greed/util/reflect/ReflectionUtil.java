@@ -1,4 +1,6 @@
-package greed.util;
+package greed.util.reflect;
+
+import greed.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -7,15 +9,15 @@ import java.lang.reflect.Method;
  * Greed is good! Cheers!
  */
 public class ReflectionUtil {
-    public static Method findMethod(Class<?> clazz, String methodName, int paramNum) {
+    public static Method findMethod(Class<?> clazz, String methodName, Class<?> returnType, int paramNum) {
         Method found = null;
         for (Method method: clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName) && method.getParameterTypes().length == paramNum) {
+            // Note the co-variance on the return type
+            if (method.getName().equals(methodName) && returnType.isAssignableFrom(method.getReturnType()) && method.getParameterTypes().length == paramNum) {
                 if (found == null)
                     found = method;
                 else {
-                    // TODO: support for raw logging (logging to stderr before the log is configured)
-                    //Log.w("Ambigious method named " + methodName + " with " + paramNum + " parameters");
+                    Log.e(String.format("Ambiguous method named %s(%d): %s", methodName, paramNum, returnType.getSimpleName()));
                 }
             }
         }

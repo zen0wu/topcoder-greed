@@ -1,7 +1,7 @@
 package greed.conf.parser;
 
-import greed.util.FullGeneric1;
-import greed.util.ReflectionUtil;
+import greed.util.reflect.FullGeneric1;
+import greed.util.reflect.ReflectionUtil;
 
 import java.lang.reflect.Method;
 
@@ -30,7 +30,7 @@ public abstract class ExpressionParser<T> implements IParser<T>, FullGeneric1<T>
             for (int i = 0; i < paramExps.length; ++i)
                 paramExps[i] = paramExps[i].trim();
 
-            Method method = ReflectionUtil.findMethod(this.getClass(), funcName, paramExps.length);
+            Method method = ReflectionUtil.findMethod(this.getClass(), funcName, returnType, paramExps.length);
             if (method != null) {
                 Class<?>[] paramTypes = method.getParameterTypes();
                 Object[] params = new Object[paramExps.length];
@@ -40,6 +40,8 @@ public abstract class ExpressionParser<T> implements IParser<T>, FullGeneric1<T>
                 return returnType.cast(method.invoke(this, params));
             }
         }
+        // Issue: Although not needed right now, but it's possible T = String,
+        // in this situation, the parser would get confused, and an extra option is needed
         if (String.class.equals(returnType))
             return returnType.cast(expression);
         if (typeOf1().equals(returnType)) {

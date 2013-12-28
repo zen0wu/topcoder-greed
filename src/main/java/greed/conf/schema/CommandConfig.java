@@ -16,13 +16,13 @@ public class CommandConfig {
     private String[] arguments;
 
     @Optional
-    private double timeout = -1;
+    private int timeout = -1;
 
-    public double getTimeout() {
+    public int getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(double timeout) {
+    public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 

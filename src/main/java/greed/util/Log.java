@@ -16,13 +16,14 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;
-    private static final String[] LEVEL_NAMES = new String[]{"DEBUG", "INFO", "WARN", "ERROR"};
+    private static final String[] LEVEL_NAMES = new String[] { "DEBUG", "INFO", "WARN", "ERROR" };
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.ENGLISH);
 
     private static int minimalLoggingLevel = 0;
     private static PrintWriter logger = null;
     private static int logCount = 0;
-    private static boolean logToErr = false;
+    // Default set to true to allow pre-initialized logging to StdErr
+    private static boolean logToErr = true;
 
     static void initialize(LoggingConfig config) {
         minimalLoggingLevel = LEVEL_NAMES.length + 1;

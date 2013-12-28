@@ -21,8 +21,9 @@ public class TemplateDependencyParser extends ExpressionParser<TemplateDependenc
         String[] subExps = expression.split("\\|");
         for (int i = 0; i < subExps.length; ++i)
             subExps[i] = subExps[i].trim();
-        if (subExps.length == 1)
+        if (subExps.length == 1) {
             return parseExp(subExps[0], TemplateDependencyConfig.Dependency.class);
+        }
         else {
             TemplateDependencyConfig.Dependency[] dependencies = new TemplateDependencyConfig.Dependency[subExps.length];
             for (int i = 0; i < dependencies.length; ++i) {

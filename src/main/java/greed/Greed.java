@@ -7,10 +7,7 @@ import greed.code.transform.AppendingTransformer;
 import greed.code.transform.ContinuousBlankLineRemover;
 import greed.code.transform.CutBlockRemover;
 import greed.code.transform.EmptyCutBlockCleaner;
-import greed.conf.schema.CommandConfig;
-import greed.conf.schema.GreedConfig;
-import greed.conf.schema.LanguageConfig;
-import greed.conf.schema.TemplateConfig;
+import greed.conf.schema.*;
 import greed.model.Contest;
 import greed.model.Convert;
 import greed.model.Language;
@@ -23,7 +20,9 @@ import greed.util.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.JPanel;
 
@@ -154,6 +153,7 @@ public class Greed {
         currentTemplateModel = new HashMap<String, Object>();
         currentTemplateModel.put("Contest", contest);
         currentTemplateModel.put("Problem", problem);
+
         // Bind problem template model
         currentTemplateModel.put("ClassName", problem.getClassName());
         currentTemplateModel.put("Method", problem.getMethod());
@@ -172,19 +172,84 @@ public class Greed {
         currentTemplateModel.put("CutBegin", langConfig.getCutBegin());
         currentTemplateModel.put("CutEnd", langConfig.getCutEnd());
 
+        // Switch language
         TemplateEngine.switchLanguage(language);
 
-        // Generate templates
-        for (String templateName : langConfig.getTemplates()) {
-            TemplateConfig template = langConfig.getTemplateDef().get(templateName);
-            
-            currentTemplateModel.put("Options", template.getOptions() );
-            if (template == null) {
-                talkingWindow.error("Unknown template [" + templateName + "] (ignored)");
-                continue;
+        // Validate template definitions and calculate order
+        ArrayList<String> templateOrder;
+        {
+            ArrayList<String> templates = new ArrayList<String>();
+            HashSet<String> templateSet = new HashSet<String>();
+            // Find all the templates needed by hard constraint (direct template dependency)
+            for (String templateName: langConfig.getTemplates()) {
+                if (!langConfig.getTemplateDef().containsKey(templateName)) {
+                    talkingWindow.error("Unknown template [" + templateName + "] (ignored)");
+                    continue;
+                }
+                templates.add(templateName);
+                templateSet.add(templateName);
             }
+            for (int i = 0; i < templates.size(); ++i) {
+                String template = templates.get(i);
+                TemplateConfig templateConfig = langConfig.getTemplateDef().get(template);
+                if (templateConfig.getDependencies() != null) {
+                    for (TemplateDependencyConfig.Dependency dep: templateConfig.getDependencies()) {
+                        if (dep instanceof TemplateDependencyConfig.TemplateDependency) {
+                            String depTemplate = ((TemplateDependencyConfig.TemplateDependency)dep).getTemplate();
+                            if (!templateSet.contains(depTemplate)) {
+                                templateSet.add(depTemplate);
+                                templates.add(depTemplate);
+                            }
+                        }
+                    }
+                }
+            }
+            // Queue the order
+            templateOrder = new ArrayList<String>();
+            HashSet<String> hasKeys = new HashSet<String>();
+            HashSet<String> hasTemplates = new HashSet<String>();
+            while (!templateSet.isEmpty()) {
+                String selected = null;
+                for (String template: templateSet) {
+                    boolean independent = true;
+                    TemplateConfig templateConfig = langConfig.getTemplateDef().get(template);
+                    if (templateConfig.getDependencies() != null) {
+                        for (TemplateDependencyConfig.Dependency dep: templateConfig.getDependencies()) {
+                            if (!checkDependency(dep, hasKeys, hasTemplates)) {
+                                independent = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (independent) {
+                        selected = template;
+                        break;
+                    }
+                }
+                if (selected == null)
+                    break;
+                templateSet.remove(selected);
+                templateOrder.add(selected);
+                hasTemplates.add(selected);
+                String key = langConfig.getTemplateDef().get(selected).getOutputKey();
+                if (key != null)
+                    hasKeys.add(key);
+            }
+            if (!templateSet.isEmpty())
+                templateOrder = null;
+        }
+        if (templateOrder == null) {
+            talkingWindow.error("Cannot figure out template generation order");
+            return;
+        }
 
+        // Generate templates
+        for (String templateName : templateOrder) {
             talkingWindow.show(String.format("Generating template [" + templateName + "]"));
+
+            TemplateConfig template = langConfig.getTemplateDef().get(templateName);
+            currentTemplateModel.put("Options", template.getOptions());
+
             // Generate code from templates
             String code;
             try {
@@ -236,8 +301,8 @@ public class Greed {
                     continue;
                 }
                 if (exists) {
-                    if (FileSystem.fileEqualToString( filePath, code)) {
-                        talkingWindow.show(" (skipped, files identical)");
+                    if (FileSystem.fileEqualToString(filePath, code)) {
+                        talkingWindow.show(" (skipped, identical)");
                     } else {
                         talkingWindow.show(" (overwrite)");
                         FileSystem.backup(filePath); // Backup the old files
@@ -257,7 +322,7 @@ public class Greed {
                     for (int i = 1; i < commands.length; ++i) {
                         commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
                     }
-                    long timeout = (long)(1000 * afterGen.getTimeout());
+                    long timeout = 1000L * afterGen.getTimeout();
 
                     talkingWindow.showLine("");
                     talkingWindow.indent();
@@ -274,6 +339,25 @@ public class Greed {
 
         talkingWindow.showLine("All set, good luck!");
         talkingWindow.showLine("");
+    }
+
+    private boolean checkDependency(TemplateDependencyConfig.Dependency dependency, HashSet<String> hasKeys, HashSet<String> hasTemplates) {
+        if (dependency instanceof TemplateDependencyConfig.KeyDependency) {
+            return hasKeys.contains(((TemplateDependencyConfig.KeyDependency)dependency).getKey());
+        }
+        else if (dependency instanceof TemplateDependencyConfig.TemplateDependency) {
+            return hasTemplates.contains(((TemplateDependencyConfig.TemplateDependency)dependency).getTemplate());
+        }
+        else if (dependency instanceof TemplateDependencyConfig.OneOfDependency) {
+            TemplateDependencyConfig.OneOfDependency oneOfDep = (TemplateDependencyConfig.OneOfDependency)dependency;
+            for (TemplateDependencyConfig.Dependency dep: oneOfDep.getDependencies()) {
+                if (checkDependency(dep, hasKeys, hasTemplates)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        throw new IllegalStateException("Invalid types of TemplateDependencyConfig.Dependency");
     }
 
     public String getSource() {

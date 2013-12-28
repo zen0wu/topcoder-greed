@@ -14,7 +14,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import com.typesafe.config.ConfigValue;
 import greed.conf.parser.IParser;
-import greed.util.ReflectionUtil;
+import greed.util.reflect.ReflectionUtil;
 
 /**
  * Greed is good! Cheers!

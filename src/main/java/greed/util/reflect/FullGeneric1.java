@@ -1,4 +1,4 @@
-package greed.util;
+package greed.util.reflect;
 
 /**
  * Greed is good! Cheers!
