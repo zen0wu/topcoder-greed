@@ -58,7 +58,7 @@ def run_tests():
     for arg in sys.argv[1:]:
         case_set.add(int(arg))
 
-    with open("${Problem.Name}.sample", "r") as f:
+    with open("${Dependencies.testcase.GeneratedFileName}", "r") as f:
         while True:
             label = f.readline()
             if not label.startswith("--"): break

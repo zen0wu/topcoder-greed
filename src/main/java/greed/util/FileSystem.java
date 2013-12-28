@@ -15,14 +15,14 @@ import java.util.HashMap;
  */
 public class FileSystem {
     public static InputStream getResource(ResourcePath resourcePath) throws FileNotFoundException {
-        Log.i("Getting resource: " + resourcePath);
+        Log.i("Getting resource: " + resourcePath.getRelativePath());
         if (resourcePath.isInternal()) {
             String relativePath = resourcePath.getRelativePath();
             if (Debug.developmentMode) {
                 return new FileInputStream(Debug.getResourceDirectory() + relativePath);
             } else {
                 InputStream is = FileSystem.class.getResourceAsStream(relativePath);
-                if(is == null)
+                if (is == null)
                     throw new FileNotFoundException(relativePath);
                 return is;
             }
@@ -31,13 +31,12 @@ public class FileSystem {
         }
     }
 
-    /* Log is relied on this method, hence Log cannot be used in here */
     public static PrintWriter createWriter(String relativePath, boolean append) throws IOException {
         return new PrintWriter(new FileWriter(Configuration.getWorkspace() + "/" + relativePath, append));
     }
 
-    /* Log is relied on this method, hence Log cannot be used in here */
     public static void createFolder(String relativePath) {
+        Log.i("Create folder [" + relativePath + "]");
         File folder = new File(Configuration.getWorkspace() + "/" + relativePath);
         if (!folder.exists()) folder.mkdirs();
     }
@@ -62,6 +61,7 @@ public class FileSystem {
         File f = new File(relativePath);
         return f.getParent();
     }
+
     public static File getRawFile(String relativePath) {
         File f = new File(Configuration.getWorkspace() + "/" + relativePath);
         try {
@@ -109,16 +109,16 @@ public class FileSystem {
             Log.i("Deleting " + getBackupFile(file, 0) );
             getBackupFile(file, 0).delete();
             for (int j = 1; j < i; ++j) {
-                Log.i( getBackupFile(file, j) +" -> "+getBackupFile(file, j-1));
+                Log.i( getBackupFile(file, j) + " -> " + getBackupFile(file, j-1));
                 getBackupFile(file, j).renameTo(getBackupFile(file, j-1));
             }
             i = limit - 1;
         }
-        Log.i(absolutePath+" -> " + getBackupFile(file, i) );
-        file.renameTo(  getBackupFile(file, i) );
+        Log.i(absolutePath + " -> " + getBackupFile(file, i));
+        file.renameTo(getBackupFile(file, i));
     }
     
-    public static boolean fileEqualToString(String filePath, String s) {
+    public static boolean compareFileToString(String filePath, String s) {
         if (getSize(filePath) == s.length()) {
             File f = new File(Configuration.getWorkspace() + "/" + filePath);
             int i = 0;

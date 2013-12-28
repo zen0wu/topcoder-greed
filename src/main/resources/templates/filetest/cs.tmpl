@@ -59,7 +59,7 @@ ${<end}
 		Console.Error.WriteLine();
 
     	int nCases = 0, nPassed = 0;
-    	using (var reader = File.OpenText("${Problem.Name}.sample")) {
+    	using (var reader = File.OpenText("${Dependencies.testcase.GeneratedFileName}")) {
             while (true) {
                 string line = reader.ReadLine();
                 if (line == null || !line.StartsWith("--"))

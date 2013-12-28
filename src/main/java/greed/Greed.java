@@ -37,14 +37,14 @@ public class Greed {
     private Language currentLang;
     private Problem currentProb;
     private Contest currentContest;
-    private HashMap<String, Object> currentTemplateModel;
+    private HashMap<String, Object> currentModel;
 
     private GreedEditorPanel talkingWindow;
     private boolean firstUsing;
 
     public Greed() {
         // Entrance of all program
-        Log.i("Create Greed Plugin Instance");
+        Log.i("Greed Plugin");
         this.talkingWindow = new GreedEditorPanel(this);
         this.firstUsing = true;
     }
@@ -71,7 +71,7 @@ public class Greed {
     }
 
     public void startUsing() {
-        Log.i("Start using called");
+        Log.d("Start using");
         talkingWindow.clear();
         if (firstUsing) {
             talkingWindow.showLine(String.format("Greetings from %s", AppInfo.getAppName()));
@@ -86,13 +86,13 @@ public class Greed {
             talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
             Log.e("Loading config error", e);
         } catch (Throwable e) {
-            talkingWindow.error("Final error, saying \"" + e.getMessage() + "\", try fix it.");
+            talkingWindow.error("Fatal error, saying \"" + e.getMessage() + "\", try fix it.");
             Log.e("Initialization error", e);
         }
     }
 
     public void stopUsing() {
-        Log.i("Stop using called");
+        Log.d("Stop using called");
     }
 
     public void configure() {
@@ -133,9 +133,10 @@ public class Greed {
 
     private String renderedCodeRoot(GreedConfig config)
     {
-        return TemplateEngine.render(config.getCodeRoot(), currentTemplateModel);
+        return TemplateEngine.render(config.getCodeRoot(), currentModel);
     }
 
+    @SuppressWarnings("unchecked")
     private void setProblem(Contest contest, Problem problem, Language language, boolean regen) {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(language));
@@ -150,27 +151,28 @@ public class Greed {
         }
 
         // Create model map
-        currentTemplateModel = new HashMap<String, Object>();
-        currentTemplateModel.put("Contest", contest);
-        currentTemplateModel.put("Problem", problem);
+        currentModel = new HashMap<String, Object>();
+        currentModel.put("Contest", contest);
+        currentModel.put("Problem", problem);
+        currentModel.put("ClassName", problem.getClassName());
+        currentModel.put("Method", problem.getMethod());
 
         // Bind problem template model
-        currentTemplateModel.put("ClassName", problem.getClassName());
-        currentTemplateModel.put("Method", problem.getMethod());
-        currentTemplateModel.put("Examples", problem.getTestcases());
-        currentTemplateModel.put("NumOfExamples", problem.getTestcases().length);
+        HashMap<String, Object> sharedModel = new HashMap<String, Object>(currentModel);
+        sharedModel.put("Examples", problem.getTestcases());
+        sharedModel.put("NumOfExamples", problem.getTestcases().length);
         boolean useArray = problem.getMethod().getReturnType().isArray();
-        currentTemplateModel.put("ReturnsArray", useArray);
+        sharedModel.put("ReturnsArray", useArray);
         for (Param param : problem.getMethod().getParams()) useArray |= param.getType().isArray();
-        currentTemplateModel.put("HasArray", useArray);
+        sharedModel.put("HasArray", useArray);
 
         boolean useString = problem.getMethod().getReturnType().isString();
-        currentTemplateModel.put("ReturnsString", useString);
+        sharedModel.put("ReturnsString", useString);
         for (Param param : problem.getMethod().getParams()) useString |= param.getType().isString();
-        currentTemplateModel.put("HasString", useString);
-        currentTemplateModel.put("CreateTime", System.currentTimeMillis() / 1000);
-        currentTemplateModel.put("CutBegin", langConfig.getCutBegin());
-        currentTemplateModel.put("CutEnd", langConfig.getCutEnd());
+        sharedModel.put("HasString", useString);
+        sharedModel.put("CreateTime", System.currentTimeMillis() / 1000);
+        sharedModel.put("CutBegin", langConfig.getCutBegin());
+        sharedModel.put("CutEnd", langConfig.getCutEnd());
 
         // Switch language
         TemplateEngine.switchLanguage(language);
@@ -243,19 +245,23 @@ public class Greed {
             return;
         }
 
+        HashMap<String, Object> dependencyModel = new HashMap<String, Object>();
+        sharedModel.put("Dependencies", dependencyModel);
         // Generate templates
         for (String templateName : templateOrder) {
             talkingWindow.show(String.format("Generating template [" + templateName + "]"));
 
             TemplateConfig template = langConfig.getTemplateDef().get(templateName);
-            currentTemplateModel.put("Options", template.getOptions());
+            HashMap<String, Object> indivModel = new HashMap<String, Object>();
+            indivModel.put("Options", template.getOptions());
+            dependencyModel.put(templateName, indivModel);
 
             // Generate code from templates
             String code;
             try {
                 CodeByLine codeLines = CodeByLine.fromString(TemplateEngine.render(
                         FileSystem.getResource(template.getTemplateFile()),
-                        currentTemplateModel
+                        mergeModels(sharedModel, indivModel)
                 ));
 
                 if (template.getTransformers() != null) {
@@ -281,17 +287,20 @@ public class Greed {
 
             // Output to model
             if (template.getOutputKey() != null) {
-                currentTemplateModel.put(template.getOutputKey(), code);
+                sharedModel.put(template.getOutputKey(), code);
             }
 
             // Output to file
             if (template.getOutputFile() != null) {
                 String filePath = renderedCodeRoot(config) + "/" +
-                        TemplateEngine.render(template.getOutputFile(), currentTemplateModel);
+                        TemplateEngine.render(template.getOutputFile(), currentModel);
                 String fileFolder = FileSystem.getParentPath(filePath);
                 if (!FileSystem.exists(fileFolder)) {
                     FileSystem.createFolder(fileFolder);
                 }
+
+                indivModel.put("GeneratedFileName", new java.io.File(filePath).getName());
+                indivModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath).getPath());
 
                 boolean exists = FileSystem.exists(filePath);
                 TemplateConfig.OverwriteOptions overwrite = template.getOverwrite();
@@ -303,7 +312,7 @@ public class Greed {
                     continue;
                 }
                 if (exists) {
-                    if (FileSystem.fileEqualToString(filePath, code)) {
+                    if (FileSystem.compareFileToString(filePath, code)) {
                         talkingWindow.show(" (skipped, identical)");
                     } else {
                         if (overwrite == TemplateConfig.OverwriteOptions.FORCE) {
@@ -325,10 +334,8 @@ public class Greed {
                     CommandConfig afterGen = template.getAfterFileGen();
                     String[] commands = new String[afterGen.getArguments().length + 1];
                     commands[0] = afterGen.getExecute();
-                    currentTemplateModel.put("GeneratedFileName", new java.io.File(filePath).getName());
-                    currentTemplateModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath).getPath());
                     for (int i = 1; i < commands.length; ++i) {
-                        commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], currentTemplateModel);
+                        commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], mergeModels(currentModel, indivModel));
                     }
                     long timeout = 1000L * afterGen.getTimeout();
 
@@ -342,11 +349,19 @@ public class Greed {
                     talkingWindow.unindent();
                 }
             }
+
             talkingWindow.showLine("");
         }
 
         talkingWindow.showLine("All set, good luck!");
         talkingWindow.showLine("");
+    }
+
+    private HashMap<String, Object> mergeModels(HashMap<String, Object> ... models) {
+        HashMap<String, Object> merged = new HashMap<String, Object>();
+        for (HashMap<String, Object> model: models)
+            merged.putAll(model);
+        return merged;
     }
 
     private boolean checkDependency(TemplateDependencyConfig.Dependency dependency, HashSet<String> hasKeys, HashSet<String> hasTemplates) {
@@ -372,7 +387,7 @@ public class Greed {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(currentLang));
         String filePath = renderedCodeRoot(config) + "/" +
-                TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentTemplateModel);
+                TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentModel);
 
         talkingWindow.showLine("Getting source code from " + filePath);
         talkingWindow.indent();
