@@ -7,20 +7,11 @@ import greed.conf.schema.GreedConfig;
  * Greed is good! Cheers!
  */
 public class Utils {
-    private static boolean initialized = false;
     private static GreedConfig greedConfig = null;
 
     public static void initialize() throws ConfigException {
-        if (!initialized) {
-            initialized = true;
-            greedConfig = Configuration.loadConfig();
-            Log.initialize(greedConfig.getLogging());
-        }
-    }
-
-    public static void reinitialize() throws ConfigException {
-        initialized = false;
-        initialize();
+        greedConfig = Configuration.loadConfig();
+        Log.initialize(greedConfig.getLogging());
     }
 
     public static GreedConfig getGreedConfig() {

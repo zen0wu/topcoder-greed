@@ -40,13 +40,13 @@ public class Greed {
     private HashMap<String, Object> currentModel;
 
     private GreedEditorPanel talkingWindow;
-    private boolean firstUsing;
+    private boolean initialized;
 
     public Greed() {
         // Entrance of all program
         Log.i("Greed Plugin");
         this.talkingWindow = new GreedEditorPanel(this);
-        this.firstUsing = true;
+        this.initialized = false;
     }
 
     // Greed signature in the code
@@ -70,29 +70,36 @@ public class Greed {
     public void setSource(String source) {
     }
 
-    public void startUsing() {
-        Log.d("Start using");
-        talkingWindow.clear();
-        if (firstUsing) {
-            talkingWindow.showLine(String.format("Greetings from %s", AppInfo.getAppName()));
-        } else {
-            talkingWindow.showLine(String.format("Hello again :>"));
-        }
-        firstUsing = false;
-
+    public void initialize() {
         try {
+            talkingWindow.show(initialized ? "Reinitializing..." : "Initializing...");
+            initialized = false;
             Utils.initialize();
+            initialized = true;
+            talkingWindow.showLine(" done");
+            talkingWindow.showLine("");
         } catch (greed.conf.ConfigException e) {
-            talkingWindow.error("Loading config error, saying \"" + e.getMessage() + "\", try fix it.");
+            talkingWindow.error("  Config error: " + e.getMessage());
             Log.e("Loading config error", e);
         } catch (Throwable e) {
-            talkingWindow.error("Fatal error, saying \"" + e.getMessage() + "\", try fix it.");
+            talkingWindow.error("  Fatal error: " + e.getMessage());
             Log.e("Initialization error", e);
         }
     }
 
+    public void startUsing() {
+        Log.d("Start using");
+        talkingWindow.clear();
+        if (!initialized) {
+            talkingWindow.showLine(String.format("Greetings from %s", AppInfo.getAppName()));
+            initialize();
+        } else {
+            talkingWindow.showLine(String.format("Hello again :>"));
+        }
+    }
+
     public void stopUsing() {
-        Log.d("Stop using called");
+        Log.d("Stop using");
     }
 
     public void configure() {
@@ -108,12 +115,13 @@ public class Greed {
         }
         currentProb = Convert.convertProblem(componentModel, currentLang);
 
-        talkingWindow.showLine(String.format("Problem :  %s", currentProb.getName()));
-        talkingWindow.showLine(String.format("Score   :  %d", currentProb.getScore()));
+        if (!initialized)
+            return;
+
         generateCode(false);
     }
 
-    public void generateCode(boolean forceOverride) {
+    public void generateCode(boolean regen) {
         // Check whether workspace is set
         if (Configuration.getWorkspace() == null || "".equals(Configuration.getWorkspace())) {
             talkingWindow.setEnabled(false);
@@ -124,10 +132,17 @@ public class Greed {
 
         talkingWindow.setEnabled(true);
         try {
-            setProblem(currentContest, currentProb, currentLang, forceOverride);
+            talkingWindow.showLine(String.format("Problem :  %s", currentProb.getName()));
+            talkingWindow.showLine(String.format("Score   :  %d", currentProb.getScore()));
+
+            talkingWindow.showLine(regen ? "Regenerating code..." : "Generating code...");
+            talkingWindow.indent();
+            setProblem(currentContest, currentProb, currentLang, regen);
         } catch (Throwable e) {
-            talkingWindow.error("Set problem error, message says \"" + e.getMessage() + "\"");
+            talkingWindow.error("Error: " + e.getMessage());
             Log.e("Set problem error", e);
+        } finally {
+            talkingWindow.unindent();
         }
     }
 
@@ -280,7 +295,7 @@ public class Greed {
                 code = codeLines.toString();
             } catch (FileNotFoundException e) {
                 talkingWindow.indent();
-                talkingWindow.error("Template file \"" + template.getTemplateFile() + "\" not found");
+                talkingWindow.error("Template file \"" + template.getTemplateFile().getRelativePath() + "\" not found");
                 talkingWindow.unindent();
                 continue;
             }
