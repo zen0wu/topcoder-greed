@@ -136,7 +136,7 @@ public class Greed {
         return TemplateEngine.render(config.getCodeRoot(), currentTemplateModel);
     }
 
-    private void setProblem(Contest contest, Problem problem, Language language, boolean forceOverride) {
+    private void setProblem(Contest contest, Problem problem, Language language, boolean regen) {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(language));
 
@@ -294,9 +294,11 @@ public class Greed {
                 }
 
                 boolean exists = FileSystem.exists(filePath);
-                boolean override = forceOverride || template.isOverride();
+                TemplateConfig.OverwriteOptions overwrite = template.getOverwrite();
+                if (regen && overwrite == TemplateConfig.OverwriteOptions.SKIP)
+                    overwrite = TemplateConfig.OverwriteOptions.BACKUP;
                 talkingWindow.show(" -> " + filePath);
-                if (exists && !override) {
+                if (exists && overwrite == TemplateConfig.OverwriteOptions.SKIP) {
                     talkingWindow.showLine(" (skipped)");
                     continue;
                 }
@@ -304,9 +306,15 @@ public class Greed {
                     if (FileSystem.fileEqualToString(filePath, code)) {
                         talkingWindow.show(" (skipped, identical)");
                     } else {
-                        talkingWindow.show(" (overwrite)");
-                        FileSystem.backup(filePath); // Backup the old files
-                        FileSystem.writeFile(filePath, code);
+                        if (overwrite == TemplateConfig.OverwriteOptions.FORCE) {
+                            talkingWindow.show(" (force overwrite)");
+                            FileSystem.writeFile(filePath, code);
+                        }
+                        else {
+                            talkingWindow.show(" (backup and overwrite)");
+                            FileSystem.backup(filePath); // Backup the old files
+                            FileSystem.writeFile(filePath, code);
+                        }
                     }
                 }
                 else {

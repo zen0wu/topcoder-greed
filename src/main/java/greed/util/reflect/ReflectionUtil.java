@@ -33,6 +33,16 @@ public class ReflectionUtil {
         return null;
     }
 
+    public static String normalizeEnumName(String name) {
+        StringBuilder concatenated = new StringBuilder();
+        for (String tok: name.split("-")) {
+            if (concatenated.length() > 0)
+                concatenated.append('_');
+            concatenated.append(tok.toUpperCase());
+        }
+        return concatenated.toString();
+    }
+
     private static String normalizeFieldName(String name) {
         StringBuilder concatenated = new StringBuilder();
         for (String tok: name.split("-")) {

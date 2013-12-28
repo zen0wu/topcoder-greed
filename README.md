@@ -122,7 +122,7 @@ under `greed.language.<lang>`.
 
 Here's what you're going to do.
 
-- Specify the `override` behaviour
+- Specify the `overwrite` behaviour (force, backup or skip)
 - Set the `outputKey` or `outputFile`, using variables like `${Problem.Name}`, `${Contest.Name}`
 - **Write your awesome template**
 - Set the `templateFile` to your template (relative path to your workspace)
@@ -135,7 +135,7 @@ Here's an possible example of the `testcase` template def.
 ```
 greed.language.cpp.templateDef {
     testcase {
-        override = false
+        overwrite = skip
         outputFile = "${Contest.Name}/${Problem.Name}.data"
         templateFile = "builtin testcase/testcases.tmpl"
         afterFileGen {

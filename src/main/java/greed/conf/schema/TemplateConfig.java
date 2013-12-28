@@ -11,8 +11,9 @@ import greed.conf.parser.TemplateFileParser;
  */
 @ConfigObjectClass
 public class TemplateConfig {
-    @Required
-    private boolean override;
+    public static enum OverwriteOptions {
+        FORCE, BACKUP, SKIP
+    }
 
     @Required
     @Parser(TemplateFileParser.class)
@@ -32,6 +33,9 @@ public class TemplateConfig {
     private String outputFileExtension;
 
     @Optional
+    private OverwriteOptions overwrite = OverwriteOptions.BACKUP;
+
+    @Optional
     private CommandConfig afterFileGen;
 
     @Optional
@@ -45,12 +49,12 @@ public class TemplateConfig {
     @MapParam(value = String.class)
     private HashMap<String, String> options;
     
-    public boolean isOverride() {
-        return override;
+    public OverwriteOptions getOverwrite() {
+        return overwrite;
     }
 
-    public void setOverride(boolean override) {
-        this.override = override;
+    public void setOverwrite(OverwriteOptions overwrite) {
+        this.overwrite = overwrite;
     }
 
     public String getOutputKey() {

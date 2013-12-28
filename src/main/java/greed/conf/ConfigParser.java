@@ -34,6 +34,9 @@ public class ConfigParser {
         else if (Boolean.TYPE.equals(configClass) || Boolean.class.equals(configClass)) {
             return (T) parseBoolean(obj);
         }
+        else if (configClass.isEnum()) {
+            return (T) parseEnum(obj, configClass);
+        }
 
         if (!(obj instanceof Config) && !(obj instanceof ConfigObject)) {
             throw new ConfigException(String.format("Config object needed, %s found", obj.getClass().getSimpleName()));
@@ -69,9 +72,9 @@ public class ConfigParser {
 
                 Class<?> fieldType = field.getType();
                 hasSet.add(field.getName());
-                if (fieldType.isPrimitive() || String.class.equals(fieldType)) {
+                if (fieldType.isPrimitive() || String.class.equals(fieldType) || fieldType.isEnum()) {
                     setter.invoke(configObject,
-                            parser != null ? parser.apply(obj) : parseAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
+                            parser != null ? parser.apply(rawConf.getAnyRef(field.getName())) : parseAndCheck(path + "." + field.getName(), rawConf.getAnyRef(field.getName()), fieldType));
                 }
                 else if (fieldType.isArray()) {
                     Class<?> elementType = fieldType.getComponentType();
@@ -125,6 +128,19 @@ public class ConfigParser {
         } catch (ReflectiveOperationException e) {
             throw new ConfigException("FATAL: Exception while reflecting on " + configClass.getName(), e);
         }
+    }
+
+    private Object parseEnum(Object obj, Class<?> enumClass) throws ConfigException {
+        String enumStr = ReflectionUtil.normalizeEnumName(obj.toString());
+        Object enumValue = null;
+        for (Object ev: enumClass.getEnumConstants())
+            if (ev.toString().equals(enumStr)) {
+                enumValue = ev;
+                break;
+            }
+        if (enumValue == null)
+            throw new ConfigException("No such value of " + enumStr + " for enum type " + enumClass.getName());
+        return enumValue;
     }
 
     private Boolean parseBoolean(Object obj) {

@@ -29,5 +29,4 @@ public class BackupConfig {
     public int getFileCountLimit() {
         return this.fileCountLimit;
     }
-
 }

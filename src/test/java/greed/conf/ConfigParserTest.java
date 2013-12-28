@@ -17,6 +17,7 @@ public class ConfigParserTest {
         GreedConfig greedConfig = configParser.parseAndCheck("greed", config.getConfig("greed"), GreedConfig.class);
         System.out.println(StringUtil.join(greedConfig.getLanguage().get("java").getTemplateDef().get("source").getTransformers(), ", "));
         System.out.println(greedConfig.getLanguage().get("java").getTemplateDef().get("source").getDependencies());
+        System.out.println(greedConfig.getLanguage().get("java").getTemplateDef().get("testcase").getOverwrite());
         System.out.println("done");
     }
 }
