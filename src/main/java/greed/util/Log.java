@@ -1,6 +1,7 @@
 package greed.util;
 
 import greed.conf.schema.LoggingConfig;
+import greed.conf.schema.LoggingConfig.LoggingLevel;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,44 +17,24 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public class Log {
     private static final int STACK_TRACE_BACKDEPTH = 4;
-    private static final String[] LEVEL_NAMES = new String[] { "DEBUG", "INFO", "WARN", "ERROR" };
+    private static final int STACK_TRACE_MAX_DEPTH = 10;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMM dd HH:mm:ss", Locale.ENGLISH);
 
-    private static int minimalLoggingLevel = 0;
+    private static LoggingLevel minimalLoggingLevel = LoggingLevel.INFO;
     private static PrintWriter logger = null;
     private static int logCount = 0;
     // Default set to true to allow pre-initialized logging to StdErr
     private static boolean logToErr = true;
 
     static void initialize(LoggingConfig config) {
-        minimalLoggingLevel = LEVEL_NAMES.length + 1;
-        if ("all".equals(config.getLogLevel().toLowerCase())) minimalLoggingLevel = 0;
-        else
-            for (int i = 0; i < 4; ++i)
-                if (LEVEL_NAMES[i].equals(config.getLogLevel().toUpperCase())) {
-                    minimalLoggingLevel = i;
-                    break;
-                }
+        minimalLoggingLevel = config.getLogLevel();
+        logToErr = config.isLogToStderr();
         // If logging is enabled and workspace exists
-        if (minimalLoggingLevel < LEVEL_NAMES.length && Configuration.workspaceSet()) {
-            logToErr = config.isLogToStderr();
+        if (minimalLoggingLevel.value < LoggingLevel.OFF.value && Configuration.workspaceSet()) {
             // Create logging folder
             String logFolder = config.getLogFolder();
             if (logFolder == null) {
-                // REMOVE THESE BEFORE RELEASE: DEBUG USE
-                System.err.println("=== FINAL ERROR DEBUG LOG ===");
-                try {
-                    throw new Exception("DEBUG");
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                System.err.println(config.getLogLevel());
-                System.err.println(config.getLogFolder());
-                System.err.println(config.isLogToStderr());
-                System.err.println("=== FINAL ERROR DEBUG LOG ===");
-                // DEBUG USE
-                logFolder = "Logs";
+                throw new IllegalArgumentException("Log folder cannot be null");
             }
             FileSystem.createFolder(logFolder);
 
@@ -67,13 +48,13 @@ public class Log {
         }
     }
 
-    private static void doLog(int level, String message) {
+    private static void doLog(LoggingLevel level, String message) {
         StackTraceElement trace = Thread.currentThread().getStackTrace()[STACK_TRACE_BACKDEPTH];
         String dateString = DATE_FORMAT.format(new Date());
         String prefix = "    ";
-        if (level >= 0)
-            prefix = trace.getClassName().substring(trace.getClassName().lastIndexOf(".") + 1) + "[" + LEVEL_NAMES[level] + "]:";
-        String log = String.format("[%s] [%s.%s@line %d] %s %s",
+        if (level != LoggingLevel.ALL)
+            prefix = trace.getClassName().substring(trace.getClassName().lastIndexOf(".") + 1) + "[" + level.toString() + "]:";
+        String log = String.format("[%s] [%s.%s@L%d] %s %s",
                 dateString, trace.getClassName(), trace.getMethodName(), trace.getLineNumber(),
                 prefix, message);
         if (logger != null) {
@@ -83,50 +64,50 @@ public class Log {
         if (logToErr) System.err.println(log);
     }
 
-    private static void checkLoggingLevel(int level, String message) {
-        if (level >= minimalLoggingLevel)
+    private static void checkLoggingLevel(LoggingLevel level, String message) {
+        if (level.value >= minimalLoggingLevel.value)
             doLog(level, message);
     }
 
-    private static void checkLoggingLevel(int level, String message, Throwable e) {
-        if (level >= minimalLoggingLevel) {
+    private static void checkLoggingLevel(LoggingLevel level, String message, Throwable e) {
+        if (level.value >= minimalLoggingLevel.value) {
             doLog(level, String.format("%s, with an %s", message, e.toString()));
-            for (int i = 0; i < Math.min(15, e.getStackTrace().length); ++i)
-                doLog(-1, "    " + e.getStackTrace()[i].toString());
-            if (e.getStackTrace().length > 15)
-                doLog(-1, "    " + " and " + (e.getStackTrace().length - 15) + " more ...");
+            for (int i = 0; i < Math.min(STACK_TRACE_MAX_DEPTH, e.getStackTrace().length); ++i)
+                doLog(LoggingLevel.ALL, "    " + e.getStackTrace()[i].toString());
+            if (e.getStackTrace().length > STACK_TRACE_MAX_DEPTH)
+                doLog(LoggingLevel.ALL, "    " + " and " + (e.getStackTrace().length - STACK_TRACE_MAX_DEPTH) + " more ...");
         }
     }
 
     public static void d(String message) {
-        checkLoggingLevel(0, message);
+        checkLoggingLevel(LoggingLevel.DEBUG, message);
     }
 
     public static void d(String message, Throwable e) {
-        checkLoggingLevel(0, message, e);
+        checkLoggingLevel(LoggingLevel.DEBUG, message, e);
     }
 
     public static void i(String message) {
-        checkLoggingLevel(1, message);
+        checkLoggingLevel(LoggingLevel.INFO, message);
     }
 
     public static void i(String message, Throwable e) {
-        checkLoggingLevel(1, message, e);
+        checkLoggingLevel(LoggingLevel.INFO, message, e);
     }
 
     public static void w(String message) {
-        checkLoggingLevel(2, message);
+        checkLoggingLevel(LoggingLevel.WARN, message);
     }
 
     public static void w(String message, Throwable e) {
-        checkLoggingLevel(2, message, e);
+        checkLoggingLevel(LoggingLevel.WARN, message, e);
     }
 
     public static void e(String message) {
-        checkLoggingLevel(3, message);
+        checkLoggingLevel(LoggingLevel.ERROR, message);
     }
 
     public static void e(String message, Throwable e) {
-        checkLoggingLevel(3, message, e);
+        checkLoggingLevel(LoggingLevel.ERROR, message, e);
     }
 }

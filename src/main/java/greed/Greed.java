@@ -72,18 +72,25 @@ public class Greed {
 
     public void initialize() {
         try {
-            talkingWindow.show(initialized ? "Reinitializing..." : "Initializing...");
+            talkingWindow.show("Initializing... ");
+            talkingWindow.indent();
+
             initialized = false;
             Utils.initialize();
             initialized = true;
-            talkingWindow.showLine(" done");
-            talkingWindow.showLine("");
+
+            talkingWindow.showLine("done");
         } catch (greed.conf.ConfigException e) {
-            talkingWindow.error("  Config error: " + e.getMessage());
             Log.e("Loading config error", e);
+            talkingWindow.showLine("failed");
+            talkingWindow.error("Config error: " + e.getMessage());
         } catch (Throwable e) {
-            talkingWindow.error("  Fatal error: " + e.getMessage());
             Log.e("Initialization error", e);
+            talkingWindow.showLine("failed");
+            talkingWindow.error("Fatal error: " + e.getMessage());
+        } finally {
+            talkingWindow.unindent();
+            talkingWindow.showLine("");
         }
     }
 

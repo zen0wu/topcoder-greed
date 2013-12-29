@@ -8,8 +8,16 @@ import greed.conf.meta.Required;
  */
 @ConfigObjectClass
 public class LoggingConfig {
+    public static enum LoggingLevel {
+        ALL(-1), DEBUG(0), INFO(1), WARN(2), ERROR(3), OFF(4);
+
+        public final int value;
+
+        private LoggingLevel(int v) { this.value = v; }
+    }
+
     @Required
-    private String logLevel;
+    private LoggingLevel logLevel;
 
     @Required
     private boolean logToStderr;
@@ -17,11 +25,11 @@ public class LoggingConfig {
     @Required
     private String logFolder;
 
-    public String getLogLevel() {
+    public LoggingLevel getLogLevel() {
         return logLevel;
     }
 
-    public void setLogLevel(String logLevel) {
+    public void setLogLevel(LoggingLevel logLevel) {
         this.logLevel = logLevel;
     }
 

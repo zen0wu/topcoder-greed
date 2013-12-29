@@ -17,8 +17,9 @@ public class ExternalSystemTest {
     @Before
     public void init() {
         LoggingConfig config = new LoggingConfig();
-        config.setLogLevel("DEBUG");
+        config.setLogLevel(LoggingConfig.LoggingLevel.DEBUG);
         config.setLogToStderr(true);
+        config.setLogFolder("Logs");
         Log.initialize(config);
     }
 

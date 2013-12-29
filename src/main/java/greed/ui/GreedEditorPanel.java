@@ -96,6 +96,7 @@ public class GreedEditorPanel extends JPanel implements InteractiveWindow, Actio
     public void actionPerformed(ActionEvent actionEvent) {
         Object src = actionEvent.getSource();
         if (src == reloadConfigButton) {
+            this.showLine("Reload configuration");
             greed.initialize();
         } else if (src == regenerateButton) {
             greed.generateCode(true);
