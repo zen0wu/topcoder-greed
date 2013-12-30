@@ -52,6 +52,10 @@ public class LanguageManager {
         return traitMap.get(language);
     }
 
+    public LanguageRenderer getRenderer(Language language) {
+        return rendererMap.get(language);
+    }
+
     public void registerRenderer(Language language, Engine engine) {
         final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
