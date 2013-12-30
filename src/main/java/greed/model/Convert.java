@@ -64,11 +64,15 @@ public class Convert {
         return xml;
     }
     
-    private static String fixDoubleStrip(String tcXML)
+    private static String commonTCXMLFixes(String tcXML)
     {
         // TopCoder's toXML() has the bad habit of doubly stripping entites.
         // For example, &gt; becomes &amp;gt;
-        return tcXML.replaceAll("&amp;(lt|gt|amp|quot|apos);", "&$1;");
+        String s = tcXML.replaceAll("&amp;(lt|gt|amp|quot|apos);", "&$1;");
+        
+        // We need to replace <br></br> with <br />. This fixes the 
+        // double line break issue that happens in some problem statements. 
+        return s.replaceAll("<br\\s*>\\s*</\\s*br>", "<br />");
     }
 
     public static Problem convertProblem(com.topcoder.client.contestant.ProblemComponentModel problem, Language language) {
@@ -89,7 +93,7 @@ public class Convert {
 
             if (tc.getAnnotation() != null) {
                 String ann = getRidOfTopElement(tc.getAnnotation().toXML());
-                ann = fixDoubleStrip(ann);
+                ann = commonTCXMLFixes(ann);
                 if ( ann.length() != 0 ) {
                     cases[i].setAnnotation(ann);
                 }
@@ -98,10 +102,10 @@ public class Convert {
 
         String[] notes = new String[problem.getNotes().length];
         for (int i = 0; i < notes.length; ++i)
-            notes[i] = fixDoubleStrip(problem.getNotes()[i].toXML());
+            notes[i] = commonTCXMLFixes(problem.getNotes()[i].toXML());
         String[] constraints = new String[problem.getConstraints().length];
         for (int i = 0; i < constraints.length; ++i)
-            constraints[i] = fixDoubleStrip(problem.getConstraints()[i].toXML());
+            constraints[i] = commonTCXMLFixes(problem.getConstraints()[i].toXML());
 
         return new Problem(
                 problem.getProblem().getName(),
@@ -110,7 +114,7 @@ public class Convert {
                 method,
                 cases,
                 new ProblemDescription(
-                        fixDoubleStrip(problem.getIntro().toXML()),
+                        commonTCXMLFixes(problem.getIntro().toXML()),
                         notes,
                         constraints
                 )
