@@ -2,6 +2,7 @@
 
 <html>
 <head>
+    <title>TopCoder ${Contest.Name} - ${Problem.Score}: ${Problem.Name}</title>
     ${if Options.favIcon}
         <link type="image/x-icon" rel="shortcut icon" href="${Options.favIcon}"/>
     ${end}
@@ -10,283 +11,405 @@
     ${if Options.customStyleSheet}
     <link href="${Options.customStyleSheet}" rel="stylesheet" type="text/css" />
     ${else}
-	<style type="text/css">
-	    /* color scheme */
-	    ${if Options.colorThemeBlack }
+    <style type="text/css">
+        /* color scheme */
+        ${if Options.colorThemeBlack }
             body { color: white; background-color: black; }
             .section .section-title { color: white; }
-            li.testcase div.testcase-no { border-color: #181818; color: white; background: #101010; }
+            ol.testcases > li:before { border-color: #181818; color: white; background: #101010; }
             li.testcase .tag { background: #101010;  color: white; }
             li.testcase .data { background: #050505; }
-	    ${else}${if Options.colorThemeBlue }
+        ${else}${if Options.colorThemeBlue }
             body { color: white; background-color: #001B35; }
             .section .section-title { color: white; }
-            li.testcase div.testcase-no { border-color: #88F; color: white; }
+            ol.testcases > li:before { border-color: #88F; color: white; }
             li.testcase .tag { background: #66a; color: white; }
             li.testcase .data { background: #001930;  }
-	    ${else}${if Options.colorThemeLowContrast }
+        ${else}${if Options.colorThemeLowContrast }
             body { color: #CCCCCC; background-color: #333333; }
             .section .section-title { color: white; }
-            li.testcase div.testcase-no { border-color: #888; color: #CCCCCC; }
+            ol.testcases > li:before { border-color: #888; color: #CCCCCC; }
             li.testcase .tag { background: #161616; color: #EEEEEE }
             li.testcase .data { background: #303030; }
-	    ${else}
-            body { color: black; background-color: white; }
-            .section .section-title { color: grey; }
-            li.testcase div.testcase-no { border-color: #ddd; color: grey; }
+        ${else}
+            body { color: #333333; background-color: white; }
+            .section .section-title { color: black; }
+            ol.testcases > li:before { border-color: #ddd; color: grey; }
             li.testcase .tag { background: #545454; color: white; }
             li.testcase .data { background: #eee; }
         ${end}${end}${end}
-
-	    /* other style */
-	    body { font-family: Helvetica, Arial, Verdana, sans-serif; }
-		.heading { font-weight: bold; font-size: 28px; text-align: center; }
-		.section { padding-top: 10px; }
-	    .section .section-title { font-weight: bold; font-size: 20px; }
-        .problem-intro { padding-left: 20px; }
-        note, user-constraint { padding-left: 20px; }
-		type {
-			font-weight: bold;
-			font-family: monospace;
-		}
-		${if Options.resizeImages}
+        
+        /* font */
+        body, ul.constraints > li:before, ul.notes > li:before {
+            font-family: Helvetica, Arial, Verdana, sans-serif;
+            font-size: ${Options.fontSize};
+            line-height: 1.2em;
+        }
+        ul.constraints > li:before, ul.notes > li:before {
+            font-family: monospace;
+            font-weight: normal;
+        }
+        .heading {
+            font-weight: bold;
+            font-size: 175%;
+            line-height: 1.2em;
+        }
+        .section .section-title { 
+            font-weight: bold;
+            font-size: 125%;
+        }
+        li.testcase .tag {
+            font-family: Georgia;
+            font-size: 62.5%;
+        }
+        ol.testcases > li:before {
+            ${if Options.fancyExampleNumber}
+                font-size: 100%; /* The example number */
+            ${else}
+                font-family: monospace;
+            ${end}
+        }
+        type {
+            font-weight: bold;
+            font-family: monospace;
+        }
+        li.testcase .data {
+            font-family: monospace;
+        }
+            
+        /* other style */
+        .heading {
+            margin-top: 0.1em;
+            margin-bottom:0.1em;
+            text-align: center;
+        }
+        .section .section-title { 
+            margin-top : 1em;
+            margin-bottom: 1em;
+        }
+        .problem-intro, note, user-constraint {
+            padding-left: 1.25em;
+        }
+        ${if Options.resizeImages}
             img {
                 float: none;
                 display: block;
                 width: ${Options.resizeImages};
                 height: auto;
-                margin: 10px;
+                margin: 0.615em;
                 border: 0px solid #ccc;
             }
         ${end}
-		ul {
-			list-style-type: none;
-			padding: 0px;
-			margin-top: 10px;
-			margin-bottom: 10px;
-		}
-		ul.constraints li:before {
-			content: "-";
-			font-size: 16px;
-			font-family: monospace;
-			position:relative;
-			margin-left: 0px; /* optional, for multiline li element */
-			left: 10px;
-		}
-		ul.notes li:before {
-			content: "~";
-			font-size: 16px;
-			font-family: monospace;
-			font-weight: normal;
-			position:relative;
-			margin-left: 0px; /* optional, for multiline li element */
-			left: 10px;
-		}
+        ul.constraints, ul.notes, ul.variables, ul.problem-definition-lines {
+            list-style-type: none;
+            padding: 0px;
+        }
+        ul.constraints > li:before {
+            content: "-";
+            position:relative;
+            margin-left: 0px; /* optional, for multiline li element */
+            left: 0.625em;
+        }
+        ul.notes > li:before {
+            content: "-";
+            position:relative;
+            margin-left: 0px; /* optional, for multiline li element */
+            left: 0.625em;
+        }
+        li.testcase {
+            line-height: 1.1em;
+            padding-top: 0.625em;
+            padding-bottom: 0.625em;
+            overflow: auto;
+        }
+        li.testcase > .testcase-content > div { padding-bottom: 0.5em; }
+        li.testcase .tag {
+            text-align: center;
+            border-radius: 0.5em;
+            padding: 0.2em;
+        }
+        li.testcase .data {
+            line-height: 1.6em;
+        }
+        ${if Options.showVariableNames}
+        .variable .name .data {
+            border-top-left-radius: 0.5em;
+            border-bottom-left-radius: 0.5em;
+            padding: 0.2em 0em 0.2em 1em;
+        }
+        .variable .value .data {
+            border-top-right-radius: 0.5em;
+            border-bottom-right-radius: 0.5em;
+            padding: 0.2em 1em 0.2em 0.5em;
+        }
+        ${else}.variable .value .data, ${end}
+        .testcase-output .data {
+            border-radius: 0.5em;
+            padding: 0.2em 1em 0.2em 1em;
+        }
+        ${if !Options.highlightData}
+        .data {
+            background: inherit !important;
+        }
+        ${end}
 
-		li.testcase {
-			display: flex;
-			line-height: 16px;
-			padding-top: 10px;
-			padding-bottom: 10px;
-		}
-		li.testcase > .testcase-content > div { padding-bottom: 8px; }
-		li.testcase .tag {
-			font-family: Georgia;
-			font-size: 10px;
-			text-align: center;
-			border-radius: 5px;
-			padding: 2px;
-		}
-		li.testcase .data {
-			font-family: monospace;
-			padding: 5px;
-		}
+        
         li.testcase .testcase-comment {
             margin: 0;
-            padding-left: 5px;
+            padding-left: 0.31em;
         }
         .testcase-comment p:first-child { margin-top: 0; }
         .testcase-comment p:last-child { margin-bottom: 0; }
 
-		li.testcase {
-			line-height: 16px;
-			padding-top: 10px;
-			padding-bottom: 10px;
-			overflow: auto;
-		}
-		li.testcase .testcase-no {
-		    float: left;
-		    clear: both;
-		}
-		li.testcase .testcase-content {
-		    clear: both;
-		    float: left;
-		    margin: 5px;
-		}
-		li.testcase .tag {
-		    float: left;
-		    clear: both;
-		    margin-bottom: 5px;
-		}
-
-		.testcase-content .testcase-input {
-		    clear: both;
-		    float: left;
-		}
-		.testcase-content .variables {
-		    float: left;
-		}
-		.variables {
-		    margin-left: 0.5em;
-		}
-		.variable {
-		    float: left;
-		    clear: both;
-		}
-		.variable .name {
-		    clear: both;
-		    float : left;
-		    font-weight: bold;
-		}
-		.variable .name:after {
-		    font-weight: bold;
-		    content : ": ";
-		}
-		.variable .value {
-		    float: left;
-		    padding-left: 0.5em;
-		}
-		.variable .value:after {
-		    clear: both;
-		    display: block;
-		}
-		.testcase-content .testcase-output {
-		    clear: both;
-		    float: left;
-		}
-		.testcase-content .testcase-output .tag {
-		    clear: both;
-		    float: left;
-		}
-		.testcase-content .testcase-output .data {
-		    float: left;
-		    margin-left: 0.5em;
-		}
-		.testcase-content .testcase-annotation {
-		    clear: both;
-		    float: left;
-		}
-		.testcase-content .testcase-annotation .tag {
-		    clear: both;
-		    float: left;
-		}
-		.testcase-content .testcase-annotation .testcase-comment {
-		    float: left;
-		}
-		${if Options.fancyExampleNumber}
-            li.testcase div.testcase-no {
-                min-width: 16px;
-                width: 16px;
-                height: 16px;
-                font-size: 16px;
-                line-height: 16px;
-                padding: 8px;
-                margin-right: 10px;
+        .testcase-content .testcase-annotation, .testcase-content .testcase-annotation .tag,
+        .testcase-content .testcase-output, .testcase-content .testcase-output .tag,
+        li.testcase .testcase-no, li.testcase .testcase-content,
+        .testcase-content .testcase-input, li.testcase .tag {
+            float: left;
+            clear: both;
+        }
+        li.testcase .testcase-content {
+            margin: 0.31em;
+        }
+        li.testcase .tag {
+            margin-bottom: 0.5em;
+            min-width: 5em;
+        }
+        .testcase-content .variables {
+            float: left;
+        }
+        .variables {
+            margin-left: 0.5em;
+            display: table;
+            margin-bottom: 0px;
+            margin-top: 0px;
+        }
+        .variable {
+            display: table-row;
+        }
+        .variable .name {
+            font-weight: bold;
+            display: table-cell;
+            text-align: right;
+        }
+        .variable .name .data:after {
+            font-weight: bold;
+            content : ": ";
+        }
+        .variable .value {
+            display: table-cell;
+        }
+        .testcase-content .testcase-output .value {
+            float: left;
+            margin-left: 0.5em;
+        }
+        .testcase-content .testcase-annotation .testcase-comment {
+            float: left;
+        }
+        ol.testcases {
+            padding: 0px;
+            counter-reset: test_number -1;
+        }
+        ol.testcases > li {
+            list-style:none; 
+        }
+        ol.testcases > li:before {
+            counter-increment:test_number;
+            display: block;
+            clear: both;
+            ${if Options.fancyExampleNumber}
+                content:counter(test_number);
+                min-width: 1em;
+                width: 1em;
+                height: 1em;
+                line-height: 1em;
+                padding: 0.5em;
+                margin-bottom: 0.5em;
+                margin-right: 0.625em;
                 border-radius: 100%;
                 font-weight: bold;
                 text-align: center;
                 vertical-align: top;
                 border-style: solid;
-                border-width: 2px;
-            }
-		${else}
-		    li.testcase div.testcase-no {
-		        border: None;
-		        color: inherit;
-		        background: inherit;
-		    }
-		    li.testcase div.testcase-no:after {
-		        content: ")";
-		    }
-		${end}
-        ${if !Options.showTags}.tag,${end} ${if !Options.showVariableNames}.variable .name,${end} .hideit {
+                border-width: 0.125em;
+            ${else}
+                content:counter(test_number) ")";
+                color: inherit;
+                background: inherit;
+            ${end}
+        }
+        ${if !Options.showVariableNames}.variable .name,${end}
+        ${if !Options.showTags}.tag,${end}
+        ${if !Options.showDefinition}#definition,${end}
+        .hideit {
             visibility: hidden;
             position: absolute;
         }
-        ${if Options.showOutputArrow}
+        ${if Options.outputPrefix}
         .testcase-output .value:before {
-            content: "→";
+            content: "${Options.outputPrefix}";
         }
         ${end}
+        .problem-definition {
+            padding-left: 1.25em;
+        }
+        .problem-definition-lines {
+            display: table;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        .definition-line {
+            display: table-row;
+            height: 1.5em;
+            overflow: auto;
+        }
+        .definition-name, .definition-value {
+            display: table-cell;
+        }
+        .definition-value {
+            padding-left: 0.5em;
+        }
+        .definition-name:after {
+            content: ":";
+        }
+        #contest-division:before {
+            content: "Div ";
+        }
+        #problem-score:before {
+            content: "- Problem ";
+        }
+        #problem-name {
+            display: block;
+        }
+    </style>
+    ${end}
 
-	</style>
-	${end}
-
-    <title>Topcoder - ${Contest.Name} - Problem ${Problem.Score}</title>
 </head>
 
 <body>
-	<div class="heading">
-        ${Contest.Name} ${if Contest.Div}Div ${Contest.Div} ${end}- Problem ${Problem.Score} <br/>
-        ${Problem.Name}
-    </div>
+    <!--<h1 class="heading">
+        ${if Contest.Div}Div${Contest.Div} ${end}${Problem.Score}: ${Problem.Name}
+    </h1>-->
+    <h1 class="heading">
+        <span id='contest-name'>${Contest.Name}</span>
+        ${if Contest.Div}<span id='contest-division'>${Contest.Div}</span>${end}
+        <span id='problem-score'>${Problem.Score}</span>
+        <span id='problem-name'>${Problem.Name}</span>
+    </h1>
 
-	<hr/>
+    <hr />
 
-    <!-- Problem Statemnt -->
+    <!-- Problem Statement -->
     <div class="section">
-        <div class="section-title">Problem Statement</div>
+        <h2 class="section-title">Problem Statement</h2>
         <div class="problem-intro">
             ${Problem.Description.Intro}
         </div>
     </div>
+    
+    <!-- Problem definition -->
+    <div class="section" id="definition">
+        <h2 class="section-title">Definition</h2>
+        <div class="problem-definition">
+            <ul class="problem-definition-lines">
+                <li class="definition-line" id='class-line'>
+                    <span class='definition-name'>Class</span>
+                    <span class='definition-value'>${Problem.Name}</span>
+                </li>
+                <li class="definition-line" id='method-line'>
+                    <span class='definition-name'>Method</span>
+                    <span class='definition-value'>${Method.Name}</span>
+                </li>
+                <li class="definition-line" id='parameters-line'>
+                    <span class='definition-name'>Parameters</span>
+                    <span class='definition-value'>
+                    ${foreach Method.Params p , }
+                        ${if Options.cppDefinition}
+                            ${p.Type;html(cpp)}
+                        ${else}
+                            ${p.Type;html(java)}
+                        ${end}
+                    ${end}
+                    </span>
+                </li>
+                <li class="definition-line" id='returns-line'>
+                    <span class='definition-name'>Returns</span>
+                    <span class='definition-value'>
+                        ${if Options.cppDefinition}
+                            ${Method.ReturnType;html(cpp)}
+                        ${else}
+                            ${Method.ReturnType;html(java)}
+                        ${end}
+                    </span>
+                </li>
+                <li class="definition-line" id='signature-line'>
+                    <span class='definition-name'>Method signature</span>
+                    <span class='definition-value'>
+                        ${if Options.cppDefinition}
+                            ${Method.ReturnType;html(cpp)}
+                        ${else}
+                            ${Method.ReturnType;html(java)}
+                        ${end}
+                        ${Method.Name}(${foreach Method.Params p , }
+                            ${if Options.cppDefinition}
+                                ${p.Type;html(cpp)}
+                            ${else}
+                                ${p.Type;html(java)}
+                            ${end}
+                            ${p.Name}
+                        ${end})                         
+                    </span>
+                </li>
+            </ul>
+            <div class="problem-definition-public-tip">(be sure your method is public)</div>
+        </div>        
+    </div>
 
-    ${<if Problem.Description.HasNotes}
+    ${if Problem.Description.HasNotes}
     <!-- Notes -->
     <div class="section">
-        <div class="section-title">Notes</div>
+        <h2 class="section-title">Notes</h2>
         <ul class="notes">
-        ${<foreach Problem.Description.Notes note}
+        ${foreach Problem.Description.Notes note}
             <li>${note}</li>
-        ${<end}
+        ${end}
         </ul>
     </div>
-    ${<end}
+    ${end}
 
     <!-- Constraints -->
     <div class="section">
-        <div class="section-title">Constraints</div>
+        <h2 class="section-title">Constraints</h2>
         <ul class="constraints">
-        ${<foreach Problem.Description.Constraints cons}
+        ${foreach Problem.Description.Constraints cons}
             <li>${cons}</li>
-        ${<end}
+        ${end}
         </ul>
     </div>
 
     <!-- Test cases -->
     <div class="section">
-        <div class="section-title">Test cases</div>
-        <ul class="testcases">
-            ${<foreach Examples e}
+        <h2 class="section-title">Test cases</h2>
+        <ol class="testcases" start='0'>
+            ${foreach Examples e}
             <li class="testcase">
-                <div class="testcase-no">${e.Num}</div>
                 <div class="testcase-content">
                     <div class="testcase-input">
                         <div class="tag">input</div>
-                        <div class="variables">
-                        ${<foreach e.Input in}
-                            <div class="variable data">
-                                <div class="name data">${in.Param.Name}</div>
-                                <div class="value data">
+                        <ul class="variables">
+                        ${foreach e.Input in}
+                            <li class="variable">
+                                <span class="name"><span class='data'>${in.Param.Name}</span></span>
+                                <span class="value"><span class='data'>
                                 ${if Options.gridArrays}
                                     ${in;html(grid)}
                                 ${else}
                                     ${in;html}
                                 ${end}
-                                </div>
-                            </div>
-                        ${<end}
-                        </div>
+                                </span></span>
+                            </li>
+                        ${end}
+                        </ul>
                     </div>
                     <div class="testcase-output">
                         <div class="tag">output</div>
@@ -298,20 +421,19 @@
                         ${end}
                         </div>
                     </div>
-                    ${<if e.Annotation}
+                    ${if e.Annotation}
                     <div class="testcase-annotation">
                         <div class="tag">comment</div>
                         <div class="testcase-comment">${e.Annotation}</div>
                     </div>
-                    ${<end}
+                    ${end}
                
                 </div>
             </li>
-            ${<end}
-        </ul>
+            ${end}
+        </ol>
     </div>
-
-    <hr>
+    <hr />
 
     This problem statement is the exclusive and proprietary property of TopCoder, Inc. Any unauthorized use or reproduction of this information without the prior written consent of TopCoder, Inc. is strictly prohibited. (c)2003, TopCoder, Inc. All rights reserved.
 </body>
