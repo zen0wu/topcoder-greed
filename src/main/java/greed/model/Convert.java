@@ -103,10 +103,15 @@ public class Convert {
         for (int i = 0; i < constraints.length; ++i)
             constraints[i] = fixDoubleStrip(problem.getConstraints()[i].toXML());
 
+        int memoryLimitMB = problem.getComponent().getMemLimitMB();
+        int timeLimitMillis = 2000; //Placeholder until Arena maintainers add a function for it
+
         return new Problem(
                 problem.getProblem().getName(),
                 problem.getPoints().intValue(),
                 problem.getClassName(),
+                memoryLimitMB,
+                timeLimitMillis,
                 method,
                 cases,
                 new ProblemDescription(
