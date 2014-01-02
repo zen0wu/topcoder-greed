@@ -107,10 +107,15 @@ public class Convert {
         for (int i = 0; i < constraints.length; ++i)
             constraints[i] = commonTCXMLFixes(problem.getConstraints()[i].toXML());
 
+        int memoryLimitMB = problem.getComponent().getMemLimitMB();
+        int timeLimitMillis = problem.getComponent().getExecutionTimeLimit();
+
         return new Problem(
                 problem.getProblem().getName(),
                 problem.getPoints().intValue(),
                 problem.getClassName(),
+                memoryLimitMB,
+                timeLimitMillis,
                 method,
                 cases,
                 new ProblemDescription(

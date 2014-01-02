@@ -250,20 +250,25 @@
             content: "${Options.outputPrefix}";
         }
         ${end}
-        .problem-definition {
+        .problem-definition, .problem-limits {
             padding-left: 1.25em;
         }
-        .problem-definition-lines {
+        .problem-definition-lines, .limit-lines {
             display: table;
             margin-top: 0px;
             margin-bottom: 0px;
+            padding-left: 0px;
         }
-        .definition-line {
+        .definition-line, .limit-line {
             display: table-row;
             height: 1.5em;
             overflow: auto;
         }
-        .definition-name, .definition-value {
+        .limit-name:after {
+            content: ":";
+            margin-right: 1em;
+        }
+        .definition-name, .definition-value, .limit-name, .limit-value {
             display: table-cell;
         }
         .definition-value {
@@ -365,6 +370,23 @@
         </div>        
     </div>
 
+    <!-- Limits -->
+    <div class="section">
+        <h2 class="section-title">Limits</h2>
+        <div class='problem-limits'>
+            <ul class="limit-lines">
+                <li class='limit-line'>
+                    <span class='limit-name'>Time limit (s)</span>
+                    <span class='limit-value'>${Problem.TimeLimitSeconds}</span>
+                </li>
+                <li class='limit-line'>
+                    <span class='limit-name'>Memory limit (MB)</span>
+                    <span class='limit-value'>${Problem.MemoryLimitMB}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     ${if Problem.Description.HasNotes}
     <!-- Notes -->
     <div class="section">
@@ -376,7 +398,7 @@
         </ul>
     </div>
     ${end}
-
+    
     <!-- Constraints -->
     <div class="section">
         <h2 class="section-title">Constraints</h2>
