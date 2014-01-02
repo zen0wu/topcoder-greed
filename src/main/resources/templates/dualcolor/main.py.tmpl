@@ -1,12 +1,13 @@
 ${--
-#    Vexorian's c++ tester template for greed. Version 0.7
+#    Vexorian's c++ tester template for greed. Version 0.8
 #    - Test cases in ( [ () ], x / None ) format for ease of modification.
 #    - Very small code for the problem file.
 #    - Requires tester.py. Use dualcolor-tester template.
 #    - Template options:
-#        * caseTimeOut : The duration for each test case. 2.00 by default.
-#                        Computers with much different run speed than TC might
-#                        need to tweak.
+#        * localTestTimeFactor : The problem's time limit will be multiplied by
+#                                this value (unless it is set to false)
+#                                Computers with much different run speed than
+#                                TC might need to tweak.
 #        * compactMode : Three options:
 #              COMPACT_REPORT : Default, verbose output when running test cases
 #                               brief one-line report at the end.
@@ -25,7 +26,7 @@ ${--
 #
 }  
 #-------------------------------------------------------------------------------
-CASE_TIME_OUT = ${Options.caseTimeOut}
+CASE_TIME_OUT = ${Problem.TimeLimitSeconds}${if Options.localTestTimeFactor} * ${Options.localTestTimeFactor}${end};
 
 TEST_CASES = [
 ${<foreach Examples e}

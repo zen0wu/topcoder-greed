@@ -1,5 +1,5 @@
 ${-- /*
-    Vexorian's c++ tester template for greed. Version 0.7
+    Vexorian's c++ tester template for greed. Version 0.8
     Part of test template which has many features:
     - Test cases in bracket format for ease of modification.
     - Very small code for the problem file.
@@ -28,9 +28,10 @@ ${-- /*
               Runs each test case in a single process. This allows tester
            to detect runtime errors and there is no need to reset globals.
                           
-        * caseTimeOut : The duration for each test case. 2.00 by default.
-                        Computers with much different run speed than TC might
-                        need to tweak.
+        * localTestTimeFactor : The problem's time limit will be multiplied by
+                                this value (unless it is set to false)
+                                Computers with much different run speed than
+                                TC might need to tweak.
         * compactMode : Three options: COMPACT_REPORT, FULL_REPORT, ONLY_REPORT
                         as described above.
         * singleFile : It will render the dualcolor-tester in the same file
@@ -45,7 +46,7 @@ ${-- /*
     (c) 2013 Victor Hugo Soliz Kuncar, ZLIB/LibPNG license 
 */ }
 //------------------------------------------------------------------------------
-const double CASE_TIME_OUT = ${Options.caseTimeOut};
+const double CASE_TIME_OUT = ${Problem.TimeLimitSeconds}${if Options.localTestTimeFactor} * ${Options.localTestTimeFactor}${end};
 
 bool disabledTest(int x)
 {

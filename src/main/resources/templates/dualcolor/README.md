@@ -38,7 +38,7 @@ There are 3 option fields that affect this template, for example:
 <pre>
 greed.shared.templateDef.dualcolor-test.options {
     compactMode = COMPACT_REPORT
-    caseTimeOut = "2.00"
+    localTestTimeFactor = false
     singleFile  = false
     #(c++ only)
     runMultipleProcesses = true
@@ -50,7 +50,7 @@ greed.shared.templateDef.dualcolor-test.options {
  + `COMPACT_REPORT` : (default). Verbose output for each test case, a brief one-line report at the end.
  + `FULL_REPORT`    : The final report has more detail (one line per test case).
  + `ONLY_REPORT`    : That final report is the only thing displayed. (Very compact).
-* `caseTimeOut` : Initial value of the CASE_TIMEOUT constant.
+* `localTestTimeFactor` : If set to false, does nothing. Else it will multiply the problem's per case time limit by this value to find the local time limit. (If your computer has much different execution speed than TopCoder, it is convenient to customize this  value, 1.5, for example, adds 50% more time before a test case is reported as TLE; 0.5 will cut the execution time in half, so if your computer somehow manages to be twice as fast as TopCoder's, this is a good value.
 * `disableColors`: Default is false. Enable this if your terminal cannot display ANSI-C color codes and you'd still like to use the other features.
 * `customTesterLocation`: Eventually, you'd like to use a single tester.cpp / tester.py file for all the problems. Use this if you'd like to change the location of the loaded tester source.
 Example:
