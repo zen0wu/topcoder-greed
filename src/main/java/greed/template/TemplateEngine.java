@@ -20,12 +20,12 @@ public class TemplateEngine {
         if (engine == null)
             engine = new Engine();
         engine.registerNamedRenderer(new StringUtilRenderer());
-        engine.registerNamedRenderer(new HTMLRenderer());
         engine.registerNamedRenderer(new ContestCategoryRenderer());
     }
 
     public static void switchLanguage(Language language) {
         lazyInit();
+        engine.registerNamedRenderer(new HTMLRenderer(language));
         LanguageManager.getInstance().registerRenderer(language, engine);
     }
 

@@ -2,12 +2,16 @@ package greed.template;
 
 import greed.model.ParamValue;
 import greed.model.Type;
+import greed.model.Language;
 import greed.util.StringUtil;
+import greed.code.LanguageManager;
+import greed.code.LanguageRenderer;
 
 import java.util.Locale;
 
 import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
+
 
 /**
  * Greed is good! Cheers!
@@ -17,12 +21,54 @@ import com.floreysoft.jmte.RenderFormatInfo;
  */
 public class HTMLRenderer implements NamedRenderer {
 
-    // TODO strip in case of non-grid or malformed input.
-    private String stripQuotes(String v) {
-        if (v.length() >= 2 && v.charAt(0) == '"' && v.charAt(v.length()-1) == '"') {
-            v = "&quot;" + v.substring(1, v.length() - 1) + "&quot;";
+    Language currentLang = null;
+    
+    HTMLRenderer(Language lang)
+    {
+        currentLang = lang;
+    }
+    
+    private String stripHTML(String v) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < v.length(); i++) {
+            switch (v.charAt(i)) {
+            case '"':
+                sb.append("&quot;");
+                break;
+            case '<':
+                sb.append("&lt;");
+                break;
+            case '>':
+                sb.append("&gt;");
+                break;
+            case '&':
+                sb.append("&amp;");
+                break;
+            case '\'':
+                sb.append("&apos;");
+                break;
+            default:
+                sb.append(v.charAt(i));
+            } 
         }
-        return v;
+        return sb.toString();
+    }
+    
+    private String renderType(Type ty, String langName)
+    {
+        Language lang = currentLang;
+        if (langName != null) {
+            for (Language iteratedLang : Language.values()) {
+                if (Language.getName(iteratedLang).equals(langName)) {
+                    lang = iteratedLang;
+                }
+            }
+        }
+        LanguageRenderer renderer = LanguageManager.getInstance()
+            .getRenderer(lang);
+        String s = renderer.renderType(ty);
+        return stripHTML(s);
+        
     }
 
     private String renderParamValue(ParamValue pv, String param) {
@@ -34,7 +80,7 @@ public class HTMLRenderer implements NamedRenderer {
                 boolean useGrid = isGridMode(param, x);
                 return doRenderStringArray(x, useGrid);
             } else {
-                return stripQuotes(pv.getValue());
+                return stripHTML(pv.getValue());
             }
         }
         return pv.getValue();
@@ -56,7 +102,7 @@ public class HTMLRenderer implements NamedRenderer {
         String[] xQuoted = new String[x.length];
 
         for(int i = 0; i < x.length; ++ i) {
-            xQuoted[i] = stripQuotes(x[i]);
+            xQuoted[i] = stripHTML(x[i]);
         }
 
         sb.append("{");
@@ -75,8 +121,10 @@ public class HTMLRenderer implements NamedRenderer {
     public String render(Object o, String param, Locale locale) {
         if (o instanceof ParamValue) {
             return renderParamValue( (ParamValue)o, param);
+        } else if (o instanceof Type) {
+            return renderType( (Type)o, param);
         } else if (o instanceof String) {
-            return stripQuotes( (String)o );
+            return stripHTML( (String)o );
         }
         return "(No HTML renderer support for object: "+o.toString()+")";
     }
@@ -93,6 +141,6 @@ public class HTMLRenderer implements NamedRenderer {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-        return new Class<?>[]{ ParamValue.class, String.class };
+        return new Class<?>[]{ ParamValue.class, String.class, Type.class };
     }
 }
