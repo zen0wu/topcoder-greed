@@ -51,7 +51,6 @@ public class LanguageManager {
     public void registerRenderer(Language language, Engine engine) {
         final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
-            // TODO: Unregister all the engine's old renderers, seems no simple API to do so
             engine.registerRenderer(Primitive.class, new Renderer<Primitive>() {
                 @Override
                 public String render(Primitive primitive, Locale locale) {
