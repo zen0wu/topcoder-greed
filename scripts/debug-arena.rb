@@ -4,7 +4,7 @@ HOME_DIR = File.expand_path(File.dirname(__FILE__) + "/..")
 
 require 'optparse'
 
-java_opts = ["-J-DprojectDir=#{HOME_DIR}"]
+java_opts = ["-J-DprojectDir=#{HOME_DIR}", '-J-DdevelopmentMode=true']
 
 ARGV.options do |opts|
 	opts.banner = "Usage:  #{File.basename($PROGRAM_NAME)} [OPTIONS]"
@@ -16,11 +16,6 @@ ARGV.options do |opts|
 	         "Show this message." ) do
 		puts opts
 		exit
-	end
-
-	opts.on( "-d", "--debug",
-			  "Enable debug environment when running the arena" ) do
-		java_opts << '-J-DdevelopmentMode=true'
 	end
 
 	opts.on( "-i", "--idea-debug",

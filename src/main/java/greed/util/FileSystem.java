@@ -18,14 +18,10 @@ public class FileSystem {
         Log.i("Getting resource: " + resourcePath.getRelativePath());
         if (resourcePath.isInternal()) {
             String relativePath = resourcePath.getRelativePath();
-            if (Debug.developmentMode) {
-                return new FileInputStream(Debug.getResourceDirectory() + relativePath);
-            } else {
-                InputStream is = FileSystem.class.getResourceAsStream(relativePath);
-                if (is == null)
-                    throw new FileNotFoundException(relativePath);
-                return is;
-            }
+            InputStream is = FileSystem.class.getResourceAsStream(relativePath);
+            if (is == null)
+                throw new FileNotFoundException(relativePath);
+            return is;
         } else {
             return new FileInputStream(Configuration.getWorkspace() + "/" + resourcePath.getRelativePath());
         }

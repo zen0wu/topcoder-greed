@@ -42,18 +42,16 @@ public class Configuration {
     private static final String DEFAULT_USER_CONFIG_FILENAME = "greed.conf";
 
     static GreedConfig loadConfig() throws ConfigException {
-        Config conf;
-        if (Debug.developmentMode) {
-            conf = ConfigFactory.parseFile(new File(Debug.getResourceDirectory() + "/default.conf"));
-        } else {
-            conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
-        }
+        Config conf = ConfigFactory.parseURL(Configuration.class.getResource("/default.conf"));
 
-        String workspace = getWorkspace();
-        File userConfFile = new File(workspace, DEFAULT_USER_CONFIG_FILENAME);
-        if (userConfFile.exists()) {
-            Config userConf = ConfigFactory.parseFile(userConfFile);
-            conf = userConf.withFallback(conf);
+        if (!Modes.testMode) {
+            // User configuration will not be loaded in test mode
+            String workspace = getWorkspace();
+            File userConfFile = new File(workspace, DEFAULT_USER_CONFIG_FILENAME);
+            if (userConfFile.exists()) {
+                Config userConf = ConfigFactory.parseFile(userConfFile);
+                conf = userConf.withFallback(conf);
+            }
         }
 
         conf = conf.resolve();

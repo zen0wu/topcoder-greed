@@ -1,6 +1,6 @@
 package greed;
 
-import greed.util.Debug;
+import greed.util.Modes;
 
 import java.io.*;
 
@@ -18,7 +18,7 @@ public class AppInfo {
     public static String getVersion() {
         if (VERSION == null) {
             try {
-                VERSION = Debug.developmentMode
+                VERSION = Modes.devMode
                         ? readVersionFromStream(new FileInputStream("version"))
                         : readVersionFromStream(AppInfo.class.getResourceAsStream("/version"));
             } catch (FileNotFoundException e) {}

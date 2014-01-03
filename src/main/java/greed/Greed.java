@@ -8,6 +8,7 @@ import greed.code.transform.ContinuousBlankLineRemover;
 import greed.code.transform.CutBlockRemover;
 import greed.code.transform.EmptyCutBlockCleaner;
 import greed.conf.schema.*;
+import greed.conf.schema.TemplateDependencyConfig.*;
 import greed.model.Contest;
 import greed.model.Convert;
 import greed.model.Language;
@@ -57,7 +58,7 @@ public class Greed {
 
     // Cache the editor
     public boolean isCacheable() {
-        return !Debug.developmentMode;
+        return !Modes.devMode;
     }
 
     // Called when open the coding frame
@@ -217,9 +218,9 @@ public class Greed {
                 String template = templates.get(i);
                 TemplateConfig templateConfig = langConfig.getTemplateDef().get(template);
                 if (templateConfig.getDependencies() != null) {
-                    for (TemplateDependencyConfig.Dependency dep: templateConfig.getDependencies()) {
-                        if (dep instanceof TemplateDependencyConfig.TemplateDependency) {
-                            String depTemplate = ((TemplateDependencyConfig.TemplateDependency)dep).getTemplate();
+                    for (Dependency dep: templateConfig.getDependencies()) {
+                        if (dep instanceof TemplateDependency) {
+                            String depTemplate = ((TemplateDependency)dep).getTemplate();
                             if (!templateSet.contains(depTemplate)) {
                                 templateSet.add(depTemplate);
                                 templates.add(depTemplate);
@@ -238,7 +239,7 @@ public class Greed {
                     boolean independent = true;
                     TemplateConfig templateConfig = langConfig.getTemplateDef().get(template);
                     if (templateConfig.getDependencies() != null) {
-                        for (TemplateDependencyConfig.Dependency dep: templateConfig.getDependencies()) {
+                        for (Dependency dep: templateConfig.getDependencies()) {
                             if (!checkDependency(dep, hasKeys, hasTemplates)) {
                                 independent = false;
                                 break;
@@ -386,23 +387,23 @@ public class Greed {
         return merged;
     }
 
-    private boolean checkDependency(TemplateDependencyConfig.Dependency dependency, HashSet<String> hasKeys, HashSet<String> hasTemplates) {
-        if (dependency instanceof TemplateDependencyConfig.KeyDependency) {
-            return hasKeys.contains(((TemplateDependencyConfig.KeyDependency)dependency).getKey());
+    private boolean checkDependency(Dependency dependency, HashSet<String> hasKeys, HashSet<String> hasTemplates) {
+        if (dependency instanceof KeyDependency) {
+            return hasKeys.contains(((KeyDependency)dependency).getKey());
         }
-        else if (dependency instanceof TemplateDependencyConfig.TemplateDependency) {
-            return hasTemplates.contains(((TemplateDependencyConfig.TemplateDependency)dependency).getTemplate());
+        else if (dependency instanceof TemplateDependency) {
+            return hasTemplates.contains(((TemplateDependency)dependency).getTemplate());
         }
-        else if (dependency instanceof TemplateDependencyConfig.OneOfDependency) {
-            TemplateDependencyConfig.OneOfDependency oneOfDep = (TemplateDependencyConfig.OneOfDependency)dependency;
-            for (TemplateDependencyConfig.Dependency dep: oneOfDep.getDependencies()) {
+        else if (dependency instanceof OneOfDependency) {
+            OneOfDependency oneOfDep = (OneOfDependency)dependency;
+            for (Dependency dep: oneOfDep.getDependencies()) {
                 if (checkDependency(dep, hasKeys, hasTemplates)) {
                     return true;
                 }
             }
             return false;
         }
-        throw new IllegalStateException("Invalid types of TemplateDependencyConfig.Dependency");
+        throw new IllegalStateException("Invalid types of Dependency");
     }
 
     public String getSource() {
