@@ -4,10 +4,7 @@ import com.floreysoft.jmte.NamedRenderer;
 import com.floreysoft.jmte.RenderFormatInfo;
 import greed.code.LanguageRenderer;
 import greed.code.LanguageTrait;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Primitive;
-import greed.model.Type;
+import greed.model.*;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,14 +30,30 @@ public class PythonLanguage extends AbstractLanguage implements LanguageRenderer
 
     @Override
     public String renderPrimitive(Primitive primitive) {
-        // python has no type...
+        // python has no type, this result is only for showing
+        // DO NOT RENDER TYPES IN PYTHON CODE
+        switch (primitive) {
+            case INT:
+            case LONG:
+                return "integer";
+            case BOOL:
+                return "bool";
+            case DOUBLE:
+                return "float";
+            case STRING:
+                return "string";
+        }
         return "";
     }
 
     @Override
     public String renderType(Type type) {
-        // python has no type...
-        return "";
+        // python has no type, this result is only for showing
+        // DO NOT RENDER TYPES IN PYTHON CODE
+        String res = renderPrimitive(type.getPrimitive());
+        if (type.isArray())
+            res = "tuple(" + res + ")";
+        return res;
     }
 
     @Override
@@ -73,6 +86,11 @@ public class PythonLanguage extends AbstractLanguage implements LanguageRenderer
             }
         }
         return "";
+    }
+
+    @Override
+    public String renderMethod(Method method) {
+        return "def " + method.getName() + "(self, " + renderParamList(method.getParams()) + ")";
     }
 
     @Override

@@ -2,10 +2,7 @@ package greed.template;
 
 import greed.model.ParamValue;
 import greed.model.Type;
-import greed.model.Language;
 import greed.util.StringUtil;
-import greed.code.LanguageManager;
-import greed.code.LanguageRenderer;
 
 import java.util.Locale;
 
@@ -21,13 +18,6 @@ import com.floreysoft.jmte.RenderFormatInfo;
  */
 public class HTMLRenderer implements NamedRenderer {
 
-    Language currentLang = null;
-    
-    HTMLRenderer(Language lang)
-    {
-        currentLang = lang;
-    }
-    
     private String stripHTML(String v) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < v.length(); i++) {
@@ -54,23 +44,6 @@ public class HTMLRenderer implements NamedRenderer {
         return sb.toString();
     }
     
-    private String renderType(Type ty, String langName)
-    {
-        Language lang = currentLang;
-        if (langName != null) {
-            for (Language iteratedLang : Language.values()) {
-                if (Language.getName(iteratedLang).equals(langName)) {
-                    lang = iteratedLang;
-                }
-            }
-        }
-        LanguageRenderer renderer = LanguageManager.getInstance()
-            .getRenderer(lang);
-        String s = renderer.renderType(ty);
-        return stripHTML(s);
-        
-    }
-
     private String renderParamValue(ParamValue pv, String param) {
         Type t = pv.getParam().getType();
 
@@ -121,12 +94,10 @@ public class HTMLRenderer implements NamedRenderer {
     public String render(Object o, String param, Locale locale) {
         if (o instanceof ParamValue) {
             return renderParamValue( (ParamValue)o, param);
-        } else if (o instanceof Type) {
-            return renderType( (Type)o, param);
         } else if (o instanceof String) {
             return stripHTML( (String)o );
         }
-        return "(No HTML renderer support for object: "+o.toString()+")";
+        return "(No HTML renderer support for object: " + o.toString() + ")";
     }
 
     @Override
@@ -141,6 +112,6 @@ public class HTMLRenderer implements NamedRenderer {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-        return new Class<?>[]{ ParamValue.class, String.class, Type.class };
+        return new Class<?>[]{ ParamValue.class, String.class };
     }
 }

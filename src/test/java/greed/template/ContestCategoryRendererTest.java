@@ -25,9 +25,11 @@ public class ContestCategoryRendererTest {
         return Collections.singletonMap(key, (Object) new Contest(name, div) );
     }
 
+    private TemplateEngine engine;
+
     @Before
     public void setup() {
-        TemplateEngine.switchLanguage(Language.CPP);
+        engine = new TemplateEngine(Language.CPP);
     }
 
     @Test
@@ -50,7 +52,7 @@ public class ContestCategoryRendererTest {
 
         for(Map.Entry<String, String> entry : cases.entrySet()) {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
-            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+            assertEquals(entry.getValue(), engine.render(TEMPLATE_SRC, model));
         }
     }
 
@@ -67,7 +69,7 @@ public class ContestCategoryRendererTest {
 
         for(Map.Entry<String, String> entry : cases.entrySet()) {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
-            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+            assertEquals(entry.getValue(), engine.render(TEMPLATE_SRC, model));
         }
     }
 
@@ -84,7 +86,7 @@ public class ContestCategoryRendererTest {
 
         for(Map.Entry<String, String> entry : cases.entrySet()) {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
-            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+            assertEquals(entry.getValue(), engine.render(TEMPLATE_SRC, model));
         }
         
         TEMPLATE_SRC = "${Contest;category(tco-text=TopCoder Open,tchs-text=Highschool)}";
@@ -98,30 +100,30 @@ public class ContestCategoryRendererTest {
 
         for(Map.Entry<String, String> entry : cases.entrySet()) {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
-            assertEquals(entry.getValue(), TemplateEngine.render(TEMPLATE_SRC, model));
+            assertEquals(entry.getValue(), engine.render(TEMPLATE_SRC, model));
         }
 
     }
     
     @Test
     public void testContestCategoryAdvanced() {
-        assertEquals("SRM 0-99", TemplateEngine.render(
+        assertEquals("SRM 0-99", engine.render(
             "${Contest;category(srm=100)}",
             createModel("Contest", "SRM 77", 1))
         );
-        assertEquals("SRM 75-99", TemplateEngine.render(
+        assertEquals("SRM 75-99", engine.render(
             "${Contest;category(srm=)}",
             createModel("Contest", "SRM 77", 1))
         );
-        assertEquals("Single Round Match 77", TemplateEngine.render(
+        assertEquals("Single Round Match 77", engine.render(
             "${Contest;category(srm=1,srm-text=Single Round Match)}",
             createModel("Contest", "SRM 77", 1))
         );
-        assertEquals(" 0-99", TemplateEngine.render(
+        assertEquals(" 0-99", engine.render(
             "${Contest;category(srm=100,srm-text=)}",
             createModel("Contest", "SRM 77", 1))
         );
-        assertEquals("499", TemplateEngine.render(
+        assertEquals("499", engine.render(
             "${Contest;category(srm=1,no-space,srm-text=)}",
             createModel("Contest", "SRM 499", 1))
         );

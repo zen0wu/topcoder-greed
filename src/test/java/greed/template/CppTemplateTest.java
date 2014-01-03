@@ -21,6 +21,7 @@ public class CppTemplateTest {
     private InputStream testTemplate;
 
     Map<String, Object> model = TestModelFixtures.buildStubbingModel();
+    TemplateEngine engine;
 
     @BeforeClass
     public static void initializeGreed() throws ConfigException {
@@ -36,14 +37,14 @@ public class CppTemplateTest {
         this.testTemplate = getClass().getResourceAsStream("/templates/test/cpp.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        TemplateEngine.switchLanguage(Language.CPP);
+        engine = new TemplateEngine(Language.CPP);
     }
 
     @Test
     public void renderCppCode() {
-        String test = TemplateEngine.render(testTemplate, model);
+        String test = engine.render(testTemplate, model);
         model.put("TestCode", test);
-        String code = TemplateEngine.render(codeTemplate, model);
+        String code = engine.render(codeTemplate, model);
         System.out.println(code);
 
         // TODO verify to make test fail on malfunctioning
@@ -54,9 +55,9 @@ public class CppTemplateTest {
         Map<String,String> mp = new HashMap<String,String>();
         mp.put("cpp11", "true");
         model.put("Options", mp);
-        String test = TemplateEngine.render(testTemplate, model);
+        String test = engine.render(testTemplate, model);
         model.put("TestCode", test);
-        String code = TemplateEngine.render(codeTemplate, model);
+        String code = engine.render(codeTemplate, model);
         System.out.println(code);
 
         // TODO verify to make test fail on malfunctioning

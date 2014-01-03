@@ -1,10 +1,7 @@
 package greed.code;
 
 import com.floreysoft.jmte.NamedRenderer;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Primitive;
-import greed.model.Type;
+import greed.model.*;
 
 import java.util.List;
 
@@ -23,6 +20,8 @@ public interface LanguageRenderer {
     public String renderParamList(Param[] params);
 
     public String renderZeroValue(Type type);
+
+    public String renderMethod(Method method);
 
     public List<NamedRenderer> getOtherRenderers();
 }

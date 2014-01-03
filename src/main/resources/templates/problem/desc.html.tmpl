@@ -329,40 +329,20 @@
                     <span class='definition-name'>Parameters</span>
                     <span class='definition-value'>
                     ${foreach Method.Params p , }
-                        ${if Options.cppDefinition}
-                            ${p.Type;html(cpp)}
-                        ${else}
-                            ${p.Type;html(java)}
-                        ${end}
+                        ${p.Type;seq(#, html)}
                     ${end}
                     </span>
                 </li>
                 <li class="definition-line" id='returns-line'>
                     <span class='definition-name'>Returns</span>
                     <span class='definition-value'>
-                        ${if Options.cppDefinition}
-                            ${Method.ReturnType;html(cpp)}
-                        ${else}
-                            ${Method.ReturnType;html(java)}
-                        ${end}
+                        ${Method.ReturnType}
                     </span>
                 </li>
                 <li class="definition-line" id='signature-line'>
                     <span class='definition-name'>Method signature</span>
                     <span class='definition-value'>
-                        ${if Options.cppDefinition}
-                            ${Method.ReturnType;html(cpp)}
-                        ${else}
-                            ${Method.ReturnType;html(java)}
-                        ${end}
-                        ${Method.Name}(${foreach Method.Params p , }
-                            ${if Options.cppDefinition}
-                                ${p.Type;html(cpp)}
-                            ${else}
-                                ${p.Type;html(java)}
-                            ${end}
-                            ${p.Name}
-                        ${end})                         
+                        ${Method;seq(#, html)}
                     </span>
                 </li>
             </ul>

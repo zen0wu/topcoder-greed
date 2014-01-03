@@ -25,15 +25,17 @@ public class StringUtilRendererTest {
         return Collections.singletonMap(key, (Object) value);
     }
 
+    private TemplateEngine engine;
+
     @Before
     public void setup() {
-        TemplateEngine.switchLanguage(Language.CPP);
+        engine = new TemplateEngine(Language.CPP);
     }
 
     @Test
     public void testContestName() {
         Map<String, Object> model = createModel("ContestName", "SRM    245");
-        String result = TemplateEngine.render("${ContestName;string(lower,removespace)}", model);
+        String result = engine.render("${ContestName;string(lower,removespace)}", model);
         Assert.assertEquals(result, "srm245");
     }
 
@@ -42,19 +44,19 @@ public class StringUtilRendererTest {
         Map<String, Object> model;
 
         model = createModel("ContestName", "Single Round Match    245");
-        assertEquals("SRM245", TemplateEngine.render("${ContestName;string(abbr)}", model));
+        assertEquals("SRM245", engine.render("${ContestName;string(abbr)}", model));
 
         model = createModel("ContestName", "TCHS 21 Div 1");
-        assertEquals("TCHS21D1", TemplateEngine.render("${ContestName;string(abbr)}", model));
+        assertEquals("TCHS21D1", engine.render("${ContestName;string(abbr)}", model));
 
         model = createModel("ContestName", "TCO11");
-        assertEquals("TCO11", TemplateEngine.render("${ContestName;string(abbr)}", model));
+        assertEquals("TCO11", engine.render("${ContestName;string(abbr)}", model));
     }
 
     @Test
     public void testUpFirst() {
         Map<String, Object> model = createModel("Var", "topcoder");
-        assertEquals("Topcoder", TemplateEngine.render("${Var;string(upfirst)}", model));
+        assertEquals("Topcoder", engine.render("${Var;string(upfirst)}", model));
     }
 
     @Test
@@ -64,9 +66,9 @@ public class StringUtilRendererTest {
         model.put("V2", "   Topcoder");
         model.put("V3", "   Single Round Match     ");
 
-        assertEquals("ABC", TemplateEngine.render("${V1;string(removespace)}", model));
-        assertEquals("Topcoder", TemplateEngine.render("${V2;string(removespace)}", model));
-        assertEquals("SingleRoundMatch", TemplateEngine.render("${V3;string(removespace)}", model));
+        assertEquals("ABC", engine.render("${V1;string(removespace)}", model));
+        assertEquals("Topcoder", engine.render("${V2;string(removespace)}", model));
+        assertEquals("SingleRoundMatch", engine.render("${V3;string(removespace)}", model));
     }
 
     @Test
@@ -74,10 +76,10 @@ public class StringUtilRendererTest {
         Map<String, Object> model;
 
         model = createModel("Var", "\"\"");
-        assertEquals("", TemplateEngine.render("${Var;string(unquote)}", model));
+        assertEquals("", engine.render("${Var;string(unquote)}", model));
 
         model = createModel("Var", "\"####\"");
-        assertEquals("####", TemplateEngine.render("${Var;string(unquote)}", model));
+        assertEquals("####", engine.render("${Var;string(unquote)}", model));
     }
 
     @Test
@@ -86,11 +88,11 @@ public class StringUtilRendererTest {
 
         //model = createModel("Var", "Topcoder Single Round Match 200");
         //Assert.assertEquals("Srm 200-224",
-        //        TemplateEngine.render("${Var;string(contestcategory, lower, upFirst, unquote)}", model));
+        //        engine.render("${Var;string(contestcategory, lower, upFirst, unquote)}", model));
 
         model = createModel("Var", "Topcoder Single Round Match 200");
         assertEquals("Topcoder Single Round Match 200",
-                TemplateEngine.render("${Var;string()}", model));
+                engine.render("${Var;string()}", model));
     }
 
 }

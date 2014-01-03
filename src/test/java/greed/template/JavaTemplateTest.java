@@ -21,6 +21,7 @@ public class JavaTemplateTest {
     private InputStream testJunitTemplate;
 
     Map<String, Object> model = TestModelFixtures.buildStubbingModel();
+    TemplateEngine engine;
 
     @BeforeClass
     public static void initializeGreed() throws ConfigException {
@@ -39,14 +40,14 @@ public class JavaTemplateTest {
         this.testJunitTemplate = getClass().getResourceAsStream("/templates/unittest/junit.java.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        TemplateEngine.switchLanguage(Language.JAVA);
+        engine = new TemplateEngine(Language.JAVA);
     }
 
     @Test
     public void renderJavaCode() {
-        String test = TemplateEngine.render(testTemplate, model);
+        String test = engine.render(testTemplate, model);
         model.put("TestCode", test);
-        String code = TemplateEngine.render(codeTemplate, model);
+        String code = engine.render(codeTemplate, model);
         System.out.println(code);
 
         // TODO verify to make test fail on malfunctioning
@@ -54,7 +55,7 @@ public class JavaTemplateTest {
 
     @Test
     public void renderJavaCode_junit() {
-        String code = TemplateEngine.render(testJunitTemplate, model);
+        String code = engine.render(testJunitTemplate, model);
         System.out.println(code);
 
         // TODO verify to make test fail on malfunctioning

@@ -1,14 +1,8 @@
 package greed.util;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import greed.template.TemplateEngine;
+
+import java.io.*;
 import java.util.HashMap;
 /**
  * Greed is good! Cheers!
@@ -49,6 +43,16 @@ public class FileSystem {
         }
     }
 
+    public static boolean exists(ResourcePath resourcePath) {
+        if (resourcePath.isInternal()) {
+            String relativePath = resourcePath.getRelativePath();
+            InputStream is = FileSystem.class.getResourceAsStream(relativePath);
+            return is != null;
+        } else {
+            return exists(resourcePath.getRelativePath());
+        }
+    }
+
     public static boolean exists(String relativePath) {
         return new File(Configuration.getWorkspace() + "/" + relativePath).exists();
     }
@@ -82,8 +86,8 @@ public class FileSystem {
         HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("GeneratedFileName", name);
         model.put("BackupNumber", num);
-        greed.conf.schema.BackupConfig bc= Utils.getGreedConfig().getBackup();
-        String newname = greed.template.TemplateEngine.render( bc.getFileName(), model );
+        greed.conf.schema.BackupConfig bc = Utils.getGreedConfig().getBackup();
+        String newname = new TemplateEngine().render( bc.getFileName(), model );
         File newfile = new File( file.getParentFile(), newname);
         if ( ! newfile.getParentFile().exists() ) {
             newfile.getParentFile().mkdirs();
@@ -114,35 +118,22 @@ public class FileSystem {
         file.renameTo(getBackupFile(file, i));
     }
     
-    public static boolean compareFileToString(String filePath, String s) {
-        if (getSize(filePath) == s.length()) {
-            File f = new File(Configuration.getWorkspace() + "/" + filePath);
-            int i = 0;
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(f));
-                try {
-                    char[] buf = new char[100];
-                    int numRead;
-                    while ((numRead = reader.read(buf)) != -1) {
-                        for (int j = 0; j < numRead; j++) {
-                            if ( (i >= s.length()) || (s.charAt(i) != buf[j]) ) {
-                                return false;
-                            }
-                            i++;
-                        }
-                    }
-                    if (i < s.length()) {
-                        return false;
-                    }
-                } finally {
-                    reader.close();
-                }
-                return true;
-            } catch (IOException e) {
-                Log.e("IOException when reading [" + filePath + "]" , e);
-                return false;
+    public static String readStream(InputStream stream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder buf = new StringBuilder();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                buf.append(line);
+                buf.append("\n");
             }
+            reader.close();
+            stream.close();
+        } catch (IOException e) {
+            Log.e("IOException while reading stream", e);
+            return null;
         }
-        return false;
+        return buf.toString();
     }
+
 }

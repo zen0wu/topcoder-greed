@@ -26,6 +26,7 @@ public class PythonTemplateTest {
     InputStream testTemplate;
 
     Map<String, Object> model = TestModelFixtures.buildStubbingModel();
+    TemplateEngine engine;
 
     @Before
     public void setupTemplates() throws IOException {
@@ -35,12 +36,12 @@ public class PythonTemplateTest {
         this.testTemplate = getClass().getResourceAsStream("/templates/test/py.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        TemplateEngine.switchLanguage(Language.PYTHON);
+        engine = new TemplateEngine(Language.PYTHON);
     }
 
     @Test
     public void renderPythonTestCode() {
-        String testCode = TemplateEngine.render(testTemplate, model);
+        String testCode = engine.render(testTemplate, model);
         System.out.println(testCode);
 
         // naive and minimal assertions by string matching
@@ -61,7 +62,7 @@ public class PythonTemplateTest {
 
     @Test
     public void renderPythonMainCode() {
-        String code = TemplateEngine.render(codeTemplate, model);
+        String code = engine.render(codeTemplate, model);
         System.out.println(code);
 
         // naive assertions by string matching

@@ -5,11 +5,7 @@ import greed.code.lang.CppLanguage;
 import greed.code.lang.JavaLanguage;
 import greed.code.lang.PythonLanguage;
 import greed.code.transform.JavaPackageRemover;
-import greed.model.Language;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Primitive;
-import greed.model.Type;
+import greed.model.*;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -52,10 +48,6 @@ public class LanguageManager {
         return traitMap.get(language);
     }
 
-    public LanguageRenderer getRenderer(Language language) {
-        return rendererMap.get(language);
-    }
-
     public void registerRenderer(Language language, Engine engine) {
         final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
@@ -88,6 +80,12 @@ public class LanguageManager {
                 @Override
                 public String render(Param[] params, Locale locale) {
                     return renderer.renderParamList(params);
+                }
+            });
+            engine.registerRenderer(Method.class, new Renderer<Method>() {
+                @Override
+                public String render(Method method, Locale locale) {
+                    return renderer.renderMethod(method);
                 }
             });
             for (NamedRenderer namedRenderer: renderer.getOtherRenderers())

@@ -2,10 +2,7 @@ package greed.code.lang;
 
 import greed.code.LanguageRenderer;
 import greed.code.LanguageTrait;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Primitive;
-import greed.model.Type;
+import greed.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +65,11 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
             }
             return new ParamValue(param, valueList);
         }
+    }
+
+    @Override
+    public String renderMethod(Method method) {
+        return renderType(method.getReturnType()) + " " + method.getName() + "(" + renderParamList(method.getParams()) + ")";
     }
 
     @Override

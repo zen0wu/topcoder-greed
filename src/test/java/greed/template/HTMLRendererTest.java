@@ -20,9 +20,11 @@ import org.junit.Test;
  */
 public class HTMLRendererTest {
 
+    private TemplateEngine engine;
+
     @Before
     public void setup() {
-        TemplateEngine.switchLanguage(Language.CPP);
+        engine = new TemplateEngine(Language.CPP);
     }
 
     static final ParamValue GRID_LIKE_STRING_ARRAY_PARAM =
@@ -36,7 +38,7 @@ public class HTMLRendererTest {
     public void testRenderHtmlGridFilter() {
         HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("gridParam", GRID_LIKE_STRING_ARRAY_PARAM);
-        String result = TemplateEngine.render("${gridParam;html(grid)}", model);
+        String result = engine.render("${gridParam;html(grid)}", model);
 
         System.out.println(result);
         assertThat(result, equalTo("{####,<br />&nbsp;#..#,<br />&nbsp;#..#,<br />&nbsp;####}"));
@@ -46,7 +48,7 @@ public class HTMLRendererTest {
     public void testRenderHtmlNonGridFilter() {
         HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("gridParam", GRID_LIKE_STRING_ARRAY_PARAM);
-        String result = TemplateEngine.render("${gridParam;html}", model);
+        String result = engine.render("${gridParam;html}", model);
 
         System.out.println(result);
         assertThat(result, equalTo("{ ####, #..#, #..#, #### }"));
@@ -60,7 +62,7 @@ public class HTMLRendererTest {
                     "\"quoted\"")
                 );
 
-        String result = TemplateEngine.render("${stringParam;html}", model);
+        String result = engine.render("${stringParam;html}", model);
         System.out.println(result);
         assertThat(result, equalTo("&quot;quoted&quot;"));
 
@@ -69,7 +71,7 @@ public class HTMLRendererTest {
                     new String[] {"\"\"", ".."}
                     )
                 );
-        String gridResult = TemplateEngine.render("${gridParam;html(grid)}", model);
+        String gridResult = engine.render("${gridParam;html(grid)}", model);
         System.out.println(gridResult);
         assertThat(gridResult, equalTo("{&quot;&quot;,<br />&nbsp;..}"));
     }

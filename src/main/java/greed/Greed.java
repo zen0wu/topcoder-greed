@@ -39,6 +39,7 @@ public class Greed {
     private Problem currentProb;
     private Contest currentContest;
     private HashMap<String, Object> currentModel;
+    private TemplateEngine currentEngine;
 
     private GreedEditorPanel talkingWindow;
     private boolean initialized;
@@ -156,7 +157,7 @@ public class Greed {
 
     private String renderedCodeRoot(GreedConfig config)
     {
-        return TemplateEngine.render(config.getCodeRoot(), currentModel);
+        return currentEngine.render(config.getCodeRoot(), currentModel);
     }
 
     @SuppressWarnings("unchecked")
@@ -198,7 +199,7 @@ public class Greed {
         sharedModel.put("CutEnd", langConfig.getCutEnd());
 
         // Switch language
-        TemplateEngine.switchLanguage(language);
+        currentEngine = new TemplateEngine(language);
 
         // Validate template definitions and calculate order
         ArrayList<String> templateOrder;
@@ -207,8 +208,15 @@ public class Greed {
             HashSet<String> templateSet = new HashSet<String>();
             // Find all the templates needed by hard constraint (direct template dependency)
             for (String templateName: langConfig.getTemplates()) {
+                // Check existence of template
                 if (!langConfig.getTemplateDef().containsKey(templateName)) {
                     talkingWindow.error("Unknown template [" + templateName + "] (ignored)");
+                    continue;
+                }
+                // Check existence of template file
+                ResourcePath templateFile = langConfig.getTemplateDef().get(templateName).getTemplateFile();
+                if (!FileSystem.exists(templateFile)) {
+                    talkingWindow.error("Template file [" + templateFile.getRelativePath() + "] not found (ignored)");
                     continue;
                 }
                 templates.add(templateName);
@@ -280,14 +288,15 @@ public class Greed {
             dependencyModel.put(templateName, indivModel);
 
             // Generate code from templates
-            String code;
+            String output;
             try {
-                CodeByLine codeLines = CodeByLine.fromString(TemplateEngine.render(
+                output = currentEngine.render(
                         FileSystem.getResource(template.getTemplateFile()),
                         mergeModels(sharedModel, indivModel)
-                ));
+                );
 
                 if (template.getTransformers() != null) {
+                    CodeByLine codeLines = CodeByLine.fromString(output);
                     for (String transformerId: template.getTransformers()) {
                         if (codeTransformers.containsKey(transformerId)) {
                             codeLines = codeTransformers.get(transformerId).transform(codeLines);
@@ -298,28 +307,26 @@ public class Greed {
                             talkingWindow.unindent();
                         }
                     }
+                    output = codeLines.toString();
                 }
-
-                code = codeLines.toString();
             } catch (FileNotFoundException e) {
-                talkingWindow.indent();
-                talkingWindow.error("Template file \"" + template.getTemplateFile().getRelativePath() + "\" not found");
-                talkingWindow.unindent();
-                continue;
+                // Fatal error, the existence has been checked before
+                Log.e("Fatal error, cannot find resource " + template.getTemplateFile(), e);
+                throw new IllegalStateException(e);
             }
 
             // Output to self
-            indivModel.put("Output", code);
+            indivModel.put("Output", output);
 
             // Output to model
             if (template.getOutputKey() != null) {
-                sharedModel.put(template.getOutputKey(), code);
+                sharedModel.put(template.getOutputKey(), output);
             }
 
             // Output to file
             if (template.getOutputFile() != null) {
                 String filePath = renderedCodeRoot(config) + "/" +
-                        TemplateEngine.render(template.getOutputFile(), currentModel);
+                        currentEngine.render(template.getOutputFile(), currentModel);
                 String fileFolder = FileSystem.getParentPath(filePath);
                 if (!FileSystem.exists(fileFolder)) {
                     FileSystem.createFolder(fileFolder);
@@ -338,22 +345,30 @@ public class Greed {
                     continue;
                 }
                 if (exists) {
-                    if (FileSystem.compareFileToString(filePath, code)) {
+                    String oldContent;
+                    try {
+                        oldContent = FileSystem.readStream(FileSystem.getResource(new ResourcePath(filePath, false)));
+                    } catch (FileNotFoundException e) {
+                        Log.e("Fatal error, cannot find resource " + filePath, e);
+                        throw new IllegalStateException(e);
+                    }
+
+                    if (oldContent.equals(output)) {
                         talkingWindow.show(" (skipped, identical)");
                     } else {
                         if (overwrite == TemplateConfig.OverwriteOptions.FORCE) {
                             talkingWindow.show(" (force overwrite)");
-                            FileSystem.writeFile(filePath, code);
+                            FileSystem.writeFile(filePath, output);
                         }
                         else {
                             talkingWindow.show(" (backup and overwrite)");
                             FileSystem.backup(filePath); // Backup the old files
-                            FileSystem.writeFile(filePath, code);
+                            FileSystem.writeFile(filePath, output);
                         }
                     }
                 }
                 else {
-                    FileSystem.writeFile(filePath, code);
+                    FileSystem.writeFile(filePath, output);
                 }
 
                 if (template.getAfterFileGen() != null) {
@@ -361,7 +376,7 @@ public class Greed {
                     String[] commands = new String[afterGen.getArguments().length + 1];
                     commands[0] = afterGen.getExecute();
                     for (int i = 1; i < commands.length; ++i) {
-                        commands[i] = TemplateEngine.render(afterGen.getArguments()[i - 1], mergeModels(currentModel, indivModel));
+                        commands[i] = currentEngine.render(afterGen.getArguments()[i - 1], mergeModels(currentModel, indivModel));
                     }
                     long timeout = 1000L * afterGen.getTimeout();
 
@@ -413,7 +428,7 @@ public class Greed {
         GreedConfig config = Utils.getGreedConfig();
         LanguageConfig langConfig = config.getLanguage().get(Language.getName(currentLang));
         String filePath = renderedCodeRoot(config) + "/" +
-                TemplateEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentModel);
+                currentEngine.render(langConfig.getTemplateDef().get(langConfig.getSubmitTemplate()).getOutputFile(), currentModel);
 
         talkingWindow.showLine("Getting source code from " + filePath);
         talkingWindow.indent();

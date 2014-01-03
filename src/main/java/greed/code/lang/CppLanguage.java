@@ -28,6 +28,7 @@ public class CppLanguage extends CStyleLanguage implements LanguageRenderer {
             case BOOL:
                 return "bool";
             case LONG:
+                // TODO: Bad practice, need decoupling
                 return Utils.getGreedConfig().getLanguage().get(Language.getName(Language.CPP)).getLongIntTypeName();
         }
         return "";
