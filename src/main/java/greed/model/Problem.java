@@ -12,7 +12,6 @@ public class Problem {
     private int memoryLimitMB;
     private int timeLimitMillis;
     private ProblemDescription description;
-
     
     private Testcase[] testcases;
     

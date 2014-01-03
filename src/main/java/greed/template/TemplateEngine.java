@@ -36,7 +36,6 @@ public class TemplateEngine {
         return engine.transform(template, model);
     }
 
-
     public static String render(String template, Map<String, Object> model) {
         lazyInit();
         return engine.transform(template, model);
@@ -44,7 +43,7 @@ public class TemplateEngine {
 
     private static String readStream(InputStream stream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String line;
         try {
             while ((line = reader.readLine()) != null) {

@@ -67,7 +67,7 @@ ${<if Options.disableColors}
 ${<end}
     ${if Options.runMultipleProcesses}//${end}#define DISABLE_THREADS
 ${<if Options.singleFile}
-${<DualColorTesterCode}
+${<Dependencies.dualcolor-tester.Output}
 ${<else}
 ${<if Options.customTesterLocation}
     #include "${Options.customTesterLocation}"

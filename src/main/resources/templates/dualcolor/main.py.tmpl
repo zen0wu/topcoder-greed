@@ -42,7 +42,7 @@ def isTestDisabled(i):
 
 #-------------------------------------------------------------------------------
 ${<if Options.singleFile}
-${<DualColorTesterCode}
+${<Dependencies.dualcolor-tester.Output}
 ${<end}
 if __name__ == '__main__':
 ${<if Options.customTesterLocation}

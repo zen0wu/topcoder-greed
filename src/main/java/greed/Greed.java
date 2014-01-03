@@ -308,6 +308,9 @@ public class Greed {
                 continue;
             }
 
+            // Output to self
+            indivModel.put("Output", code);
+
             // Output to model
             if (template.getOutputKey() != null) {
                 sharedModel.put(template.getOutputKey(), code);
