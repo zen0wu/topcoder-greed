@@ -14,4 +14,11 @@ public enum Language {
         if (language == Language.VB) return "vb";
         return null;
     }
+
+    public static Language fromString(String langName) {
+        for (Language lang: Language.values())
+            if (langName.equals(getName(lang)))
+                return lang;
+        return null;
+    }
 }

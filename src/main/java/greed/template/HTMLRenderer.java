@@ -1,5 +1,8 @@
 package greed.template;
 
+import greed.code.LanguageManager;
+import greed.model.Language;
+import greed.model.Method;
 import greed.model.ParamValue;
 import greed.model.Type;
 import greed.util.StringUtil;
@@ -94,10 +97,21 @@ public class HTMLRenderer implements NamedRenderer {
     public String render(Object o, String param, Locale locale) {
         if (o instanceof ParamValue) {
             return renderParamValue( (ParamValue)o, param);
-        } else if (o instanceof String) {
+        }
+        else if (o instanceof String) {
             return stripHTML( (String)o );
         }
-        return "(No HTML renderer support for object: " + o.toString() + ")";
+        else if (o instanceof Type) {
+            return stripHTML(
+                    LanguageManager.getInstance().getRenderer(Language.fromString(param)).renderType((Type) o)
+            );
+        }
+        else if (o instanceof Method) {
+            return stripHTML(
+                    LanguageManager.getInstance().getRenderer(Language.fromString(param)).renderMethod((Method) o)
+            );
+        }
+        return "(No HTML renderer support for type: " + o.getClass().getName() + ")";
     }
 
     @Override
@@ -112,6 +126,6 @@ public class HTMLRenderer implements NamedRenderer {
 
     @Override
     public Class<?>[] getSupportedClasses() {
-        return new Class<?>[]{ ParamValue.class, String.class };
+        return new Class<?>[]{ ParamValue.class, String.class, Type.class, Method.class };
     }
 }

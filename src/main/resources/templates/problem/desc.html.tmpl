@@ -329,20 +329,32 @@
                     <span class='definition-name'>Parameters</span>
                     <span class='definition-value'>
                     ${foreach Method.Params p , }
-                        ${p.Type;seq(#, html)}
+                        ${if Options.forceDefLanguage}
+                            ${p.Type;seq(html($Options.forceDefLanguage))}
+                        ${else}
+                            ${p.Type;seq(#, html)}
+                        ${end}
                     ${end}
                     </span>
                 </li>
                 <li class="definition-line" id='returns-line'>
                     <span class='definition-name'>Returns</span>
                     <span class='definition-value'>
-                        ${Method.ReturnType}
+                        ${if Options.forceDefLanguage}
+                            ${Method.ReturnType;seq(html($Options.forceDefLanguage))}
+                        ${else}
+                            ${Method.ReturnType;seq(#, html)}
+                        ${end}
                     </span>
                 </li>
                 <li class="definition-line" id='signature-line'>
                     <span class='definition-name'>Method signature</span>
                     <span class='definition-value'>
-                        ${Method;seq(#, html)}
+                        ${if Options.forceDefLanguage}
+                            ${Method;seq(html($Options.forceDefLanguage))}
+                        ${else}
+                            ${Method;seq(#, html)}
+                        ${end}
                     </span>
                 </li>
             </ul>

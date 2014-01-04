@@ -44,10 +44,6 @@ public class LanguageManager {
         postTransformerMap.put(Language.JAVA, new JavaPackageRemover());
     }
 
-    public LanguageTrait getTrait(Language language) {
-        return traitMap.get(language);
-    }
-
     public void registerRenderer(Language language, Engine engine) {
         final LanguageRenderer renderer = rendererMap.get(language);
         if (renderer != null) {
@@ -92,7 +88,15 @@ public class LanguageManager {
         }
     }
 
+    public LanguageTrait getTrait(Language language) {
+        return traitMap.get(language);
+    }
+
     public CodeTransformer getPostTransformer(Language language) {
         return postTransformerMap.get(language);
+    }
+
+    public LanguageRenderer getRenderer(Language language) {
+        return rendererMap.get(language);
     }
 }
