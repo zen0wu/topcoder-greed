@@ -9,6 +9,6 @@ body {
     color: white;
 }
 li.testcase .data {
-    /* highlight color (if highlightData is enabled in options) */
+    /* highlight color */
     background: #001930;
 }
