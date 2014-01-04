@@ -199,7 +199,7 @@ public class Greed {
         sharedModel.put("CutEnd", langConfig.getCutEnd());
 
         // Switch language
-        currentEngine = new TemplateEngine(language);
+        currentEngine = TemplateEngine.newLanguageEngine(language);
 
         // Validate template definitions and calculate order
         ArrayList<String> templateOrder;

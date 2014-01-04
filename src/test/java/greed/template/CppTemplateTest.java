@@ -37,7 +37,7 @@ public class CppTemplateTest {
         this.testTemplate = getClass().getResourceAsStream("/templates/test/cpp.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        engine = new TemplateEngine(Language.CPP);
+        engine = TemplateEngine.newLanguageEngine(Language.CPP);
     }
 
     @Test

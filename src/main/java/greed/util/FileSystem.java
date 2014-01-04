@@ -87,7 +87,7 @@ public class FileSystem {
         model.put("GeneratedFileName", name);
         model.put("BackupNumber", num);
         greed.conf.schema.BackupConfig bc = Utils.getGreedConfig().getBackup();
-        String newname = new TemplateEngine().render( bc.getFileName(), model );
+        String newname = TemplateEngine.getBareEngine().render( bc.getFileName(), model );
         File newfile = new File( file.getParentFile(), newname);
         if ( ! newfile.getParentFile().exists() ) {
             newfile.getParentFile().mkdirs();

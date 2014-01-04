@@ -29,7 +29,7 @@ public class ContestCategoryRendererTest {
 
     @Before
     public void setup() {
-        engine = new TemplateEngine(Language.CPP);
+        engine = TemplateEngine.newLanguageEngine(Language.CPP);
     }
 
     @Test

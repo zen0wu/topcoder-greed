@@ -24,7 +24,7 @@ public class HTMLRendererTest {
 
     @Before
     public void setup() {
-        engine = new TemplateEngine(Language.CPP);
+        engine = TemplateEngine.newLanguageEngine(Language.CPP);
     }
 
     static final ParamValue GRID_LIKE_STRING_ARRAY_PARAM =
