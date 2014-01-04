@@ -19,7 +19,7 @@ repositories {
 dependencies {
     compile 'com.typesafe:config:0.5.0'
     compile files('lib/jmte-3.1-mod.jar')
-    // Arena jars from COntestAppletProd.jnlp:
+    // Arena jars from ContestAppletProd.jnlp:
     compile files (
         'lib/arena-client-7.0.8.jar',
         'lib/arena-shared-7.5.1.jar',
