@@ -1,4 +1,14 @@
-body { color: white; background-color: #001B35; }
-.section .section-title { color: white; }
-ol.testcases > li:before { border-color: #88F; color: white; }
-li.testcase .data { background: #001930;  }
+body {
+    /* font color */
+    color: white;
+    /* background color */
+    background-color: #001B35;
+}
+.section .section-title {
+    /* title color */
+    color: white;
+}
+li.testcase .data {
+    /* highlight color (if highlightData is enabled in options) */
+    background: #001930;
+}

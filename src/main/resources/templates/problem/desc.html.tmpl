@@ -15,8 +15,11 @@
     <style type="text/css">
         ${Options.theme;seq(format(Dependencies.problem-desc-theme-%s.Output), reify)}
     </style>
-
+    ${if !Options.noDefaultStyle}
     <style type="text/css">
+        body, ul.constraints > li:before, ul.notes > li:before {
+            font-size: ${Options.fontSize};
+        }
         ${if Options.resizeImages}
         img {
             float: none;
@@ -62,6 +65,7 @@
         }
         ${end}
     </style>
+    ${end}
 
     ${if Options.customStyle}
     <link href="${Options.customStyle}" rel="stylesheet" type="text/css" />

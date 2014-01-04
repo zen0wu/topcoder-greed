@@ -1,7 +1,6 @@
 /* font */
 body, ul.constraints > li:before, ul.notes > li:before {
     font-family: Helvetica, Arial, Verdana, sans-serif;
-    font-size: ;
     line-height: 1.2em;
 }
 ul.constraints > li:before, ul.notes > li:before {
@@ -78,8 +77,6 @@ li.testcase .testcase-comment {
 
 li.testcase .testcase-content {
     margin: 0.31em;
-}
-.testcase-content .variables {
 }
 .variables {
     margin-left: 0.5em;
