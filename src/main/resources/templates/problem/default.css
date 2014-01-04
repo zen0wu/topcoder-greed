@@ -1,7 +1,7 @@
 /* font */
 body, ul.constraints > li:before, ul.notes > li:before {
     font-family: Helvetica, Arial, Verdana, sans-serif;
-    font-size: ${Options.fontSize};
+    font-size: ;
     line-height: 1.2em;
 }
 ul.constraints > li:before, ul.notes > li:before {
@@ -16,10 +16,6 @@ ul.constraints > li:before, ul.notes > li:before {
 .section .section-title {
     font-weight: bold;
     font-size: 125%;
-}
-li.testcase .tag {
-    font-family: Georgia;
-    font-size: 62.5%;
 }
 ol.testcases > li:before {
     font-family: monospace;
@@ -71,39 +67,19 @@ li.testcase {
     padding-bottom: 0.625em;
     overflow: auto;
 }
-li.testcase > .testcase-content > div { padding-bottom: 0.5em; }
-li.testcase .tag {
-    text-align: center;
-    border-radius: 0.5em;
-    padding: 0.2em;
-}
-li.testcase .data {
-    line-height: 1.6em;
-}
+li.testcase > .testcase-content > div { padding-bottom: 0.5em; padding-left: 1em; }
 
 li.testcase .testcase-comment {
     margin: 0;
-    padding-left: 0.31em;
+    padding-left: 0.2em;
 }
 .testcase-comment p:first-child { margin-top: 0; }
 .testcase-comment p:last-child { margin-bottom: 0; }
 
-.testcase-content .testcase-annotation, .testcase-content .testcase-annotation .tag,
-.testcase-content .testcase-output, .testcase-content .testcase-output .tag,
-li.testcase .testcase-no, li.testcase .testcase-content,
-.testcase-content .testcase-input, li.testcase .tag {
-    float: left;
-    clear: both;
-}
 li.testcase .testcase-content {
     margin: 0.31em;
 }
-li.testcase .tag {
-    margin-bottom: 0.5em;
-    min-width: 5em;
-}
 .testcase-content .variables {
-    float: left;
 }
 .variables {
     margin-left: 0.5em;
@@ -127,11 +103,8 @@ li.testcase .tag {
     display: table-cell;
 }
 .testcase-content .testcase-output .value {
-    float: left;
     margin-left: 0.5em;
-}
-.testcase-content .testcase-annotation .testcase-comment {
-    float: left;
+    width: auto;
 }
 ol.testcases {
     padding: 0px;

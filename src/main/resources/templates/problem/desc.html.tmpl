@@ -21,25 +21,21 @@
             body { color: white; background-color: black; }
             .section .section-title { color: white; }
             ol.testcases > li:before { border-color: #181818; color: white; background: #101010; }
-            li.testcase .tag { background: #101010;  color: white; }
             li.testcase .data { background: #050505; }
         ${else}${if Options.colorThemeBlue }
             body { color: white; background-color: #001B35; }
             .section .section-title { color: white; }
             ol.testcases > li:before { border-color: #88F; color: white; }
-            li.testcase .tag { background: #66a; color: white; }
             li.testcase .data { background: #001930;  }
         ${else}${if Options.colorThemeLowContrast }
             body { color: #CCCCCC; background-color: #333333; }
             .section .section-title { color: white; }
             ol.testcases > li:before { border-color: #888; color: #CCCCCC; }
-            li.testcase .tag { background: #161616; color: #EEEEEE }
             li.testcase .data { background: #303030; }
         ${else}
             body { color: #333333; background-color: white; }
             .section .section-title { color: black; }
             ol.testcases > li:before { border-color: #ddd; color: grey; }
-            li.testcase .tag { background: #545454; color: white; }
             li.testcase .data { background: #eee; }
         ${end}${end}${end}
         
@@ -78,7 +74,6 @@
 
         
         ${if !Options.showVariableNames}.variable .name,${end}
-        ${if !Options.showTags}.tag,${end}
         ${if !Options.showDefinition}#definition,${end}
         .hideit {
             visibility: hidden;
@@ -212,7 +207,6 @@
             <li class="testcase">
                 <div class="testcase-content">
                     <div class="testcase-input">
-                        <div class="tag">input</div>
                         <ul class="variables">
                         ${foreach e.Input in}
                             <li class="variable">
@@ -229,18 +223,16 @@
                         </ul>
                     </div>
                     <div class="testcase-output">
-                        <div class="tag">output</div>
-                        <div class="value data">
+                        <span class="value data">
                         ${if Options.gridArrays}
                             ${e.Output;html(grid)}
                         ${else}
                             ${e.Output;html}
                         ${end}
-                        </div>
+                        </span>
                     </div>
                     ${if e.Annotation}
                     <div class="testcase-annotation">
-                        <div class="tag">comment</div>
                         <div class="testcase-comment">${e.Annotation}</div>
                     </div>
                     ${end}

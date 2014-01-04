@@ -39,17 +39,16 @@ public class StringUtilRenderer implements NamedRenderer {
             if ("lower".equals(func)) {
                 result = applyLower(result);
             }
-            else if("upfirst".equals(func)) {
-                // TODO awkward name.
-                result = applyUpfirst(result);
+            else if ("upcasefirst".equals(func)) {
+                result = applyUpcaseFirst(result);
             }
-            else if("removespace".equals(func)) {
+            else if ("removespace".equals(func)) {
                 result = applyRemoveSpace(result);
             }
-            else if("unquote".equals(func)) {
+            else if ("unquote".equals(func)) {
                 result = applyUnquote(result);
             }
-            else if("abbr".equals(func)) {
+            else if ("abbr".equals(func)) {
                 result = applyAbbr(result);
             }
         }
@@ -60,7 +59,7 @@ public class StringUtilRenderer implements NamedRenderer {
         return s.toLowerCase();
     }
 
-    private String applyUpfirst(String s) {
+    private String applyUpcaseFirst(String s) {
         if(s.length() > 0) {
             s = s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
         }
