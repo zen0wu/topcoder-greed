@@ -55,7 +55,7 @@
         
         ${if !Options.showVariableNames}.variable .name,${end}
         ${if !Options.showDefinition}#definition,${end}
-        .hideit {
+        .tag {
             visibility: hidden;
             position: absolute;
         }
@@ -188,6 +188,7 @@
             <li class="testcase">
                 <div class="testcase-content">
                     <div class="testcase-input">
+                        <div class='tag'>input</div>
                         <ul class="variables">
                         ${foreach e.Input in}
                             <li class="variable">
@@ -204,6 +205,7 @@
                         </ul>
                     </div>
                     <div class="testcase-output">
+                        <div class='tag'>output</div>
                         <span class="value data">
                         ${if Options.gridArrays}
                             ${e.Output;html(grid)}
@@ -214,6 +216,7 @@
                     </div>
                     ${if e.Annotation}
                     <div class="testcase-annotation">
+                        <div class='tag'>note</div>
                         <div class="testcase-comment">${e.Annotation}</div>
                     </div>
                     ${end}
