@@ -25,6 +25,7 @@ type {
 }
 li.testcase .data {
     font-family: monospace;
+    line-height: 1.5em;
 }
 
 /* other style */
