@@ -12,7 +12,7 @@ public class FormatRenderer implements NamedRenderer {
 
     @Override
     public String render(Object o, String s, Locale locale) {
-        return String.format(s, o);
+        return String.format(Locale.US, s, o);
     }
 
     @Override
