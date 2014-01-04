@@ -42,7 +42,7 @@ public class Configuration {
     private static final String DEFAULT_USER_CONFIG_FILENAME = "greed.conf";
 
     static GreedConfig loadConfig() throws ConfigException {
-        Config conf = ConfigFactory.load(Configuration.class.getClassLoader(), "default.conf");
+        Config conf = ConfigFactory.parseResources(Configuration.class.getClassLoader(), "default.conf");
 
         if (!Modes.testMode) {
             // User configuration will not be loaded in test mode

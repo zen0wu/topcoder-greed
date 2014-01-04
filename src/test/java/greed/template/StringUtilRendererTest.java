@@ -54,9 +54,9 @@ public class StringUtilRendererTest {
     }
 
     @Test
-    public void testUpFirst() {
+    public void testUpcaseFirst() {
         Map<String, Object> model = createModel("Var", "topcoder");
-        assertEquals("Topcoder", engine.render("${Var;string(upfirst)}", model));
+        assertEquals("Topcoder", engine.render("${Var;string(upcasefirst)}", model));
     }
 
     @Test
