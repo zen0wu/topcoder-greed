@@ -217,26 +217,9 @@
             counter-increment:test_number;
             display: block;
             clear: both;
-            ${if Options.fancyExampleNumber}
-                content:counter(test_number);
-                min-width: 1em;
-                width: 1em;
-                height: 1em;
-                line-height: 1em;
-                padding: 0.5em;
-                margin-bottom: 0.5em;
-                margin-right: 0.625em;
-                border-radius: 100%;
-                font-weight: bold;
-                text-align: center;
-                vertical-align: top;
-                border-style: solid;
-                border-width: 0.125em;
-            ${else}
-                content:counter(test_number) ")";
-                color: inherit;
-                background: inherit;
-            ${end}
+            content:counter(test_number) ")";
+            color: inherit;
+            background: inherit;
         }
         ${if !Options.showVariableNames}.variable .name,${end}
         ${if !Options.showTags}.tag,${end}
