@@ -1,0 +1,188 @@
+/* font */
+body, ul.constraints > li:before, ul.notes > li:before {
+    font-family: Helvetica, Arial, Verdana, sans-serif;
+    font-size: ${Options.fontSize};
+    line-height: 1.2em;
+}
+ul.constraints > li:before, ul.notes > li:before {
+    font-family: monospace;
+    font-weight: normal;
+}
+.heading {
+    font-weight: bold;
+    font-size: 175%;
+    line-height: 1.2em;
+}
+.section .section-title {
+    font-weight: bold;
+    font-size: 125%;
+}
+li.testcase .tag {
+    font-family: Georgia;
+    font-size: 62.5%;
+}
+ol.testcases > li:before {
+    font-family: monospace;
+}
+type {
+    font-weight: bold;
+    font-family: monospace;
+}
+li.testcase .data {
+    font-family: monospace;
+}
+
+/* other style */
+.heading {
+    margin-top: 0.1em;
+    margin-bottom:0.1em;
+    text-align: center;
+}
+.section .section-title {
+    margin-top : 1em;
+    margin-bottom: 1em;
+}
+.problem-intro, note, user-constraint {
+    padding-left: 1.25em;
+}
+
+/* Lists */
+ul.constraints, ul.notes, ul.variables, ul.problem-definition-lines {
+    list-style-type: none;
+    padding: 0px;
+}
+ul.constraints > li:before {
+    content: "-";
+    position:relative;
+    margin-left: 0px; /* optional, for multiline li element */
+    left: 0.625em;
+}
+ul.notes > li:before {
+    content: "-";
+    position:relative;
+    margin-left: 0px; /* optional, for multiline li element */
+    left: 0.625em;
+}
+
+/* Testcases */
+li.testcase {
+    line-height: 1.1em;
+    padding-top: 0.625em;
+    padding-bottom: 0.625em;
+    overflow: auto;
+}
+li.testcase > .testcase-content > div { padding-bottom: 0.5em; }
+li.testcase .tag {
+    text-align: center;
+    border-radius: 0.5em;
+    padding: 0.2em;
+}
+li.testcase .data {
+    line-height: 1.6em;
+}
+
+li.testcase .testcase-comment {
+    margin: 0;
+    padding-left: 0.31em;
+}
+.testcase-comment p:first-child { margin-top: 0; }
+.testcase-comment p:last-child { margin-bottom: 0; }
+
+.testcase-content .testcase-annotation, .testcase-content .testcase-annotation .tag,
+.testcase-content .testcase-output, .testcase-content .testcase-output .tag,
+li.testcase .testcase-no, li.testcase .testcase-content,
+.testcase-content .testcase-input, li.testcase .tag {
+    float: left;
+    clear: both;
+}
+li.testcase .testcase-content {
+    margin: 0.31em;
+}
+li.testcase .tag {
+    margin-bottom: 0.5em;
+    min-width: 5em;
+}
+.testcase-content .variables {
+    float: left;
+}
+.variables {
+    margin-left: 0.5em;
+    display: table;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+.variable {
+    display: table-row;
+}
+.variable .name {
+    font-weight: bold;
+    display: table-cell;
+    text-align: right;
+}
+.variable .name .data:after {
+    font-weight: bold;
+    content : ": ";
+}
+.variable .value {
+    display: table-cell;
+}
+.testcase-content .testcase-output .value {
+    float: left;
+    margin-left: 0.5em;
+}
+.testcase-content .testcase-annotation .testcase-comment {
+    float: left;
+}
+ol.testcases {
+    padding: 0px;
+    counter-reset: test_number -1;
+}
+ol.testcases > li {
+    list-style:none;
+}
+ol.testcases > li:before {
+    counter-increment:test_number;
+    display: block;
+    clear: both;
+    content:counter(test_number) ")";
+    color: inherit;
+    background: inherit;
+}
+
+/* Problem Definition */
+.problem-definition, .problem-limits {
+    padding-left: 1.25em;
+}
+.problem-definition-lines, .limit-lines {
+    display: table;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 0px;
+}
+.definition-line, .limit-line {
+    display: table-row;
+    height: 1.5em;
+    overflow: auto;
+}
+.limit-name:after {
+    content: ":";
+    margin-right: 1em;
+}
+.definition-name, .definition-value, .limit-name, .limit-value {
+    display: table-cell;
+}
+.definition-value {
+    padding-left: 0.5em;
+}
+.definition-name:after {
+    content: ":";
+}
+#contest-division:before {
+    content: "Div ";
+}
+#problem-score:before {
+    content: "- Problem ";
+}
+#problem-name {
+    display: block;
+}
