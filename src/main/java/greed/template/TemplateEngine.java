@@ -32,6 +32,8 @@ public class TemplateEngine {
         engine.registerNamedRenderer(new StringUtilRenderer());
         engine.registerNamedRenderer(new ContestCategoryRenderer());
         engine.registerNamedRenderer(new HTMLRenderer());
+        engine.registerNamedRenderer(new ReifyRenderer());
+        engine.registerNamedRenderer(new FormatRenderer());
         engine.registerNamedRenderer(new SeqRenderer());
     }
 
@@ -53,6 +55,35 @@ public class TemplateEngine {
 
     private String noStackRender(String template) {
         return engine.transform(template, modelStack.peek());
+    }
+
+    /**
+     * Use the input as a key and reify the result by ${key}
+     */
+    private class ReifyRenderer implements NamedRenderer {
+
+        @Override
+        public String render(Object o, String s, Locale locale) {
+            if (o instanceof String) {
+                return TemplateEngine.this.noStackRender("${" + o + "}");
+            }
+            throw new IllegalArgumentException("ReifyRenderer only accepts strings");
+        }
+
+        @Override
+        public String getName() {
+            return "reify";
+        }
+
+        @Override
+        public RenderFormatInfo getFormatInfo() {
+            return null;
+        }
+
+        @Override
+        public Class<?>[] getSupportedClasses() {
+            return new Class<?> [] { String.class };
+        }
     }
 
     /**

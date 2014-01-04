@@ -2,52 +2,30 @@
 
 <html>
 <head>
+    <meta charset="utf-8" />
     <title>TopCoder ${Contest.Name} - ${Problem.Score}: ${Problem.Name}</title>
     ${if Options.favIcon}
-        <link type="image/x-icon" rel="shortcut icon" href="${Options.favIcon}"/>
+    <link type="image/x-icon" rel="shortcut icon" href="${Options.favIcon}"/>
     ${end}
-    <meta charset="utf-8" />
 
     <style type="text/css">
         ${Dependencies.problem-desc-styles.Output}
     </style>
 
-    ${if Options.customStyleSheet}
-    <link href="${Options.customStyleSheet}" rel="stylesheet" type="text/css" />
-    ${else}
     <style type="text/css">
-        /* color scheme */
-        ${if Options.colorThemeBlack }
-            body { color: white; background-color: black; }
-            .section .section-title { color: white; }
-            ol.testcases > li:before { border-color: #181818; color: white; background: #101010; }
-            li.testcase .data { background: #050505; }
-        ${else}${if Options.colorThemeBlue }
-            body { color: white; background-color: #001B35; }
-            .section .section-title { color: white; }
-            ol.testcases > li:before { border-color: #88F; color: white; }
-            li.testcase .data { background: #001930;  }
-        ${else}${if Options.colorThemeLowContrast }
-            body { color: #CCCCCC; background-color: #333333; }
-            .section .section-title { color: white; }
-            ol.testcases > li:before { border-color: #888; color: #CCCCCC; }
-            li.testcase .data { background: #303030; }
-        ${else}
-            body { color: #333333; background-color: white; }
-            .section .section-title { color: black; }
-            ol.testcases > li:before { border-color: #ddd; color: grey; }
-            li.testcase .data { background: #eee; }
-        ${end}${end}${end}
-        
+        ${Options.theme;seq(format(Dependencies.problem-desc-theme-%s.Output), reify)}
+    </style>
+
+    <style type="text/css">
         ${if Options.resizeImages}
-            img {
-                float: none;
-                display: block;
-                width: ${Options.resizeImages};
-                height: auto;
-                margin: 0.615em;
-                border: 0px solid #ccc;
-            }
+        img {
+            float: none;
+            display: block;
+            width: ${Options.resizeImages};
+            height: auto;
+            margin: 0.615em;
+            border: 0px solid #ccc;
+        }
         ${end}
 
         ${if Options.showVariableNames}
@@ -71,7 +49,6 @@
             background: inherit !important;
         }
         ${end}
-
         
         ${if !Options.showVariableNames}.variable .name,${end}
         ${if !Options.showDefinition}#definition,${end}
@@ -85,14 +62,14 @@
         }
         ${end}
     </style>
+
+    ${if Options.customStyle}
+    <link href="${Options.customStyle}" rel="stylesheet" type="text/css" />
     ${end}
 
 </head>
 
 <body>
-    <!--<h1 class="heading">
-        ${if Contest.Div}Div${Contest.Div} ${end}${Problem.Score}: ${Problem.Name}
-    </h1>-->
     <h1 class="heading">
         <span id='contest-name'>${Contest.Name}</span>
         ${if Contest.Div}<span id='contest-division'>${Contest.Div}</span>${end}
@@ -167,7 +144,7 @@
             <ul class="limit-lines">
                 <li class='limit-line'>
                     <span class='limit-name'>Time limit (s)</span>
-                    <span class='limit-value'>${Problem.TimeLimitSeconds}</span>
+                    <span class='limit-value'>${Problem.TimeLimitSeconds;format(%.3f)}</span>
                 </li>
                 <li class='limit-line'>
                     <span class='limit-name'>Memory limit (MB)</span>

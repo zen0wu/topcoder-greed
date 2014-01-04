@@ -1,0 +1,4 @@
+body { color: #333333; background-color: white; }
+.section .section-title { color: black; }
+ol.testcases > li:before { border-color: #ddd; color: grey; }
+li.testcase .data { background: #eee; }
