@@ -82,19 +82,10 @@ li.testcase .testcase-content {
 }
 
 /* Data and variables */
-.variable .name .data {
-    padding: 0.2em 0em 0.2em 1em;
+.testcase-output {
+    padding: 0.2em 1em 0.2em 0em;
 }
-.variable .value .data {
-    padding: 0.2em 1em 0.2em 0.5em;
-}
-.testcase-output .data {
-    padding: 0.2em 1em 0.2em 1em;
-}
-.testcase-output .value:before {
-    content: "Returns: ";
-}
-.variables {
+.variables, .testcase-output {
     margin-left: 0.5em;
     display: table;
     margin-bottom: 0px;
@@ -104,20 +95,27 @@ li.testcase .testcase-content {
     display: table-row;
 }
 .variable .name {
+    padding: 0.2em 0em 0.2em 1em;
     font-weight: bold;
     display: table-cell;
     text-align: right;
 }
-.variable .name .data:after {
-    font-weight: bold;
-    content : ": ";
-}
-.variable .value {
+.testcase-output .prefix {
+    padding: 0.2em 0em 0.2em 1em;
     display: table-cell;
 }
-.testcase-content .testcase-output .value {
-    margin-left: 0.5em;
-    width: auto;
+.testcase-output .prefix:after {
+    content : ":";
+    padding-right: 0.5em;
+}
+.variable .name:after {
+    font-weight: bold;
+    content : ":";
+    padding-right: 0.5em;
+}
+.variable .value, .testcase-output .value {
+    padding: 0.2em 1em 0.2em 0em;
+    display: table-cell;
 }
 ol.testcases {
     padding: 0px;
