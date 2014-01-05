@@ -8,65 +8,13 @@
     <link type="image/x-icon" rel="shortcut icon" href="${Options.favIcon}"/>
     ${end}
 
-    <style type="text/css">
-        ${Dependencies.problem-desc-styles.Output}
-    </style>
-
-    <style type="text/css">
-        ${Options.theme;seq(format(Dependencies.problem-desc-theme-%s.Output), reify)}
-    </style>
     ${if !Options.noDefaultStyle}
     <style type="text/css">
-        body, ul.constraints > li:before, ul.notes > li:before {
-            font-size: ${Options.fontSize};
-        }
-        ${if Options.resizeImages}
-        img {
-            float: none;
-            display: block;
-            width: ${Options.resizeImages};
-            height: auto;
-            margin: 0.615em;
-            border: 0px solid #ccc;
-        }
-        ${end}
-
-        ${if Options.showVariableNames}
-        .variable .name .data {
-            border-top-left-radius: 0.5em;
-            border-bottom-left-radius: 0.5em;
-            padding: 0.2em 0em 0.2em 1em;
-        }
-        .variable .value .data {
-            border-top-right-radius: 0.5em;
-            border-bottom-right-radius: 0.5em;
-            padding: 0.2em 1em 0.2em 0.5em;
-        }
-        ${else}.variable .value .data, ${end}
-        .testcase-output .data {
-            border-radius: 0.5em;
-            padding: 0.2em 1em 0.2em 1em;
-        }
-        ${if !Options.highlightData}
-        .data {
-            background: inherit !important;
-        }
-        ${end}
-        
-        ${if !Options.showVariableNames}.variable .name,${end}
-        ${if !Options.showDefinition}#definition,${end}
-        .tag {
-            visibility: hidden;
-            position: absolute;
-        }
-        ${if Options.outputPrefix}
-        .testcase-output .value:before {
-            content: "${Options.outputPrefix}";
-        }
-        ${end}
+        ${Dependencies.problem-desc-styles.Output}
+        ${Options.theme;seq(format(Dependencies.problem-desc-theme-%s.Output), reify)}
     </style>
     ${end}
-
+    
     ${if Options.customStyle}
     <link href="${Options.customStyle}" rel="stylesheet" type="text/css" />
     ${end}
@@ -92,6 +40,7 @@
     </div>
     
     <!-- Problem definition -->
+    ${if Options.showDefinition}
     <div class="section" id="definition">
         <h2 class="section-title">Definition</h2>
         <div class="problem-definition">
@@ -108,38 +57,27 @@
                     <span class='definition-name'>Parameters</span>
                     <span class='definition-value'>
                     ${foreach Method.Params p , }
-                        ${if Options.forceDefLanguage}
-                            ${p.Type;seq(html($Options.forceDefLanguage))}
-                        ${else}
-                            ${p.Type;seq(#, html)}
-                        ${end}
+                        ${p.Type;seq(html($Options.showDefinition))}
                     ${end}
                     </span>
                 </li>
                 <li class="definition-line" id='returns-line'>
                     <span class='definition-name'>Returns</span>
                     <span class='definition-value'>
-                        ${if Options.forceDefLanguage}
-                            ${Method.ReturnType;seq(html($Options.forceDefLanguage))}
-                        ${else}
-                            ${Method.ReturnType;seq(#, html)}
-                        ${end}
+                        ${Method.ReturnType;seq(html($Options.showDefinition))}
                     </span>
                 </li>
                 <li class="definition-line" id='signature-line'>
                     <span class='definition-name'>Method signature</span>
                     <span class='definition-value'>
-                        ${if Options.forceDefLanguage}
-                            ${Method;seq(html($Options.forceDefLanguage))}
-                        ${else}
-                            ${Method;seq(#, html)}
-                        ${end}
+                        ${Method;seq(html($Options.showDefinition))}
                     </span>
                 </li>
             </ul>
             <div class="problem-definition-public-tip">(be sure your method is public)</div>
         </div>        
     </div>
+    ${end}
 
     <!-- Limits -->
     <div class="section">
