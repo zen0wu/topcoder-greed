@@ -9,6 +9,9 @@ import greed.code.LanguageTrait;
  * Greed is good! Cheers!
  */
 public class Convert {
+    private static final int DUMMY_TIME_LIMIT   = 840000;
+    private static final int DEFAULT_TIME_LIMIT = 2000;
+    
     public static Contest convertContest(com.topcoder.client.contestant.ProblemComponentModel problem) {
         String fullName = problem.getProblem().getRound().getContestName();
         boolean hasDivision = fullName.contains("DIV");
@@ -109,6 +112,9 @@ public class Convert {
 
         int memoryLimitMB = problem.getComponent().getMemLimitMB();
         int timeLimitMillis = problem.getComponent().getExecutionTimeLimit();
+        if (timeLimitMillis >= DUMMY_TIME_LIMIT) {
+            timeLimitMillis = DEFAULT_TIME_LIMIT;
+        }
 
         return new Problem(
                 problem.getProblem().getName(),
