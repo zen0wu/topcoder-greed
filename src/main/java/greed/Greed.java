@@ -229,7 +229,11 @@ public class Greed {
                     for (Dependency dep: templateConfig.getDependencies()) {
                         if (dep instanceof TemplateDependency) {
                             String depTemplate = ((TemplateDependency)dep).getTemplate();
-                            if (!templateSet.contains(depTemplate)) {
+                            if (!langConfig.getTemplateDef().containsKey(depTemplate)) {
+                                talkingWindow.error(String.format("Unknown template [%s], required by [%s] (halted)", depTemplate, template));
+                                return;
+                            }
+                            else if (!templateSet.contains(depTemplate)) {
                                 templateSet.add(depTemplate);
                                 templates.add(depTemplate);
                             }

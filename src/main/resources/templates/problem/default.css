@@ -72,13 +72,27 @@ li.testcase > .testcase-content > div { padding-bottom: 0.5em; padding-left: 1em
 
 li.testcase .testcase-comment {
     margin: 0;
-    padding-left: 0.2em;
+    padding-left: 1em;
 }
 .testcase-comment p:first-child { margin-top: 0; }
 .testcase-comment p:last-child { margin-bottom: 0; }
 
 li.testcase .testcase-content {
     margin: 0.31em;
+}
+
+/* Data and variables */
+.variable .name .data {
+    padding: 0.2em 0em 0.2em 1em;
+}
+.variable .value .data {
+    padding: 0.2em 1em 0.2em 0.5em;
+}
+.testcase-output .data {
+    padding: 0.2em 1em 0.2em 1em;
+}
+.testcase-output .value:before {
+    content: "Returns: ";
 }
 .variables {
     margin-left: 0.5em;
@@ -159,25 +173,8 @@ ol.testcases > li:before {
     display: block;
 }
 
-.variable .name .data {
-    border-top-left-radius: 0.5em;
-    border-bottom-left-radius: 0.5em;
-    padding: 0.2em 0em 0.2em 1em;
-}
-.variable .value .data {
-    border-top-right-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
-    padding: 0.2em 1em 0.2em 0.5em;
-}
-.testcase-output .data {
-    border-radius: 0.5em;
-    padding: 0.2em 1em 0.2em 1em;
-}
-.testcase-output .value:before {
-    content: "Returns: ";
-}
+/* Tags, hidden default */
 .tag {
     visibility: hidden;
     position: absolute;
 }
-

@@ -1,6 +1,6 @@
 body {
     /* font color */
-    color: #f0f0f0;
+    color: #d9d9d9;
     /* background color */
     background-color: #0c0c0c;
 }
@@ -10,5 +10,5 @@ body {
 }
 li.testcase .data {
     /* highlight color */
-    background: #141414;
+    background: #191919;
 }
