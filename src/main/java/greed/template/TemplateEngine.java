@@ -90,8 +90,6 @@ public class TemplateEngine {
      * A seq renderer inside each engine, allowing engine transforming iteration
      */
     private class SeqRenderer implements NamedRenderer {
-        private Random random = new Random(System.currentTimeMillis());
-
         @Override
         public String render(Object o, String args, Locale locale) {
             if (args == null || "".equals(args)) {
@@ -127,7 +125,7 @@ public class TemplateEngine {
                 // The way to achieve this is to generate a random key, bind the current object to that key,
                 // then call the engine with the generated key
                 Map<String, Object> model = new HashMap<String, Object>(TemplateEngine.this.modelStack.peek());
-                String key = randomKey();
+                String key = UUID.randomUUID().toString();
                 model.put(key, iter == null ? o : iter);
                 iter = TemplateEngine.this.render("${" + key + renderer + "}", model);
             }
@@ -162,10 +160,6 @@ public class TemplateEngine {
             if (current.length() > 0)
                 parsed.add(current.toString());
             return parsed.toArray(new String[parsed.size()]);
-        }
-
-        private String randomKey() {
-            return "KEY" + random.nextLong();
         }
 
         @Override
