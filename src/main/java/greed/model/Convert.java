@@ -71,7 +71,7 @@ public class Convert {
     {
         // TopCoder's toXML() has the bad habit of doubly stripping entites.
         // For example, &gt; becomes &amp;gt;
-        String s = tcXML.replaceAll("&amp;(lt|gt|amp|quot|apos);", "&$1;");
+        String s = tcXML.replaceAll("&amp;((#[0-9]+)|([a-zA-Z]+));", "&$1;");
         
         // We need to replace <br></br> with <br />. This fixes the 
         // double line break issue that happens in some problem statements. 
