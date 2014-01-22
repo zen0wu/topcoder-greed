@@ -1,0 +1,35 @@
+import unittest
+from ${ClassName} import ${ClassName}
+
+
+class ${ClassName}Test(unittest.TestCase):
+${<foreach Examples e}
+
+    def test_Example${e.Num}(self):
+${<foreach e.Input in}
+${<if !in.Param.Type.Array}
+        ${in.Param.Name} = ${in}
+${<else}
+        ${in.Param.Name} = [${foreach in.ValueList v ,}
+            ${v}${end}
+        ]
+${<end}
+${<end}
+${<if !e.Output.Param.Type.Array}
+        __expected = ${e.Output}
+${<else}
+        __expected = [${foreach e.Output.ValueList v ,}
+            ${v}${end}
+        ]
+${<end}
+        __result = ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end})
+${<if !Method.ReturnType.RealNumber}
+        self.assertEqual(__expected, __result)
+${<else}
+        self.assertAlmostEqual(__expected, __result, delta=1e-9)
+${<end}
+${<end}
+
+
+if __name__ == '__main__':
+    unittest.main()
