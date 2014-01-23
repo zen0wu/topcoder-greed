@@ -93,8 +93,8 @@ The default templates for each language are `[filetest, source, problem-desc]`.
 #### Unit test
 
 Another official template is `unittest`, but disabled by default.
-This kind of template generates unit test code leveraging UT framework like `junit` for Java and `nunit` for C#.
-To use it, set as the following (only available for Java and C#):
+This kind of template generates unit test code leveraging UT framework like `junit` for Java, `nunit` for C#, and `unittest` for Python.
+To use it, set as the following (available for Java, C#, and Python):
 
 ```
 greed.language.<lang>.templates = [source, unittest, problem-desc]
