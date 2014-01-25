@@ -1,13 +1,30 @@
+using System;
 using NUnit.Framework;
 
 [TestFixture]
 public class ${ClassName}Test
 {
 ${<if Method.ReturnType.RealNumber}
-	[SetUp]
-	public void Setup()
+	class TcDoubleEqualityComparer : System.Collections.Generic.IEqualityComparer<double>
 	{
-		GlobalSettings.DefaultFloatingPointTolerance = 1e-9;
+		public bool Equals(double x, double y)
+		{
+			double eps = 1e-9;
+			return
+				!double.IsNaN(x) && !double.IsNaN(y)
+				&& Math.Abs(x - y) <= eps*Math.Max(1.0, Math.Min(Math.Abs(x), Math.Abs(y)));
+		}
+
+		public int GetHashCode(double obj)
+		{
+			// Not relevant
+			throw new NotImplementedException();
+		}
+	}
+
+	private static void AssertTcEqualTo<T>(T expected, T actual)
+	{
+		Assert.That(actual, Is.EqualTo(expected).Using(new TcDoubleEqualityComparer()));
 	}
 
 ${<end}
@@ -32,7 +49,11 @@ ${<else}
 		};
 ${<end}
 		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
+${<if Method.ReturnType.RealNumber}
+		AssertTcEqualTo(__expected, __result);
+${<else}
 		Assert.AreEqual(__expected, __result);
+${<end}
 	}
 
 ${<end}
