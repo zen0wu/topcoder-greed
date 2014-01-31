@@ -1,7 +1,28 @@
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 
 public class ${ClassName}Test {
+${<if Method.ReturnType.RealNumber}
+
+	static void assertTcFloatEquals(double expected, double actual) {
+		double eps = 1e-9;
+		if (Double.isNaN(expected) || Double.isNaN(actual)
+		    || Math.abs(expected - actual) > eps * Math.max(1.0, Math.abs(expected))) {
+			throw new ComparisonFailure(null, String.valueOf(expected), String.valueOf(actual));
+		}
+	}
+
+${<if Method.ReturnType.Array}
+	static void assertTcFloatArrayEquals(double[] expected, double[] actual) {
+		new org.junit.internal.ComparisonCriteria() {
+			@Override
+			protected void assertElementsEqual(Object expected, Object actual) {
+				assertTcFloatEquals((Double) expected, (Double) actual);
+			}
+		}.arrayEquals(null, expected, actual);
+	}
+
+${<end}
+${<end}
 ${<foreach Examples e}
 	@Test
 	public void example${e.Num}()
@@ -24,14 +45,18 @@ ${<else}
 ${<end}
 	
 		${Method.ReturnType} __result = new ${ClassName}().${Method.Name}(${foreach e.Input in , }${in.Param.Name}${end});
-		
-${<if Method.ReturnType.RealNumber}
-		Assert.assertEquals(__expected, __result, 1e-9);
-${<else}
-${<if ReturnsArray}
+
+${<if !Method.ReturnType.RealNumber}
+${<if Method.ReturnType.Array}
 		Assert.assertArrayEquals(__expected, __result);
 ${<else}
 		Assert.assertEquals(__expected, __result);
+${<end}
+${<else}
+${<if Method.ReturnType.Array}
+		assertTcFloatArrayEquals(__expected, __result);
+${<else}
+		assertTcFloatEquals(__expected, __result);
 ${<end}
 ${<end}
 	}

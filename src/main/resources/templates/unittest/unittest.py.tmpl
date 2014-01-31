@@ -1,8 +1,26 @@
 import unittest
+import math
 from ${ClassName} import ${ClassName}
 
 
 class ${ClassName}Test(unittest.TestCase):
+${<if Method.ReturnType.RealNumber}
+
+    def assertTcFloatEqual(self, expected, received, msg=None):
+        eps = 1e-9
+        if math.isnan(received) or math.isnan(expected) \\
+           or abs(received - expected) > eps * max(1.0, abs(expected)):
+            msg = self._formatMessage(msg, "%s != %s" % (expected, received))
+            raise self.failureException(msg)
+${<if Method.ReturnType.Array}
+
+    def assertTcFloatListEqual(self, expected, received):
+        if len(expected) != len(received):
+            raise self.failureException("%s != %s (different length)" % (expected, received))
+        for i, (f1, f2) in enumerate(zip(expected, received)):
+            self.assertTcFloatEqual(f1, f2, "%s != %s at index %s" % (expected, received, i))
+${<end}
+${<end}
 ${<foreach Examples e}
 
     def test_Example${e.Num}(self):
@@ -26,7 +44,11 @@ ${<end}
 ${<if !Method.ReturnType.RealNumber}
         self.assertEqual(__expected, __result)
 ${<else}
-        self.assertAlmostEqual(__expected, __result, delta=1e-9)
+${<if Method.ReturnType.Array}
+        self.assertTcFloatListEqual(__expected, __result)
+${<else}
+        self.assertTcFloatEqual(__expected, __result)
+${<end}
 ${<end}
 ${<end}
 
