@@ -19,4 +19,13 @@ public class Contest {
     public Integer getDiv() {
         return div;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        if (div != null)
+            sb.append(" Div ").append(div);
+        return sb.toString();
+    }
 }

@@ -88,7 +88,7 @@ public class ContestCategoryRendererTest {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
             assertEquals(entry.getValue(), engine.render(TEMPLATE_SRC, model));
         }
-        
+
         TEMPLATE_SRC = "${Contest;category(tco-text=TopCoder Open,tchs-text=Highschool)}";
 
         cases = new HashMap<String, String>();
@@ -104,7 +104,7 @@ public class ContestCategoryRendererTest {
         }
 
     }
-    
+
     @Test
     public void testContestCategoryAdvanced() {
         assertEquals("SRM 0-99", engine.render(
@@ -126,6 +126,18 @@ public class ContestCategoryRendererTest {
         assertEquals("499", engine.render(
             "${Contest;category(srm=1,no-space,srm-text=)}",
             createModel("Contest", "SRM 499", 1))
+        );
+        assertEquals("SRM 600", engine.render(
+            "${Contest;category(srm=1)}",
+            createModel("Contest", "SRM 600", 1))
+        );
+        assertEquals("SRM 600.5", engine.render(
+            "${Contest;category(srm=1)}",
+            createModel("Contest", "SRM 600.5", 1))
+        );
+        assertEquals("SRM 600-601", engine.render(
+            "${Contest;category(srm=2)}",
+            createModel("Contest", "SRM 600.5 Div 1", 1))
         );
     }
 

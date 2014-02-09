@@ -23,7 +23,7 @@ import com.floreysoft.jmte.RenderFormatInfo;
  *      Allows to rename the other categories.
  * <li> "no-space" : Remove space, currently the space between "SRM" and "A-B".
  * <li> Combining arguments example:
- *      "srm=25,no-space,srm-text=SingleRound Match,other-text=other matches" 
+ *      "srm=25,no-space,srm-text=SingleRound Match,other-text=other matches"
  * <li> TODO "tco=X": Separates TCO problems by year. When X = 1, "TCO 2012",
  *                "TCO 2013", etc. When X = 4, "TCO 2010-2014", etc.
  * <li> TODO "tccc=X", same as TCO.
@@ -46,21 +46,21 @@ public class ContestCategoryRenderer implements NamedRenderer {
         text.put( CATEGORY.TCCC , "TCCC"  );
         text.put( CATEGORY.TCHS , "TCHS"  );
         text.put( CATEGORY.OTHER, "Other" );
-        String[] namePar = new String[] { 
+        String[] namePar = new String[] {
             "srm-text=",
             "tco-text=",
-            "tccc-text=", 
+            "tccc-text=",
             "tchs-text=",
             "other-text="
         };
-        CATEGORY[] nameParCat = new CATEGORY[] { 
+        CATEGORY[] nameParCat = new CATEGORY[] {
             CATEGORY.SRM,
             CATEGORY.TCO,
-            CATEGORY.TCCC, 
+            CATEGORY.TCCC,
             CATEGORY.TCHS,
             CATEGORY.OTHER,
         };
-        
+
         int srmSeparate = -1;
         String space = " ";
         if (param != null) {
@@ -70,7 +70,7 @@ public class ContestCategoryRenderer implements NamedRenderer {
                     srmSeparate = 25;
                     try {
                         String s = par.substring("srm=".length());
-                        srmSeparate = Integer.parseInt(s); 
+                        srmSeparate = Integer.parseInt(s);
                     } catch (NumberFormatException nfe) {
                     }
                 } else if (par.equals("no-space")) {
@@ -93,21 +93,22 @@ public class ContestCategoryRenderer implements NamedRenderer {
         } else if (result.contains("TCCC")) {
             result = text.get( CATEGORY.TCCC );
         } else {
-            String pattern = "(?i).*(SRM|(single\\s*round\\s*match))\\s*(\\d+).*";
+            String pattern = "(?i).*(SRM|(single\\s*round\\s*match))\\s*((\\d+)(\\.\\d+)?).*";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(result);
             if (m.find()) {
-                int n = 0;
+                int matchNo = 0; // only the integer part (600 for SRM 600.5)
+                String matchNumber = m.group(3); // as-is (600.5 for SRM 600.5)
                 try {
-                    n = Integer.parseInt(m.group(3));
-                } catch (NumberFormatException nfe) {
-                }
+                    matchNo = Integer.parseInt(m.group(4));
+                } catch (NumberFormatException nfe) { }
                 if (srmSeparate <= 0) {
                     result = text.get( CATEGORY.SRM );
                 } else if (srmSeparate == 1) {
-                    result = text.get( CATEGORY.SRM ) + space + n;
+                    // for the special case of (srm=1), preserve the fractional part
+                    result = text.get( CATEGORY.SRM ) + space + matchNumber;
                 } else {
-                    int a = n - n % srmSeparate;
+                    int a = matchNo - matchNo % srmSeparate;
                     int b = a + srmSeparate - 1;
                     result = text.get( CATEGORY.SRM ) + space + a + "-" + b;
                 }
