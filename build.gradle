@@ -21,8 +21,8 @@ dependencies {
     compile files('lib/jmte-3.1-mod.jar')
     // Arena jars from ContestAppletProd.jnlp:
     compile files (
-        'lib/arena-client-7.0.8.jar',
-        'lib/arena-shared-7.5.1.jar',
+        'lib/arena-client-7.1.0.jar',
+        'lib/arena-shared-7.5.3.jar',
         'lib/custom-serialization-1.1.0.jar'
     ), {
         ext { fatJarExclude = true }
