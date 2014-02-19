@@ -111,7 +111,13 @@ public class Convert {
             constraints[i] = commonTCXMLFixes(problem.getConstraints()[i].toXML());
 
         int memoryLimitMB = problem.getComponent().getMemLimitMB();
-        int timeLimitMillis = problem.getComponent().getExecutionTimeLimit();
+        int timeLimitMillis;
+        try {
+            timeLimitMillis = problem.getComponent().getExecutionTimeLimit();
+        } catch (Throwable e) {
+            greed.util.Log.e("getExecutionTimeLimit() method not found. Using default time limit.");
+            timeLimitMillis = DEFAULT_TIME_LIMIT;
+        }
         if (timeLimitMillis >= DUMMY_TIME_LIMIT) {
             timeLimitMillis = DEFAULT_TIME_LIMIT;
         }
