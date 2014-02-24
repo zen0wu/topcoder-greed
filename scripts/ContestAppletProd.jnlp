@@ -12,15 +12,15 @@
    </security>
    <resources> 
       <j2se version="1.4+" max-heap-size="128m"/> 
-      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-client-7.0.8.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-client-7.1.0.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/basic_type_serialization-1.0.1.jar" />
-      <jar href="http://www.topcoder.com/contest/classes/7.0/client-socket-1.1.0.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/client-socket-1.1.1.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/concurrent-1.0.2.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/encoder-1.0.0.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/logging-1.1.0.jar" />
-      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-shared-7.5.1.jar" />
-      <jar href="http://www.topcoder.com/contest/classes/7.0/client-common-1.1.0.jar" />
-      <jar href="http://www.topcoder.com/contest/classes/7.0/compeng-common-1.1.1.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/arena-shared-7.5.3.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/client-common-1.2.0.jar" />
+      <jar href="http://www.topcoder.com/contest/classes/7.0/compeng-common-1.2.0.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/custom-serialization-1.1.0.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/http-tunnel-client-1.1.0.jar" />
       <jar href="http://www.topcoder.com/contest/classes/7.0/log4j-1.2.13.jar" />
