@@ -61,7 +61,7 @@ Things you can do with this config,
 ### greed.codeRoot
 
 Change where your code is stored, via `greed.codeRoot = ???`, this path is relative to your workspace root.
-Default set to `.`, which means workspace root.
+Default set to `${Contest.Name}`, which means a folder with the name of the current contest under your workspace root.
 
 ### greed.language.\<lang\>
 
