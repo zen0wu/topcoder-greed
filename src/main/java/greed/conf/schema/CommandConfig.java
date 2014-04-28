@@ -12,8 +12,8 @@ public class CommandConfig {
     @Required
     private String execute;
 
-    @Required
-    private String[] arguments;
+    @Optional
+    private String[] arguments = new String[0];
 
     @Optional
     private int timeout = -1;
