@@ -65,7 +65,7 @@ ${<end}
 
 ${<if Method.ReturnType.RealNumber}
 	static bool DoubleEquals(double a, double b) {
-		return Math.Abs(a - b) < 1e-9 || Math.Abs(a) > Math.Abs(b) * (1.0 - 1e-9) && Math.Abs(a) < Math.Abs(b) * (1.0 + 1e-9);
+		return !Double.IsNaN(a) && !Double.IsNaN(b) && Math.Abs(b - a) <= 1e-9 * Math.Max(1.0, Math.Abs(a));
 	}
 
 ${<end}
