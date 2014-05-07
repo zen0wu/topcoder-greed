@@ -2,10 +2,8 @@ package greed.template;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import greed.model.Language;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Type;
+
+import greed.model.*;
 
 import java.util.HashMap;
 
@@ -24,11 +22,11 @@ public class HTMLRendererTest {
 
     @Before
     public void setup() {
-        engine = TemplateEngine.newLanguageEngine(Language.CPP);
+        engine = TemplateEngineFactory.newLanguageEngine(Language.CPP);
     }
 
     static final ParamValue GRID_LIKE_STRING_ARRAY_PARAM =
-            new ParamValue(
+            new ParamValueList(
                     new Param("gridParam", Type.STRING_ARRAY_TYPE, 0),
                     new String[] { "####", "#..#", "#..#", "####" }
                 );
@@ -66,7 +64,7 @@ public class HTMLRendererTest {
         System.out.println(result);
         assertThat(result, equalTo("&quot;quoted&quot;"));
 
-        model.put("gridParam", new ParamValue(
+        model.put("gridParam", new ParamValueList(
                     new Param("gridParam", Type.STRING_ARRAY_TYPE, 1),
                     new String[] {"\"\"", ".."}
                     )

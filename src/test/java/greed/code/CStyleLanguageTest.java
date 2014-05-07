@@ -21,7 +21,7 @@ public class CStyleLanguageTest {
         sb.append("\"Abcde\"\n, \"12345\", \n\n\n");
         sb.append("\"Hello\"\n");
         sb.append(", \"world\"    }");
-        String[] parsedValueList = trait.parseValue(sb.toString(), new Param("arg", Type.STRING_ARRAY_TYPE, 0)).getValueList();
+        String[] parsedValueList = trait.parseValue(sb.toString(), new Param("arg", Type.STRING_ARRAY_TYPE, 0)).getStrings();
         for (String pv : parsedValueList)
             System.out.println(pv);
         Assert.assertArrayEquals("Parsed value is " + Arrays.toString(parsedValueList), parsedValueList,
@@ -34,10 +34,10 @@ public class CStyleLanguageTest {
         StringBuilder sb = new StringBuilder();
         sb.append("{123,    ");
         sb.append("\n123\n,125,999,\n\n12\n,123\n    } \n");
-        String[] parsedValueList = trait.parseValue(sb.toString(), new Param("arg", Type.LONG_ARRAY_TYPE, 0)).getValueList();
+        String[] parsedValueList = trait.parseValue(sb.toString(), new Param("arg", Type.LONG_ARRAY_TYPE, 0)).getStrings();
         for (String pv : parsedValueList)
             System.out.println(pv);
         Assert.assertArrayEquals("Parsed value is " + Arrays.toString(parsedValueList), parsedValueList,
-                new String[]{"123LL", "123LL", "125LL", "999LL", "12LL", "123LL"});
+                new String[]{"123", "123", "125", "999", "12", "123"});
     }
 }

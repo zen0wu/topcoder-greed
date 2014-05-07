@@ -36,7 +36,7 @@ public class PythonTemplateTest {
         this.testTemplate = getClass().getResourceAsStream("/templates/test/py.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        engine = TemplateEngine.newLanguageEngine(Language.PYTHON);
+        engine = TemplateEngineFactory.newLanguageEngine(Language.PYTHON);
     }
 
     @Test
