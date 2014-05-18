@@ -11,11 +11,12 @@ public class Problem {
     private Method method;
     private int memoryLimitMB;
     private int timeLimitMillis;
-    private ProblemDescription description;
+    private boolean hasCustomChecker;
+    private ProblemDescription description;    
     
     private Testcase[] testcases;
     
-    public Problem(String name, int score, String className, int memoryLimitMB, int timeLimitMillis, Method method, Testcase[] testcases, ProblemDescription description) {
+    public Problem(String name, int score, String className, int memoryLimitMB, int timeLimitMillis, boolean hasCustomChecker, Method method, Testcase[] testcases, ProblemDescription description) {
         this.name = name;
         this.score = score;
         this.className = className;
@@ -24,6 +25,7 @@ public class Problem {
         this.description = description;
         this.memoryLimitMB = memoryLimitMB;
         this.timeLimitMillis = timeLimitMillis;
+        this.hasCustomChecker = hasCustomChecker;
     }
 
     public String getName() {
@@ -52,6 +54,12 @@ public class Problem {
     {
         return (double)timeLimitMillis / 1000.0;
     }
+    
+    public boolean getHasCustomChecker()
+    {
+        return hasCustomChecker;
+    }
+    
     
     public Method getMethod() {
         return method;

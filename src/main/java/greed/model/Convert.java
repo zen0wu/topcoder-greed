@@ -118,6 +118,7 @@ public class Convert {
         if (timeLimitMillis >= DUMMY_TIME_LIMIT) {
             timeLimitMillis = DEFAULT_TIME_LIMIT;
         }
+        boolean hasCustomChecker = problem.getComponent().isCustomChecker();
 
         return new Problem(
                 problem.getProblem().getName(),
@@ -125,6 +126,7 @@ public class Convert {
                 problem.getClassName(),
                 memoryLimitMB,
                 timeLimitMillis,
+                hasCustomChecker,
                 method,
                 cases,
                 new ProblemDescription(
