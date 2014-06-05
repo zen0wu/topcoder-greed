@@ -39,7 +39,7 @@ class TestModelFixtures {
                 new ParamValue(param3, valueList1)
         }, new ParamValue(new Param("return", retType, 0), valueList2));
 
-        Problem problem = new Problem("Test", 250, "TestClass", 2000, 256, method, new Testcase[]{case0}, null);
+        Problem problem = new Problem("Test", 250, "TestClass", 2000, 256, false, method, new Testcase[]{case0}, null);
 
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("Problem", problem);
