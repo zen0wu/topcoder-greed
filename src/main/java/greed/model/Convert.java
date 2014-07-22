@@ -13,7 +13,7 @@ public class Convert {
     private static final int DEFAULT_TIME_LIMIT = 2000;
     
     public static Contest convertContest(com.topcoder.client.contestant.ProblemComponentModel problem) {
-        String fullName = problem.getProblem().getRound().getContestName();
+        String fullName = problem.getProblem().getRound().getContestName().trim();
         boolean hasDivision = fullName.contains("DIV");
         Integer div = null;
         String contestName;
