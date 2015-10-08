@@ -28,7 +28,7 @@ Go to [Releases](https://github.com/shivawu/topcoder-greed/releases) page.
 * [2.0-RC (**Updated, Comptiable with Arena 7.1.0, 2014/2/18**)](https://github.com/shivawu/topcoder-greed/releases/download/2.0-RC/Greed-2.0-RC-7.1.0.jar)
 * [2.0-beta](https://github.com/shivawu/topcoder-greed/releases/download/2.0-beta/Greed-2.0-beta.jar)
 * Legacy [1.5](https://github.com/shivawu/topcoder-greed/releases/download/1.5/Greed-1.5.jar)  
-  Note that the 2.0 is not compatiable with 1.x versions. Latest versions are recommended.
+  Note that the 2.0 is not compatible with 1.x versions. Latest versions are recommended.
 
 Quick start
 -----------
