@@ -27,10 +27,11 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
 
     @Override
     public ParamValue parseValue(String value, Param param) {
+        value = value.trim(); // always trim first
+        
         if (!param.getType().isArray())
             return new ParamValue(param, value);
 
-        value = value.trim();
         value = value.substring(1, value.length() - 1);
         value = value.replaceAll("\n", "");
         value = value.trim(); //need a second trim in case it is an empty list {  }
