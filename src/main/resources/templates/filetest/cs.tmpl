@@ -16,11 +16,11 @@
 			return false;
 		}
 		else if (${if Method.ReturnType.Array}Equals(__result, __expected)${else}${if Method.ReturnType.RealNumber}DoubleEquals(__expected, __result)${else}__result == __expected${end}${end}) {
-			Console.Error.WriteLine("PASSED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
+                        Console.Error.WriteLine("PASSED! " + $"({__elapsed.TotalSeconds:0.00} seconds)");
 			return true;
 		}
 		else {
-			Console.Error.WriteLine("FAILED! " + string.Format("({0:0.00} seconds)", __elapsed.TotalSeconds));
+                        Console.Error.WriteLine("FAILED! " + $"({__elapsed.TotalSeconds:0.00} seconds)");
 			Console.Error.WriteLine("           Expected: " + ${if Method.ReturnType.Array}ToString(__expected)${else}${if Method.ReturnType.String}"\\"" + __expected + "\\""${else}__expected${end}${end});
 			Console.Error.WriteLine("           Received: " + ${if Method.ReturnType.Array}ToString(__result)${else}${if Method.ReturnType.String}"\\"" + __result + "\\""${else}__result${end}${end});
 			return false;
