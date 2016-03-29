@@ -53,17 +53,16 @@ public abstract class AbstractLanguage implements LanguageTrait, LanguageRendere
                 }
             }
 
-            return new ParamValue(param, valueList.toArray(new String[0]));
+            return new ParamValueList(param, valueList.toArray(new String[valueList.size()]));
         } else if (value.length() == 0) {
             //Empty array
-            return new ParamValue( param, new String[]{} );
+            return new ParamValueList(param, new String[]{});
         } else {
             String[] valueList = value.split(",");
-            Param paramWithPrim = new Param(param.getName(), Type.primitiveType(param.getType().getPrimitive()), param.getIndex());
             for (int i = 0; i < valueList.length; i++) {
-            	valueList[i] = renderParamValue(new ParamValue(paramWithPrim, valueList[i].trim()));
+            	valueList[i] = valueList[i].trim();
             }
-            return new ParamValue(param, valueList);
+            return new ParamValueList(param, valueList);
         }
     }
 

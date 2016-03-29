@@ -40,7 +40,7 @@ public class JavaTemplateTest {
         this.testJunitTemplate = getClass().getResourceAsStream("/templates/unittest/junit.java.tmpl");
         assertThat(this.testTemplate, notNullValue());
 
-        engine = TemplateEngine.newLanguageEngine(Language.JAVA);
+        engine = TemplateEngineFactory.newLanguageEngine(Language.JAVA);
     }
 
     @Test

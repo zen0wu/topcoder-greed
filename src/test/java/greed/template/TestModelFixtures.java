@@ -1,11 +1,6 @@
 package greed.template;
 
-import greed.model.Method;
-import greed.model.Param;
-import greed.model.ParamValue;
-import greed.model.Problem;
-import greed.model.Testcase;
-import greed.model.Type;
+import greed.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +30,9 @@ class TestModelFixtures {
         String[] valueList2 = new String[]{"\"abcd\", \"efg\"", "\"123\", \"456\""};
         Testcase case0 = new Testcase(0, new ParamValue[]{
                 new ParamValue(param1, "15"),
-                new ParamValue(param2, valueList0),
-                new ParamValue(param3, valueList1)
-        }, new ParamValue(new Param("return", retType, 0), valueList2));
+                new ParamValueList(param2, valueList0),
+                new ParamValueList(param3, valueList1)
+        }, new ParamValueList(new Param("return", retType, 0), valueList2));
 
         Problem problem = new Problem("Test", 250, "TestClass", 2000, 256, false, method, new Testcase[]{case0}, null);
 

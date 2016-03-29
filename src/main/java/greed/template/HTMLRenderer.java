@@ -1,10 +1,7 @@
 package greed.template;
 
 import greed.code.LanguageManager;
-import greed.model.Language;
-import greed.model.Method;
-import greed.model.ParamValue;
-import greed.model.Type;
+import greed.model.*;
 import greed.util.StringUtil;
 
 import java.util.Locale;
@@ -52,7 +49,7 @@ public class HTMLRenderer implements NamedRenderer {
 
         if (t.isString()) {
             if (t.isArray()) {
-                String[] x = pv.getValueList();
+                String[] x = pv.getStrings();
                 boolean useGrid = isGridMode(param, x);
                 return doRenderStringArray(x, useGrid);
             } else {

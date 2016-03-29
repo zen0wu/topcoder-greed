@@ -15,6 +15,7 @@ import greed.model.Language;
 import greed.model.Param;
 import greed.model.Problem;
 import greed.template.TemplateEngine;
+import greed.template.TemplateEngineFactory;
 import greed.ui.ConfigurationDialog;
 import greed.ui.GreedEditorPanel;
 import greed.util.*;
@@ -199,7 +200,7 @@ public class Greed {
         sharedModel.put("CutEnd", langConfig.getCutEnd());
 
         // Switch language
-        currentEngine = TemplateEngine.newLanguageEngine(language);
+        currentEngine = TemplateEngineFactory.newLanguageEngine(language);
 
         // Validate template definitions and calculate order
         ArrayList<String> templateOrder;
@@ -291,10 +292,23 @@ public class Greed {
             indivModel.put("Options", template.getOptions());
             dependencyModel.put(templateName, indivModel);
 
+            TemplateEngine engine = currentEngine;
+            if (template.getOptions() != null && template.getOptions().containsKey("engine")) {
+                try {
+                    engine = TemplateEngineFactory.newSpecialEngine(template.getOptions().get("engine"));
+                }
+                catch (IllegalArgumentException e) {
+                    talkingWindow.indent();
+                    talkingWindow.error(e.getMessage() + ", skip");
+                    talkingWindow.unindent();
+                    continue;
+                }
+            }
+
             // Generate code from templates
             String output;
             try {
-                output = currentEngine.render(
+                output = engine.render(
                         FileSystem.getResource(template.getTemplateFile()),
                         mergeModels(sharedModel, indivModel)
                 );

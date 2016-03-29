@@ -4,19 +4,19 @@ ${<foreach e.Input in}
 ${<if in.Param.Type.Array}
 ${in.ValueListLength}
 ${<foreach in.ValueList v}
-${v;string("unquote")}
+${v}
 ${<end}
 ${<else}
-${in.Value;string("unquote")}
+${in.Value}
 ${<end}
 ${<end}
 
 ${<if e.Output.Param.Type.Array}
 ${e.Output.ValueListLength}
 ${<foreach e.Output.ValueList v}
-${v;string("unquote")}
+${v}
 ${<end}
 ${<else}
-${e.Output.Value;string("unquote")}
+${e.Output.Value}
 ${<end}
 ${<end}

@@ -15,19 +15,11 @@ import java.util.*;
  */
 public class TemplateEngine {
 
-    private static TemplateEngine bare = new TemplateEngine();
-
-    public static TemplateEngine getBareEngine() { return bare; }
-
-    public static TemplateEngine newLanguageEngine(Language lang) {
-        return new TemplateEngine(lang);
-    }
-
     private Engine engine = null;
     // Black magic for the renderer to access the current model
     private Stack<Map<String, Object>> modelStack = new Stack<Map<String, Object>>();
 
-    private TemplateEngine() {
+    TemplateEngine() {
         engine = new Engine();
         engine.registerNamedRenderer(new StringUtilRenderer());
         engine.registerNamedRenderer(new ContestCategoryRenderer());
@@ -37,9 +29,8 @@ public class TemplateEngine {
         engine.registerNamedRenderer(new SeqRenderer());
     }
 
-    private TemplateEngine(Language language) {
-        this();
-        LanguageManager.getInstance().registerRenderer(language, engine);
+    Engine getEngine() {
+        return engine;
     }
 
     public String render(InputStream templateStream, Map<String, Object> model) {

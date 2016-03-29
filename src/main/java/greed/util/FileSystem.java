@@ -1,6 +1,7 @@
 package greed.util;
 
 import greed.template.TemplateEngine;
+import greed.template.TemplateEngineFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class FileSystem {
         model.put("GeneratedFileName", name);
         model.put("BackupNumber", num);
         greed.conf.schema.BackupConfig bc = Utils.getGreedConfig().getBackup();
-        String newname = TemplateEngine.getBareEngine().render( bc.getFileName(), model );
+        String newname = TemplateEngineFactory.getBareEngine().render( bc.getFileName(), model );
         File newfile = new File( file.getParentFile(), newname);
         if ( ! newfile.getParentFile().exists() ) {
             newfile.getParentFile().mkdirs();

@@ -29,7 +29,7 @@ public class StringUtilRendererTest {
 
     @Before
     public void setup() {
-        engine = TemplateEngine.newLanguageEngine(Language.CPP);
+        engine = TemplateEngineFactory.newLanguageEngine(Language.CPP);
     }
 
     @Test
