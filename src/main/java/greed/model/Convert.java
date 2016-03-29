@@ -145,6 +145,7 @@ public class Convert {
         if ("long".equals(typeName)) type = Primitive.LONG;
         if ("double".equals(typeName)) type = Primitive.DOUBLE;
         if ("bool".equals(typeName)) type = Primitive.BOOL;
+        if ("char".equals(typeName)) type = Primitive.CHAR;
         return new Type(type, dt.getDimension());
     }
 }
