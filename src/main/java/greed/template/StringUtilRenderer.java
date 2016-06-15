@@ -74,6 +74,8 @@ public class StringUtilRenderer implements NamedRenderer {
         int n = s.length();
         if (n >= 2 && s.charAt(0) == '"' && s.charAt(n - 1) == '"')
             s = s.substring(1, n - 1);
+        else if (n >= 2 && s.charAt(0) == '\'' && s.charAt(n - 1) == '\'')
+            s = s.substring(1, n - 1);
         return s;
     }
 

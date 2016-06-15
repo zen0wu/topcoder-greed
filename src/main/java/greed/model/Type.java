@@ -20,6 +20,8 @@ public class Type {
             case STRING: return STRING_TYPE;
             case LONG: return LONG_TYPE;
             case DOUBLE: return DOUBLE_TYPE;
+            case CHAR:
+                return CHAR_TYPE;
         }
         throw new IllegalArgumentException("Unknown primitive : " + primitive);
     }
@@ -30,6 +32,7 @@ public class Type {
     public static final Type LONG_TYPE = new Type(Primitive.LONG, 0);
     public static final Type DOUBLE_TYPE = new Type(Primitive.DOUBLE, 0);
     public static final Type BOOL_TYPE = new Type(Primitive.BOOL, 0);
+    public static final Type CHAR_TYPE = new Type(Primitive.CHAR, 0);
 
     public static final Type INT_ARRAY_TYPE = new Type(Primitive.INT, 1);
     public static final Type STRING_ARRAY_TYPE = new Type(Primitive.STRING, 1);

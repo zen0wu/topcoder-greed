@@ -21,9 +21,11 @@ import greed.util.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -157,7 +159,7 @@ public class Greed {
 
     private String renderedCodeRoot(GreedConfig config)
     {
-        return currentEngine.render(config.getCodeRoot(), currentModel);
+        return currentEngine.render(config.getCodeRoot(), currentModel).replace(" ", "");
     }
 
     @SuppressWarnings("unchecked")
@@ -337,7 +339,7 @@ public class Greed {
                 }
 
                 indivModel.put("GeneratedFileName", new java.io.File(filePath).getName());
-                indivModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath).getPath());
+                indivModel.put("GeneratedFilePath", FileSystem.getRawFile(filePath).getPath().replace("\\", "/"));
 
                 boolean exists = FileSystem.exists(filePath);
                 TemplateConfig.OverwriteOptions overwrite = template.getOverwrite();
@@ -375,6 +377,15 @@ public class Greed {
                     FileSystem.writeFile(filePath, output);
                 }
 
+                if (filePath.endsWith("html")) {
+                    try {
+                        Runtime.getRuntime().exec("open " + FileSystem.getRawFile(filePath).getPath().replace("\\", "/"));
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
                 if (template.getAfterFileGen() != null) {
                     CommandConfig afterGen = template.getAfterFileGen();
                     String[] commands = new String[afterGen.getArguments().length + 1];
@@ -398,8 +409,24 @@ public class Greed {
             talkingWindow.showLine("");
         }
 
+        clionSet(problem.getClassName());
+
         talkingWindow.showLine("All set, good luck!");
         talkingWindow.showLine("");
+    }
+
+    //clion 工程设置
+    private void clionSet(String fileName) {
+        GreedConfig config = Utils.getGreedConfig();
+        InputStream cmakeTemplate = getClass().getResourceAsStream("/templates/clion/CMakeLists.tmpl");
+
+        Map<String, Object> model = new HashMap<String, Object>();
+
+        model.put("FileName", renderedCodeRoot(config) + "/" + fileName);
+
+        String cmake = currentEngine.render(cmakeTemplate, model);
+        FileSystem.writeFile("CMakeLists.txt", cmake);
+
     }
 
     private HashMap<String, Object> mergeModels(HashMap<String, Object> ... models) {
