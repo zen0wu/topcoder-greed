@@ -49,6 +49,7 @@ public class ContestCategoryRendererTest {
         cases.put("TCO 13 Qual 2", "TCO");
         cases.put("TCHS 123", "TCHS");
         cases.put("TCCC 2004 Round 1", "TCCC");
+        cases.put("TCO19 SRM 755", "SRM");
 
         for(Map.Entry<String, String> entry : cases.entrySet()) {
             Map<String, Object> model = createModel("Contest", entry.getKey(), 1);
