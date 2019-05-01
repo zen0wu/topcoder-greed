@@ -88,7 +88,7 @@ public class ContestCategoryRenderer implements NamedRenderer {
         String result = c.getName();
         if (result.contains("TCHS")) {
             result = text.get( CATEGORY.TCHS );
-        } else if (result.matches("(?i).*(TCO|(top\\s*coder\\s*open)).*")) {
+        } else if (result.matches("(?i).*(TCO|(top\\s*coder\\s*open)).*") && ! result.contains("SRM") ) {
             result = text.get( CATEGORY.TCO );
         } else if (result.contains("TCCC")) {
             result = text.get( CATEGORY.TCCC );
