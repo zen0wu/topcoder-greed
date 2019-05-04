@@ -1,5 +1,7 @@
 # TEST CODE FOR PYTHON {{{
-import sys, time, math
+import sys as _sys
+import time as _time
+import math as _math
 
 def tc_equal(expected, received):
     try:
@@ -11,7 +13,7 @@ def tc_equal(expected, received):
         elif _t == float:
             eps = 1e-9
             d = abs(received - expected)
-            return not math.isnan(received) and not math.isnan(expected) and d <= eps * max(1.0, abs(expected))
+            return not _math.isnan(received) and not _math.isnan(expected) and d <= eps * max(1.0, abs(expected))
         else:
             return expected == received
     except:
@@ -26,7 +28,7 @@ def pretty_str(x):
         return str(x)
 
 def do_test(${Method.Params}, __expected):
-    startTime = time.time()
+    startTime = _time.time()
     instance = ${ClassName}()
     exception = None
     try:
@@ -34,28 +36,28 @@ def do_test(${Method.Params}, __expected):
     except:
         import traceback
         exception = traceback.format_exc()
-    elapsed = time.time() - startTime   # in sec
+    elapsed = _time.time() - startTime   # in sec
 
     if exception is not None:
-        sys.stdout.write("RUNTIME ERROR: \\n")
-        sys.stdout.write(exception + "\\n")
+        _sys.stdout.write("RUNTIME ERROR: \\n")
+        _sys.stdout.write(exception + "\\n")
         return 0
 
     if tc_equal(__expected, __result):
-        sys.stdout.write("PASSED! " + ("(%.3f seconds)" % elapsed) + "\\n")
+        _sys.stdout.write("PASSED! " + ("(%.3f seconds)" % elapsed) + "\\n")
         return 1
     else:
-        sys.stdout.write("FAILED! " + ("(%.3f seconds)" % elapsed) + "\\n")
-        sys.stdout.write("           Expected: " + pretty_str(__expected) + "\\n")
-        sys.stdout.write("           Received: " + pretty_str(__result) + "\\n")
+        _sys.stdout.write("FAILED! " + ("(%.3f seconds)" % elapsed) + "\\n")
+        _sys.stdout.write("           Expected: " + pretty_str(__expected) + "\\n")
+        _sys.stdout.write("           Received: " + pretty_str(__result) + "\\n")
         return 0
 
 def run_tests():
-    sys.stdout.write("${Problem.Name} (${Problem.Score} Points)\\n\\n")
+    _sys.stdout.write("${Problem.Name} (${Problem.Score} Points)\\n\\n")
 
     passed = cases = 0
     case_set = set()
-    for arg in sys.argv[1:]:
+    for arg in _sys.argv[1:]:
         case_set.add(int(arg))
 
     with open("${Dependencies.testcase.GeneratedFileName}", "r") as f:
@@ -85,16 +87,16 @@ ${<end}
 
             cases += 1
             if len(case_set) > 0 and (cases - 1) in case_set: continue
-            sys.stdout.write("  Testcase #%d ... " % (cases - 1))
+            _sys.stdout.write("  Testcase #%d ... " % (cases - 1))
             passed += do_test(${foreach Method.Params param , }${param.Name}${end}, __answer)
 
-    sys.stdout.write("\\nPassed : %d / %d cases\\n" % (passed, cases))
+    _sys.stdout.write("\\nPassed : %d / %d cases\\n" % (passed, cases))
 
-    T = time.time() - ${CreateTime}
+    T = _time.time() - ${CreateTime}
     PT, TT = (T / 60.0, 75.0)
     points = ${Problem.Score} * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))
-    sys.stdout.write("Time   : %d minutes %d secs\\n" % (int(T/60), T%60))
-    sys.stdout.write("Score  : %.2f points\\n" % points)
+    _sys.stdout.write("Time   : %d minutes %d secs\\n" % (int(T/60), T%60))
+    _sys.stdout.write("Score  : %.2f points\\n" % points)
 
 if __name__ == '__main__':
     run_tests()
